@@ -21,7 +21,7 @@ public class MainActivity {
         // res_home.getString(0)测试是电视剧还是电影...，可以根据index来切换
         List<String> res_category = test_category(spider, res_home.getString(0));
         // res_category.get(1)测试是那一部视频...，可以根据index来切换
-        test_detail(spider, res_category.get(1));
+        test_detail(spider, res_category.get(0));
         test_player(spider);
     }
 
@@ -81,10 +81,10 @@ public class MainActivity {
         }
         try {
             int total = result.getInt("total");
-            System.out.println(" // 总共多少调数据");
+            System.out.println(" // 总共多少条数据");
             System.out.println("total:" + total);
         } catch (Exception e) {
-            System.out.println(" // 总共多少调数据");
+            System.out.println(" // 总共多少条数据");
             System.out.println("没有解析到total，请检查！！！");
         }
         try {
@@ -113,19 +113,56 @@ public class MainActivity {
         List<String> ids = new ArrayList<>();
         ids.add(ids0);
         System.out.println("\r\n==========detailContent:=======\r\n");
+        JSONArray data = new JSONArray();
         String strdetailContent = spider.detailContent(ids);
         JSONObject result = new JSONObject(new String(strdetailContent));
         try {
             JSONArray list = result.getJSONArray("list");
             try {
-                ArrayList<String> sources = new ArrayList<>();
-               String vod_play_from =list.getJSONObject(0).getString("vod_play_from");
-               System.out.println(vod_play_from);
+                String vod_play_from = list.getJSONObject(0).getString("vod_play_from");
+                for (String s : vod_play_from.split("\\$\\$\\$")) {
+                    JSONObject source = new JSONObject();
+                    source.put("source_name", s);
+                    data.put(source);
+                }
+                // System.out.println(data);
             } catch (Exception e) {
-                // TODO: handle exception
+                System.out.println("没有解析到vod_play_from,请检查!!!");
+            }
+            try {
+                String vod_play_url = list.getJSONObject(0).getString("vod_play_url");
+                int i = 0;
+                for (String url_list : vod_play_url.split("\\$\\$\\$")) {
+                    JSONArray d = new JSONArray();
+                    for (String name_url : url_list.split("\\#")) {
+                        JSONArray n_u = new JSONArray();
+                        for (String value : name_url.split("\\$")) {
+                            n_u.put(value);
+                        }
+
+                        d.put(n_u);
+
+                    }
+                    data.getJSONObject(i).put("data", d);
+                    i = i + 1;
+
+                }
+
+            } catch (Exception e) {
+                System.out.println("没有解析到vod_play_url,请检查!!!");
+            }
+            for (int j = 0; j < data.length(); j++) {
+                System.out.println();
+                for (int k = 0; k < data.getJSONObject(j).getJSONArray("data").length(); k++) {
+                    System.out.println(data.getJSONObject(j).getString("source_name") + "--->"
+                            + data.getJSONObject(j).getJSONArray("data").getJSONArray(k).getString(0) + "[ "
+                            + data.getJSONObject(j).getJSONArray("data").getJSONArray(k).getString(1) + " ]");
+
+                }
+
             }
 
-            //System.out.println(list);
+            // System.out.println(list);
         } catch (Exception e) {
             System.out.println("未读取到list,请检查json格式!!");
         }

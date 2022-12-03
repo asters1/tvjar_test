@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class HOME extends Spider {
 
-    private static final String siteUrl = "http://192.168.1.1:8888/";
+    private static final String siteUrl = "http://localhost:8080";
 
     public String homeContent(boolean filter) {
         try {
