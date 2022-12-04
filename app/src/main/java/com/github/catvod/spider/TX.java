@@ -22,10 +22,8 @@ public class TX extends Spider {
     protected HashMap<String, String> getHeaders(String url) {
         HashMap<String, String> headers = new HashMap<>();
         headers.put("method", "GET");
-        headers.put("Host", siteHost);
         headers.put("User-Agent",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36");
-        headers.put("accept-encoding", "gzip");
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36");
         return headers;
     }
 
@@ -92,28 +90,34 @@ public class TX extends Spider {
             if (tid.equals("doudou")) {
                 list.add("汪汪队立大功");
                 list.add("超级飞侠");
+                list.add("工程车益趣园");
+                list.add("工程车城镇救援队");
+                list.add("猪猪侠");
+                list.add("熊出没");
             } else {
+                list.add("奇迹少女");
 
             }
             JSONArray lists = new JSONArray();
             for (int i = 0; i < list.size(); i++) {
-                String q_url = "http://node.video.qq.com/x/api/msearch?keyWord="
-                        + "%E6%B1%AA%E6%B1%AA%E9%98%9F%E7%AB%8B%E5%A4%A7%E5%8A%9F";
-                // String q_url = "http://node.video.qq.com/x/api/msearch?keyWord=" +
-                // list.get(i);
-
-                String cs = OkHttpUtil.string(q_url, getHeaders(q_url));
-                System.out.println("cs:" + cs);
+                String q_url = "http://node.video.qq.com/x/api/msearch?keyWord=" + list.get(i);
+                System.out.println("q_url:" + q_url);
                 JSONArray jSONArray = new JSONObject(OkHttpUtil.string(q_url, getHeaders(q_url)))
                         .getJSONArray("uiData");
+                ArrayList<String> rlist = new ArrayList<String>();
                 for (int j = 0; j < jSONArray.length(); j++) {
                     JSONObject jSONObject = jSONArray.getJSONObject(j).getJSONArray("data").getJSONObject(0);
-                    JSONObject jSONObject2 = new JSONObject();
-                    jSONObject2.put("vod_id", jSONObject.optString("id"));
-                    jSONObject2.put("vod_name", jSONObject.optString("title"));
-                    jSONObject2.put("vod_pic", jSONObject.optString("posterPic"));
-                    jSONObject2.put("vod_remarks", jSONObject.optString("publishDate"));
-                    lists.put(jSONObject2);
+                    if (!rlist.contains(jSONObject.optString("title"))
+                            && !jSONObject.optString("id").equals("相关应用")) {
+
+                        rlist.add(jSONObject.optString("title"));
+                        JSONObject jSONObject2 = new JSONObject();
+                        jSONObject2.put("vod_id", jSONObject.optString("id"));
+                        jSONObject2.put("vod_name", jSONObject.optString("title"));
+                        jSONObject2.put("vod_pic", jSONObject.optString("posterPic"));
+                        jSONObject2.put("vod_remarks", jSONObject.optString("publishDate"));
+                        lists.put(jSONObject2);
+                    }
                 }
 
             }
