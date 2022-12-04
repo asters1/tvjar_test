@@ -15,13 +15,13 @@ import org.json.JSONObject;
 
 public class MainActivity {
     public static void main(String[] args) {
-        // TX spider = new TX();
-        HOME spider = new HOME();
+        TX spider = new TX();
+        // HOME spider = new HOME();
         JSONArray res_home = test_home(spider);
         // res_home.getString(0)测试是电视剧还是电影...，可以根据index来切换
         List<String> res_category = test_category(spider, res_home.getString(0));
         // res_category.get(1)测试是那一部视频...，可以根据index来切换
-        test_detail(spider, res_category.get(0));
+        // test_detail(spider, res_category.get(0));
         test_player(spider);
     }
 
@@ -41,22 +41,25 @@ public class MainActivity {
                 }
                 System.out.println();
             } catch (Exception e) {
-                System.out.println("未读取到type_name或者type_id，请检查json格式！");
+                System.out.println("未读取到type_name或者type_id，请检查！");
             }
         } catch (Exception e) {
-            System.out.println("未读取到class，请检查json格式！");
+            System.out.println("未读取到class，请检查！");
         }
         return res;
     }
 
     public static List<String> test_category(Spider spider, String tid) {
+        System.out.println("\r\n你测试的分类为:" + tid);
         List<String> res = new ArrayList<>();
         // 标题栏下的视频内容
         System.out.println("\r\n==========categoryContent:=======\r\n");
         String strcategoryContent = spider.categoryContent(tid, "1", true, null);
+        System.out.println(strcategoryContent);
+        System.out.println(tid);
         JSONObject result = new JSONObject(new String(strcategoryContent));
         try {
-            String page = result.getString("page");
+            int page = result.getInt("page");
             System.out.println("//当前页");
             System.out.println("page:" + page);
         } catch (Exception e) {
@@ -97,7 +100,7 @@ public class MainActivity {
                     res.add(list.getJSONObject(i).get("vod_id").toString());
                 }
             } catch (Exception e) {
-                System.out.println("视频列表解析出现问题，请检查json格式!");
+                System.out.println("视频列表解析出现问题，请检查!");
             }
         } catch (Exception e) {
             System.out.println(" // 总共多少调数据");
@@ -112,6 +115,7 @@ public class MainActivity {
         // 视频详细信息,注意List<String> ids只有一个tid
         List<String> ids = new ArrayList<>();
         ids.add(ids0);
+        System.out.println(ids0);
         System.out.println("\r\n==========detailContent:=======\r\n");
         JSONArray data = new JSONArray();
         String strdetailContent = spider.detailContent(ids);
@@ -164,7 +168,7 @@ public class MainActivity {
 
             // System.out.println(list);
         } catch (Exception e) {
-            System.out.println("未读取到list,请检查json格式!!");
+            System.out.println("未读取到list,请检查!!");
         }
 
         return "";

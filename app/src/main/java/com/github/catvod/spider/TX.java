@@ -86,38 +86,44 @@ public class TX extends Spider {
     }
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
-        if (tid == "doudou" || tid == "yangyang") {
-            if (tid == "doudou") {
-                ArrayList<String> kwlist = new ArrayList<>();
-                kwlist.add("汪汪队");
-                System.out.println(kwlist);
-                try {
-                    String str2 = "http://node.video.qq.com/x/api/msearch?keyWord=" + "汪汪队立大功";
-                    System.out.println(str2);
-                    JSONArray jSONArray = new JSONObject(OkHttpUtil.string(str2, getHeaders(str2)))
-                            .getJSONArray("uiData");
-                    JSONArray jSONArray2 = new JSONArray();
-                    for (int i = 0; i < jSONArray.length(); i++) {
-                        JSONObject jSONObject = jSONArray.getJSONObject(i).getJSONArray("data").getJSONObject(0);
-                        JSONObject jSONObject2 = new JSONObject();
-                        jSONObject2.put("vod_id", jSONObject.optString("id"));
-                        jSONObject2.put("vod_name", jSONObject.optString("title"));
-                        jSONObject2.put("vod_pic", jSONObject.optString("posterPic"));
-                        jSONObject2.put("vod_remarks", jSONObject.optString("publishDate"));
-                        jSONArray2.put(jSONObject2);
-                    }
-                    JSONObject jSONObject3 = new JSONObject();
-                    jSONObject3.put("list", jSONArray2);
-                    return jSONObject3.toString();
-                } catch (Exception e) {
-                    SpiderDebug.log(e);
-                    return "";
-                }
-
+        if (tid.equals("doudou") || tid.equals("yangyang")) {
+            JSONObject result = new JSONObject();
+            ArrayList<String> list = new ArrayList<String>();
+            if (tid.equals("doudou")) {
+                list.add("汪汪队立大功");
+                list.add("超级飞侠");
             } else {
 
             }
-            return "";
+            JSONArray lists = new JSONArray();
+            for (int i = 0; i < list.size(); i++) {
+                String q_url = "http://node.video.qq.com/x/api/msearch?keyWord="
+                        + "%E6%B1%AA%E6%B1%AA%E9%98%9F%E7%AB%8B%E5%A4%A7%E5%8A%9F";
+                // String q_url = "http://node.video.qq.com/x/api/msearch?keyWord=" +
+                // list.get(i);
+
+                String cs = OkHttpUtil.string(q_url, getHeaders(q_url));
+                System.out.println("cs:" + cs);
+                JSONArray jSONArray = new JSONObject(OkHttpUtil.string(q_url, getHeaders(q_url)))
+                        .getJSONArray("uiData");
+                for (int j = 0; j < jSONArray.length(); j++) {
+                    JSONObject jSONObject = jSONArray.getJSONObject(j).getJSONArray("data").getJSONObject(0);
+                    JSONObject jSONObject2 = new JSONObject();
+                    jSONObject2.put("vod_id", jSONObject.optString("id"));
+                    jSONObject2.put("vod_name", jSONObject.optString("title"));
+                    jSONObject2.put("vod_pic", jSONObject.optString("posterPic"));
+                    jSONObject2.put("vod_remarks", jSONObject.optString("publishDate"));
+                    lists.put(jSONObject2);
+                }
+
+            }
+            result.put("page", 1);
+            result.put("pagecount", 1);
+            result.put("limit", Integer.MAX_VALUE);
+            result.put("total", Integer.MAX_VALUE);
+            result.put("list", lists);
+
+            return result.toString();
         } else {
             int page = Integer.parseInt(pg);
             String cateUrl = siteUrl
@@ -147,7 +153,7 @@ public class TX extends Spider {
                     jSONObject2.put("vod_remarks", remarks);
                     jSONArray.put(jSONObject2);
                 }
-                result.put("page", pg);
+                result.put("page", page);
                 result.put("pagecount", Integer.MAX_VALUE);
                 result.put("limit", 90);
                 result.put("total", Integer.MAX_VALUE);
