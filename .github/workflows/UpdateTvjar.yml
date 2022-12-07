@@ -15,8 +15,8 @@ jobs:
         uses: actions/checkout@v1
       - name: Clone Tvjar
         run: |
-          conle_url=https://asters1:${{ secrets.USER_TOKEN }}@github.com/asters1/tvjar
-          git Clone $conle_url
+          clone_url=https://asters1:${{ secrets.USER_TOKEN }}@github.com/asters1/tvjar
+          git clone $clone_url
           cd tvjar
           ls
 
