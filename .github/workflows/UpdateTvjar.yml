@@ -1,0 +1,23 @@
+name: Update Tvjar
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v1
+      - name: Clone Tvjar
+        run: |
+          conle_url=https://asters1:${{ secrets.USER_TOKEN }}@github.com/asters1/tvjar
+          git Clone $conle_url
+          cd tvjar
+          ls
+
+
