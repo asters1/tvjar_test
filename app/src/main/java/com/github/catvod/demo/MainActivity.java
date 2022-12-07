@@ -19,7 +19,7 @@ public class MainActivity {
         // HOME spider = new HOME();
         JSONArray res_home = test_home(spider);
         // res_home.getString(0)测试是电视剧还是电影...，可以根据index来切换
-        List<String> res_category = test_category(spider, res_home.getString(1));
+        List<String> res_category = test_category(spider, res_home.getString(0));
         // res_category.get(1)测试是那一部视频...，可以根据index来切换
         // test_detail(spider, res_category.get(0));
         test_player(spider);

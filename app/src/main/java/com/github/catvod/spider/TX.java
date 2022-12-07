@@ -85,49 +85,19 @@ public class TX extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         if (tid.equals("doudou") || tid.equals("yangyang")) {
-            JSONObject result = new JSONObject();
-            ArrayList<String> list = new ArrayList<String>();
+            String result, q_url;
+
             if (tid.equals("doudou")) {
-                list.add("汪汪队立大功");
-                list.add("超级飞侠");
-                list.add("工程车益趣园");
-                list.add("工程车城镇救援队");
-                list.add("猪猪侠");
-                list.add("熊出没");
+                q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/doudou.json";
             } else {
-                list.add("奇迹少女");
+                q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/doudou.json";
 
             }
-            JSONArray lists = new JSONArray();
-            for (int i = 0; i < list.size(); i++) {
-                String q_url = "http://node.video.qq.com/x/api/msearch?keyWord=" + list.get(i);
-                System.out.println("q_url:" + q_url);
-                JSONArray jSONArray = new JSONObject(OkHttpUtil.string(q_url, getHeaders(q_url)))
-                        .getJSONArray("uiData");
-                ArrayList<String> rlist = new ArrayList<String>();
-                for (int j = 0; j < jSONArray.length(); j++) {
-                    JSONObject jSONObject = jSONArray.getJSONObject(j).getJSONArray("data").getJSONObject(0);
-                    if (!rlist.contains(jSONObject.optString("title"))
-                            && !jSONObject.optString("id").equals("相关应用")) {
 
-                        rlist.add(jSONObject.optString("title"));
-                        JSONObject jSONObject2 = new JSONObject();
-                        jSONObject2.put("vod_id", jSONObject.optString("id"));
-                        jSONObject2.put("vod_name", jSONObject.optString("title"));
-                        jSONObject2.put("vod_pic", jSONObject.optString("posterPic"));
-                        jSONObject2.put("vod_remarks", jSONObject.optString("publishDate"));
-                        lists.put(jSONObject2);
-                    }
-                }
+            result = OkHttpUtil.string(q_url, getHeaders(q_url));
 
-            }
-            result.put("page", 1);
-            result.put("pagecount", 1);
-            result.put("limit", Integer.MAX_VALUE);
-            result.put("total", Integer.MAX_VALUE);
-            result.put("list", lists);
+            return result;
 
-            return result.toString();
         } else {
             int page = Integer.parseInt(pg);
             String cateUrl = siteUrl
