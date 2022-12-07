@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.catvod.crawler.Spider;
+import com.github.catvod.spider.Cb;
 import com.github.catvod.spider.HOME;
 import com.github.catvod.spider.TX;
 
@@ -15,14 +16,15 @@ import org.json.JSONObject;
 
 public class MainActivity {
     public static void main(String[] args) {
-        TX spider = new TX();
+        // TX spider = new TX();
         // HOME spider = new HOME();
+        Cb spider = new Cb();
         JSONArray res_home = test_home(spider);
         // res_home.getString(0)测试是电视剧还是电影...，可以根据index来切换
         List<String> res_category = test_category(spider, res_home.getString(0));
         // res_category.get(1)测试是那一部视频...，可以根据index来切换
-        // test_detail(spider, res_category.get(0));
-        test_player(spider);
+        ArrayList<String> res_detail = test_detail(spider, res_category.get(0));
+        test_player(spider, res_detail.get(0));
     }
 
     public static JSONArray test_home(Spider spider) {
@@ -111,8 +113,9 @@ public class MainActivity {
 
     }
 
-    public static String test_detail(Spider spider, String ids0) {
+    public static ArrayList<String> test_detail(Spider spider, String ids0) {
         // 视频详细信息,注意List<String> ids只有一个tid
+        ArrayList<String> result_url = new ArrayList<String>();
         List<String> ids = new ArrayList<>();
         ids.add(ids0);
         System.out.println(ids0);
@@ -161,26 +164,27 @@ public class MainActivity {
                     System.out.println(data.getJSONObject(j).getString("source_name") + "--->"
                             + data.getJSONObject(j).getJSONArray("data").getJSONArray(k).getString(0) + "[ "
                             + data.getJSONObject(j).getJSONArray("data").getJSONArray(k).getString(1) + " ]");
+                    result_url.add(data.getJSONObject(j).getJSONArray("data").getJSONArray(k).getString(1));
 
                 }
 
             }
+            return result_url;
 
             // System.out.println(list);
         } catch (Exception e) {
             System.out.println("未读取到list,请检查!!");
         }
 
-        return "";
+        return null;
 
     }
 
-    public static String test_player(Spider spider) {
+    public static String test_player(Spider spider, String url) {
         // 播放内容
         System.out.println("\r\n==========playerContent=======\r\n");
-        String strplayerContent = spider.playerContent("",
-                "http://localhost:8080/%E5%B0%91%E5%84%BF/%E6%B1%AA%E6%B1%AA%E9%98%9F%E5%90%88%E9%9B%86/%E7%AC%AC8%E5%AD%A31080p/%E6%B1%AA%E6%B1%AA%E9%98%9F%E7%AB%8B%E5%A4%A7%E5%8A%9F.%E7%AC%AC%E5%85%AB%E5%AD%A3.1080P.%E7%AC%AC10%E9%9B%86.mp4",
-                null);
+        System.out.println("测试地址为:" + url);
+        String strplayerContent = spider.playerContent("", url, null);
         System.out.println(strplayerContent);
 
         return "";
