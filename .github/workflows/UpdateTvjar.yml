@@ -24,6 +24,7 @@ jobs:
           echo "newcommit=$newcommit">> $GITHUB_ENV
       - name: push auto
         run: |
+          cd auto
           ls
           sed -i  's/"old": ".*"/"old": "${{ env.oldcommit }}"/g' ./tvjar/tvjarCommit.json
           sed -i  's/"new": ".*"/"new": "${newcommit}"/g' ./tvjar/tvjarCommit.json
