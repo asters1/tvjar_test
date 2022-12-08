@@ -22,6 +22,9 @@ jobs:
           newcommit=$(curl -sL https://github.com/asters1/tvjar_test/commits/master |grep -o "/asters1/tvjar_test/commit/[a-z0-9]\+" |head -1 | cut -d\/ -f5)
           echo "oldcommit=$oldcommit">> $GITHUB_ENV
           echo "newcommit=$newcommit">> $GITHUB_ENV
+      - name: push auto
+        run: |
+          ls
           sed -i  's/"old": ".*"/"old": "${{ env.oldcommit }}"/g' ./tvjar/tvjarCommit.json
           sed -i  's/"new": ".*"/"new": "${newcommit}"/g' ./tvjar/tvjarCommit.json
           cat ./tvjar/tvjarCommit.json
