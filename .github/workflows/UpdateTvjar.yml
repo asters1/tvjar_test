@@ -13,11 +13,10 @@ jobs:
     steps:
       - name: Checkout codes
         uses: actions/checkout@v1
-      - name: Clone Tvjar
+      - name: Clone auto
         run: |
-          clone_url=https://asters1:${{ secrets.USER_TOKEN }}@github.com/asters1/tvjar
-          git clone $clone_url
-          cd tvjar
+          git clone https://asters1:${{secrets.USER_TOKEN}}@github.com/asters1/auto
+          cd auto
           ls
 
 
