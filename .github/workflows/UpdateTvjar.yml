@@ -28,6 +28,10 @@ jobs:
           sed -i  's/"old": ".*"/"old": "${{ env.oldcommit }}"/g' ./tvjar/tvjarCommit.json
           sed -i  's/"new": ".*"/"new": "${{ env.newcommit }}"/g' ./tvjar/tvjarCommit.json
 
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url --add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+
           git add --all
           git commit -m "${{ env.newcommit }}"
           git push -u -f origin master
