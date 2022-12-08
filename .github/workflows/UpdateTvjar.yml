@@ -23,7 +23,7 @@ jobs:
           echo $oldcommit
           echo $newcommit
           sed -i  's/"old": ".*"/"old": "${{oldcommit}}"/g' ./tvjar/tvjarCommit.json
-          sed -i  's/"new": ".*"/"new": "$newcommit"/g' ./tvjar/tvjarCommit.json
+          sed -i  's/"new": ".*"/"new": "\\$newcommit"/g' ./tvjar/tvjarCommit.json
           cat ./tvjar/tvjarCommit.json
 
 
