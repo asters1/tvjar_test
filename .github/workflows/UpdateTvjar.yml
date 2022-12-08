@@ -25,11 +25,12 @@ jobs:
       - name: push auto
         run: |
           cd auto
-          ls
           sed -i  's/"old": ".*"/"old": "${{ env.oldcommit }}"/g' ./tvjar/tvjarCommit.json
           sed -i  's/"new": ".*"/"new": "${{ env.newcommit }}"/g' ./tvjar/tvjarCommit.json
-          cat ./tvjar/tvjarCommit.json
 
+          git add --all
+          git commit -m "${{ env.newcommit }}"
+          git push -u -f origin master
 
 
 
