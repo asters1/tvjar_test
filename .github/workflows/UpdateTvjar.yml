@@ -1,4 +1,4 @@
-name: Update Tvjar
+name: Update Commit
 
 on:
   push:
@@ -15,8 +15,15 @@ jobs:
         uses: actions/checkout@v1
       - name: Clone auto
         run: |
+
           git clone https://asters1:${{secrets.USER_TOKEN}}@github.com/asters1/auto
           cd auto
-          ls
+          oldcommit=$(./jq ./tvjar/tvjarCommit.json new)
+
+          newcommit=
+          commit=$(curl -sL $upStream/commits/asters1/tvjar_test |grep -o "/asters1/tvjar_test/commit/[a-z0-9]\+" |head -1 | cut -d\/ -f5)
+          echo $oldcommit
+          echo $newcommit
+
 
 
