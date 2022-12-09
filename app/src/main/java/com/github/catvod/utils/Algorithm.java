@@ -3,6 +3,7 @@ package com.github.catvod.utils;
 import java.security.MessageDigest;
 
 public class Algorithm {
+    // 获得字符串的md5值
     public static String getMd5(String str) {
         try {
             MessageDigest md = MessageDigest.getInstance("md5");
