@@ -1,6 +1,7 @@
 # tvjar调试
 
-- java入口函数在 app/src/main/java/com/github/catvod/demo/MainActivity.java
+- java入口函数在 app/src/main/java/com/github/catvod/demo/MainActivity.java   
+- 注:请将[app/src/main/java/com/github/catvod/demo/MainActivity]()复制为[app/src/main/java/com/github/catvod/demo/MainActivity.java]()
 
 - spdier的返回值均为json字符串
 
