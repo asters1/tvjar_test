@@ -5,6 +5,7 @@ import com.github.catvod.crawler.SpiderDebug;
 import java.util.HashMap;
 
 import com.github.catvod.crawler.Spider;
+import com.github.catvod.utils.Algorithm;
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 
 import org.json.JSONArray;
@@ -50,7 +51,8 @@ public class TX extends Spider {
             JSONObject yangyang = new JSONObject();
 
             doudou.put("type_id", "doudou");
-            doudou.put("type_name", "豆豆");
+            // doudou.put("type_name", "豆豆");
+            doudou.put("type_name", Algorithm.getMd5("豆豆"));
 
             yangyang.put("type_id", "yangyang");
             yangyang.put("type_name", "洋洋");
