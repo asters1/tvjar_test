@@ -7,6 +7,7 @@
 *.class
 app/.classpath
 app/.settings
+app/src/main/java/com/github/catvod/demo/MainActivity.java
 app/.project
 # Ignore Gradle build output directory
 build
