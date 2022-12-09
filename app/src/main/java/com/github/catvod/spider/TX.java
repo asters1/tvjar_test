@@ -54,6 +54,7 @@ public class TX extends Spider {
             // doudou.put("type_name", "豆豆");
             doudou.put("type_name", Algorithm.getMd5("豆豆"));
 
+
             yangyang.put("type_id", "yangyang");
             yangyang.put("type_name", "洋洋");
 
