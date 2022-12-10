@@ -1,13 +1,12 @@
 package com.github.catvod.spider;
 
-
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -81,12 +80,12 @@ public class FreeOK extends Spider {
                         .select("[class=module-card-item-poster]");
 
                 for (int i = 0; i < list_el.size(); i++) {
-                    System.out.println(list_el.get(i));
                     JSONObject vod = new JSONObject();
                     String vod_pic = list_el.get(i).select("img").attr("data-original");
                     String vod_name = list_el.get(i).select("img").attr("alt");
                     String vod_id = siteUrl + list_el.get(i).attr("href");
-                    String vod_remarks = "第" + i + "名";
+                    int b = i + 1;
+                    String vod_remarks = "第" + b + "名";
                     vod.put("vod_id", vod_id);
                     vod.put("vod_name", vod_name);
                     vod.put("vod_pic", vod_pic);
@@ -94,7 +93,7 @@ public class FreeOK extends Spider {
                     jSONArray.put(vod);
                 }
                 result.put("page", Integer.parseInt(pg));
-                result.put("pagecount", Integer.MAX_VALUE);
+                result.put("pagecount", 1);
                 result.put("limit", 100);
                 result.put("total", Integer.MAX_VALUE);
                 result.put("list", jSONArray);
@@ -107,7 +106,6 @@ public class FreeOK extends Spider {
                 // cateUrl = "http://httpbin.org/get";
                 String content = OkHttpUtil.string(cateUrl, getHeaders());
 
-                // System.out.println(Content);
                 Elements list_el = Jsoup.parse(content)
                         .select("[class=module-items module-poster-items-base]").get(0).select("a");
 
@@ -141,6 +139,9 @@ public class FreeOK extends Spider {
 
     public String detailContent(List<String> ids) {
         try {
+            ArrayList<String> surls = new ArrayList<String>();
+            String durl = ids.get(0);
+            String content = OkHttpUtil.string(durl, getHeaders());
 
         } catch (Exception e) {
             SpiderDebug.log(e);
