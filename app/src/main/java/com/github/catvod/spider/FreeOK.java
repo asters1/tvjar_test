@@ -142,6 +142,22 @@ public class FreeOK extends Spider {
             ArrayList<String> surls = new ArrayList<String>();
             String durl = ids.get(0);
             String content = OkHttpUtil.string(durl, getHeaders());
+            Elements sources = Jsoup.parse(content).select("[class=module-list sort-list tab-list his-tab-list]");
+            String vod_play_url = "";
+            for (int i = 0; i < sources.size(); i++) {
+                for (int j = 0; j < sources.get(i).select("a").size(); j++) {
+                    if (j < sources.get(i).select("a").size() - 1) {
+
+                        vod_play_url = vod_play_url + sources.get(i).select("a").get(j).select("span").text() + "$"
+                                + sources.get(i).select("a").get(j).attr("href") + "#";
+                    } else {
+                        vod_play_url = vod_play_url + sources.get(i).select("a").get(j).select("span").text() + "$"
+                                + sources.get(i).select("a").get(j).attr("href") + "$$$";
+
+                    }
+                    System.out.println(vod_play_url);
+                }
+            }
 
         } catch (Exception e) {
             SpiderDebug.log(e);
