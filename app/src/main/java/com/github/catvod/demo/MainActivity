@@ -118,8 +118,8 @@ public class MainActivity {
         ArrayList<String> result_url = new ArrayList<String>();
         List<String> ids = new ArrayList<>();
         ids.add(ids0);
-        System.out.println(ids0);
         System.out.println("\r\n==========detailContent:=======\r\n");
+        System.out.println("你测试的链接是:" + ids0);
         JSONArray data = new JSONArray();
         String strdetailContent = spider.detailContent(ids);
         JSONObject result = new JSONObject(new String(strdetailContent));
