@@ -112,6 +112,7 @@
 ```json
 {
     "header": "",
+    //0为解析，1为嗅探
     "parse": 0,
     // 播放地址
     "url": "http://localhost:8080/%E5%B0%91%E5%84%BF/%E6%B1%AA%E6%B1%AA%E9%98%9F%E5%90%88%E9%9B%86/%E7%AC%AC8%E5%AD%A31080p/%E6%B1%AA%E6%B1%AA%E9%98%9F%E7%AB%8B%E5%A4%A7%E5%8A%9F.%E7%AC%AC%E5%85%AB%E5%AD%A3.1080P.%E7%AC%AC10%E9%9B%86.mp4",
