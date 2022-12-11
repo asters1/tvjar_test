@@ -18,8 +18,8 @@ public class MainActivity {
         // HOME spider = new HOME();
         FreeOK spider = new FreeOK();
         // 搜索开关，1为true,0为false
-        int search_switch = 1;
-        if (search_switch == 1) {
+        int search_switch = 0;
+        if (search_switch == 0) {
             // 搜索,key为空的话，将使用默认值:==>琅琊榜
             test_search(spider, "");
         } else {
@@ -38,6 +38,10 @@ public class MainActivity {
         JSONArray res = new JSONArray();
         System.out.println("==========homeContent:=======\n");
         String strhomeContent = spider.homeContent(true);
+        if (strhomeContent.equals("")) {
+            System.out.println("homeContent返回为空");
+            System.exit(0);
+        }
         JSONObject result = new JSONObject(new String(strhomeContent));
         try {
             JSONArray classes = result.getJSONArray("class");
@@ -63,6 +67,10 @@ public class MainActivity {
         // 标题栏下的视频内容
         System.out.println("\r\n==========categoryContent:=======\r\n");
         String strcategoryContent = spider.categoryContent(tid, "1", true, null);
+        if (strcategoryContent.equals("")) {
+            System.out.println("categoryContent返回为空");
+            System.exit(0);
+        }
         System.out.println(strcategoryContent);
         System.out.println(tid);
         JSONObject result = new JSONObject(new String(strcategoryContent));
@@ -128,6 +136,10 @@ public class MainActivity {
         System.out.println("你测试的链接是:" + ids0);
         JSONArray data = new JSONArray();
         String strdetailContent = spider.detailContent(ids);
+        if (strdetailContent.equals("")) {
+            System.out.println("detailContent返回为空");
+            System.exit(0);
+        }
         JSONObject result = new JSONObject(new String(strdetailContent));
         try {
             JSONArray list = result.getJSONArray("list");
@@ -192,6 +204,7 @@ public class MainActivity {
         System.out.println("测试地址为:" + url);
         String strplayerContent = spider.playerContent("", url, null);
         System.out.println(strplayerContent);
+        System.exit(0);
 
         return "";
     }
@@ -200,15 +213,39 @@ public class MainActivity {
 
         System.out.println("\r\n==========searchContent=======\r\n");
         if (key.equals("")) {
-            System.out.println("搜索为空，使用默认值==>琅琊榜");
+            System.out.println("关键字为空，使用默认值==>琅琊榜\r\n");
             key = "琅琊榜";
         }
         String strsearchContent = spider.searchContent(key, true);
         if (strsearchContent.equals("")) {
             System.out.println("searchContent返回为空");
-        } else {
-            JSONObject result = new JSONObject(new String(strsearchContent));
+            System.exit(0);
         }
+        JSONObject result = new JSONObject(new String(strsearchContent));
+        try {
+
+            JSONArray list = result.getJSONArray("list");
+            for (int i = 0; i < list.length(); i++) {
+                try {
+
+                    String vod_id = list.getJSONObject(i).getString("vod_id");
+                    try {
+
+                        String vod_name = list.getJSONObject(i).getString("vod_name");
+                        System.out.println(vod_name + "[" + vod_id + "]");
+                    } catch (Exception e) {
+                        System.out.println("没有解析到vod_name");
+                    }
+                } catch (Exception e) {
+                    System.out.println("没有解析到vod_id");
+                }
+            }
+
+        } catch (Exception e) {
+
+            System.out.println("没有解析到list");
+        }
+        System.exit(0);
 
         return "";
     }
