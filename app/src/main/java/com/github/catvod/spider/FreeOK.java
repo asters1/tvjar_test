@@ -139,26 +139,47 @@ public class FreeOK extends Spider {
 
     public String detailContent(List<String> ids) {
         try {
-            ArrayList<String> surls = new ArrayList<String>();
+            JSONObject result = new JSONObject();
+            JSONObject info = new JSONObject();
+            JSONArray list_info = new JSONArray();
+
             String durl = ids.get(0);
             String content = OkHttpUtil.string(durl, getHeaders());
             Elements sources = Jsoup.parse(content).select("[class=module-list sort-list tab-list his-tab-list]");
             String vod_play_url = "";
+            String vod_play_from = "";
             for (int i = 0; i < sources.size(); i++) {
+                int b = i + 1;
+                vod_play_from = vod_play_from + "源" + b + "$$$";
+
                 for (int j = 0; j < sources.get(i).select("a").size(); j++) {
                     if (j < sources.get(i).select("a").size() - 1) {
 
                         vod_play_url = vod_play_url + sources.get(i).select("a").get(j).select("span").text() + "$"
-                                + sources.get(i).select("a").get(j).attr("href") + "#";
+                                + siteUrl + sources.get(i).select("a").get(j).attr("href") + "#";
                     } else {
                         vod_play_url = vod_play_url + sources.get(i).select("a").get(j).select("span").text() + "$"
-                                + sources.get(i).select("a").get(j).attr("href") + "$$$";
+                                + siteUrl + sources.get(i).select("a").get(j).attr("href") + "$$$";
 
                     }
-                    System.out.println(vod_play_url);
                 }
             }
+            String title = Jsoup.parse(content).select(".module-info-heading").get(0).getElementsByTag("h1").text();
+            String pic = Jsoup.parse(content)
+                    .select(".module-main>.module-info-poster>.module-item-cover>.module-item-pic>[class=ls-is-cached lazy lazyload]")
+                    .get(0)
+                    .attr("data-original");
+            info.put("vod_id", ids.get(0));
+            info.put("vod_name", title);
+            info.put("vod_pic", pic);
 
+            info.put("vod_play_from", vod_play_from);
+            info.put("vod_play_url", vod_play_url);
+
+            list_info.put(info);
+            result.put("list", list_info);
+
+            return result.toString();
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
@@ -176,6 +197,12 @@ public class FreeOK extends Spider {
 
     public String playerContent(String flag, String id, List<String> vipFlags) {
         try {
+            JSONObject result = new JSONObject();
+            result.put("parse", 1);
+            result.put("header", "");
+            result.put("playUrl", "");
+            result.put("url", id);
+            return result.toString();
 
         } catch (Exception e) {
             SpiderDebug.log(e);
