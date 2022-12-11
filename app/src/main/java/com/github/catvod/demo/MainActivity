@@ -19,7 +19,7 @@ public class MainActivity {
         FreeOK spider = new FreeOK();
         // 搜索开关，1为true,0为false
         int search_switch = 0;
-        if (search_switch == 0) {
+        if (search_switch == 1) {
             // 搜索,key为空的话，将使用默认值:==>琅琊榜
             test_search(spider, "");
         } else {
