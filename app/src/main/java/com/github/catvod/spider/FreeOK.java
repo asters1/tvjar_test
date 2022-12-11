@@ -199,7 +199,6 @@ public class FreeOK extends Spider {
                 String vod_name = list_el.get(i).select("strong").text();
                 String vod_pic = list_el.get(i).select("[class=lazy lazyload]").attr("data-original");
                 String vod_remarks = list_el.get(i).select("[class=module-item-note]").text();
-                System.out.println(vod_remarks);
                 info.put("vod_id", vod_id);
                 info.put("vod_name", vod_name);
                 info.put("vod_pic", vod_pic);
