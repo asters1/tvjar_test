@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -189,6 +188,27 @@ public class FreeOK extends Spider {
     public String searchContent(String key, boolean quick) {
         try {
 
+            String search_url = "https://www.freeok.vip/vodsearch/-------------.html?wd=" + key;
+            String content = OkHttpUtil.string(search_url, getHeaders());
+            Elements list_el = Jsoup.parse(content).select("[class=module-card-item module-item]");
+            JSONObject result = new JSONObject();
+            JSONArray list = new JSONArray();
+            for (int i = 0; i < list_el.size(); i++) {
+                JSONObject info = new JSONObject();
+                String vod_id = siteUrl + list_el.get(i).select(".module-card-item-poster").attr("href");
+                String vod_name = list_el.get(i).select("strong").text();
+                String vod_pic = list_el.get(i).select("[class=lazy lazyload]").attr("data-original");
+                String vod_remarks = list_el.get(i).select("[class=module-item-note]").text();
+                System.out.println(vod_remarks);
+                info.put("vod_id", vod_id);
+                info.put("vod_name", vod_name);
+                info.put("vod_pic", vod_pic);
+                info.put("vod_remarks", vod_remarks);
+                list.put(info);
+
+            }
+            result.put("list", list);
+            return result.toString();
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
