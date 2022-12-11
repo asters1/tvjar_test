@@ -52,7 +52,6 @@ public class TX extends Spider {
             doudou.put("type_id", "doudou");
             doudou.put("type_name", "豆豆");
 
-
             yangyang.put("type_id", "yangyang");
             yangyang.put("type_name", "洋洋");
 
@@ -96,7 +95,7 @@ public class TX extends Spider {
                 if (tid.equals("doudou")) {
                     q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/doudou.json";
                 } else {
-                    q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/doudou.json";
+                    q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/yangyang.json";
 
                 }
 
