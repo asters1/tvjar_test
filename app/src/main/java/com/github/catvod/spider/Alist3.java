@@ -167,13 +167,18 @@ public class Alist3 extends Spider {
                                 JSONObject data = res.getJSONObject("data");
                                 System.out.println(response);
                                 info.put("vod_id", ids.get(0));
-                                String vod_play_from = "";
                                 for (int i = 0; i < data.getInt("total"); i++) {
                                     if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
 
-                                        vod_play_from = vod_play_from
-                                                + data.getJSONArray("content").getJSONObject(i).getString("name")
-                                                + "$$$";
+                                        if (i < data.getInt("total") - 2) {
+
+                                            json_vod_play_from.put(0, json_vod_play_from.get(0)
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")
+                                                    + "$$$");
+                                        } else {
+                                            json_vod_play_from.put(0, json_vod_play_from.get(0)
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                        }
                                         json_i.put(0, i);
 
                                         OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
@@ -196,6 +201,7 @@ public class Alist3 extends Spider {
                                                             for (int j = 0; j < data1.getInt("total"); j++) {
                                                                 if (j < data1.getInt("total") - 1) {
                                                                     json_vod_play_url.put(0, json_vod_play_url.get(0) +
+
                                                                             data1.getJSONArray("content")
                                                                                     .getJSONObject(j)
                                                                                     .getString("name")
@@ -209,8 +215,9 @@ public class Alist3 extends Spider {
                                                                                     .getString("name")
                                                                             + "#");
                                                                 } else {
-                                                                    list_url = list_url
-                                                                            + data1.getJSONArray("content")
+                                                                    json_vod_play_url.put(0, json_vod_play_url.get(0) +
+
+                                                                            data1.getJSONArray("content")
                                                                                     .getJSONObject(j)
                                                                                     .getString("name")
                                                                             + "$" + ids.get(0) + "/"
@@ -221,8 +228,7 @@ public class Alist3 extends Spider {
                                                                             + data1.getJSONArray("content")
                                                                                     .getJSONObject(j)
                                                                                     .getString("name")
-                                                                            + "$$$";
-
+                                                                            + "$$$");
                                                                 }
                                                             }
                                                             json_vod_play_url.put(list_url);
@@ -236,7 +242,6 @@ public class Alist3 extends Spider {
                                     }
 
                                 }
-                                json_vod_play_from.put(vod_play_from);
                             } catch (Exception e) {
                                 SpiderDebug.log(e);
                             }
