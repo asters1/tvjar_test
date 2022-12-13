@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.catvod.crawler.Spider;
-import com.github.catvod.spider.FreeOK;
+import com.github.catvod.spider.Alist3;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +16,7 @@ public class MainActivity {
     public static void main(String[] args) {
         // TX spider = new TX();
         // HOME spider = new HOME();
-        FreeOK spider = new FreeOK();
+        Alist3 spider = new Alist3();
         // 搜索开关，1为true,0为false
         int search_switch = 0;
         if (search_switch == 1) {
@@ -48,7 +48,7 @@ public class MainActivity {
             try {
                 for (int i = 0; i < classes.length(); i++) {
                     System.out.print(classes.getJSONObject(i).get("type_name") + "["
-                            + classes.getJSONObject(i).get("type_id") + "]" + "  ");
+                            + classes.getJSONObject(i).get("type_id") + "]" + "\r\n");
                     res.put(classes.getJSONObject(i).get("type_id"));
                 }
                 System.out.println();
