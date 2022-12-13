@@ -26,8 +26,19 @@ public class Alist3 extends Spider {
 
     }
 
+    private String get_jsons(String str) {
+        try {
+            String result = j_ext.getString("url");
+            return result;
+
+        } catch (Exception e) {
+            return "";
+        }
+
+    }
+
     private JSONObject j_ext = get_json("http://localhost:8080/1.json");
-    private String siteUrl = j_ext.getString("url");
+    private String siteUrl = get_jsons("url");
 
     protected HashMap<String, String> getHeaders() {
         HashMap<String, String> headers = new HashMap<>();
@@ -50,19 +61,24 @@ public class Alist3 extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
-                            JSONObject res = new JSONObject(response);
-                            JSONObject fenlei = res.getJSONObject("data");
-                            for (int i = 0; i < fenlei.getInt("total"); i++) {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("type_name",
-                                        fenlei.getJSONArray("content").getJSONObject(i).getString("name"));
-                                jsonObject.put("type_id",
-                                        j_ext.getString("path") + "/"
-                                                + fenlei.getJSONArray("content").getJSONObject(i).getString("name"));
-                                classses.put(jsonObject);
-                            }
-                            result.put("class", classses);
+                            try {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject fenlei = res.getJSONObject("data");
+                                for (int i = 0; i < fenlei.getInt("total"); i++) {
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("type_name",
+                                            fenlei.getJSONArray("content").getJSONObject(i).getString("name"));
+                                    jsonObject.put("type_id",
+                                            j_ext.getString("path") + "/"
+                                                    + fenlei.getJSONArray("content").getJSONObject(i)
+                                                            .getString("name"));
+                                    classses.put(jsonObject);
+                                }
+                                result.put("class", classses);
 
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
+                            }
                         }
                     });
             return result.toString();
@@ -87,22 +103,27 @@ public class Alist3 extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
-                            JSONObject res = new JSONObject(response);
-                            JSONObject data = res.getJSONObject("data");
-                            for (int i = 0; i < data.getInt("total"); i++) {
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("vod_name",
-                                        data.getJSONArray("content").getJSONObject(i).getString("name"));
-                                jsonObject.put("vod_id",
-                                        tid + "/" + data.getJSONArray("content").getJSONObject(i).getString("name"));
-                                jsonObject.put("vod_pic",
+                            try {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject data = res.getJSONObject("data");
+                                for (int i = 0; i < data.getInt("total"); i++) {
+                                    JSONObject jsonObject = new JSONObject();
+                                    jsonObject.put("vod_name",
+                                            data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                    jsonObject.put("vod_id",
+                                            tid + "/"
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                    jsonObject.put("vod_pic",
 
-                                        getraw(tid + "/"
-                                                + data.getJSONArray("content").getJSONObject(i).getString("name")
+                                            getraw(tid + "/"
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")
 
-                                                + "/1.jpg"));
-                                list.put(jsonObject);
+                                                    + "/1.jpg"));
+                                    list.put(jsonObject);
 
+                                }
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
                             }
                         }
                     });
@@ -140,71 +161,85 @@ public class Alist3 extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
+                            try {
 
-                            JSONObject res = new JSONObject(response);
-                            JSONObject data = res.getJSONObject("data");
-                            System.out.println(response);
-                            info.put("vod_id", ids.get(0));
-                            String vod_play_from = "";
-                            for (int i = 0; i < data.getInt("total"); i++) {
-                                if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject data = res.getJSONObject("data");
+                                System.out.println(response);
+                                info.put("vod_id", ids.get(0));
+                                String vod_play_from = "";
+                                for (int i = 0; i < data.getInt("total"); i++) {
+                                    if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
 
-                                    vod_play_from = vod_play_from
-                                            + data.getJSONArray("content").getJSONObject(i).getString("name") + "$$$";
-                                    json_i.put(0, i);
+                                        vod_play_from = vod_play_from
+                                                + data.getJSONArray("content").getJSONObject(i).getString("name")
+                                                + "$$$";
+                                        json_i.put(0, i);
 
-                                    OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
-                                            "{\"path\":\"" + ids.get(0) + "/"
-                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")
-                                                    + "\",\"password\": \"\"}",
-                                            new OKCallBack.OKCallBackString() {
-                                                @Override
-                                                protected void onFailure(Call call, Exception e) {
+                                        OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
+                                                "{\"path\":\"" + ids.get(0) + "/"
+                                                        + data.getJSONArray("content").getJSONObject(i)
+                                                                .getString("name")
+                                                        + "\",\"password\": \"\"}",
+                                                new OKCallBack.OKCallBackString() {
+                                                    @Override
+                                                    protected void onFailure(Call call, Exception e) {
 
-                                                }
-
-                                                @Override
-                                                protected void onResponse(String response) {
-                                                    JSONObject res1 = new JSONObject(response);
-                                                    JSONObject data1 = res1.getJSONObject("data");
-                                                    String list_url = "";
-                                                    for (int j = 0; j < data1.getInt("total"); j++) {
-                                                        if (j < data1.getInt("total") - 1) {
-                                                            json_vod_play_url.put(0, json_vod_play_url.get(0) +
-                                                                    data1.getJSONArray("content").getJSONObject(j)
-                                                                            .getString("name")
-                                                                    + "$" + ids.get(0) + "/"
-                                                                    + data.getJSONArray("content")
-                                                                            .getJSONObject(json_i.getInt(0))
-                                                                            .getString("name")
-                                                                    + "/"
-                                                                    + data1.getJSONArray("content").getJSONObject(j)
-                                                                            .getString("name")
-                                                                    + "#");
-                                                        } else {
-                                                            list_url = list_url
-                                                                    + data1.getJSONArray("content").getJSONObject(j)
-                                                                            .getString("name")
-                                                                    + "$" + ids.get(0) + "/"
-                                                                    + data.getJSONArray("content")
-                                                                            .getJSONObject(json_i.getInt(0))
-                                                                            .getString("name")
-                                                                    + "/"
-                                                                    + data1.getJSONArray("content").getJSONObject(j)
-                                                                            .getString("name")
-                                                                    + "$$$";
-
-                                                        }
                                                     }
-                                                    json_vod_play_url.put(list_url);
 
-                                                }
-                                            });
+                                                    @Override
+                                                    protected void onResponse(String response) {
+                                                        try {
+                                                            JSONObject res1 = new JSONObject(response);
+                                                            JSONObject data1 = res1.getJSONObject("data");
+                                                            String list_url = "";
+                                                            for (int j = 0; j < data1.getInt("total"); j++) {
+                                                                if (j < data1.getInt("total") - 1) {
+                                                                    json_vod_play_url.put(0, json_vod_play_url.get(0) +
+                                                                            data1.getJSONArray("content")
+                                                                                    .getJSONObject(j)
+                                                                                    .getString("name")
+                                                                            + "$" + ids.get(0) + "/"
+                                                                            + data.getJSONArray("content")
+                                                                                    .getJSONObject(json_i.getInt(0))
+                                                                                    .getString("name")
+                                                                            + "/"
+                                                                            + data1.getJSONArray("content")
+                                                                                    .getJSONObject(j)
+                                                                                    .getString("name")
+                                                                            + "#");
+                                                                } else {
+                                                                    list_url = list_url
+                                                                            + data1.getJSONArray("content")
+                                                                                    .getJSONObject(j)
+                                                                                    .getString("name")
+                                                                            + "$" + ids.get(0) + "/"
+                                                                            + data.getJSONArray("content")
+                                                                                    .getJSONObject(json_i.getInt(0))
+                                                                                    .getString("name")
+                                                                            + "/"
+                                                                            + data1.getJSONArray("content")
+                                                                                    .getJSONObject(j)
+                                                                                    .getString("name")
+                                                                            + "$$$";
+
+                                                                }
+                                                            }
+                                                            json_vod_play_url.put(list_url);
+                                                        } catch (Exception e) {
+                                                            SpiderDebug.log(e);
+                                                        }
+
+                                                    }
+                                                });
+
+                                    }
 
                                 }
-
+                                json_vod_play_from.put(vod_play_from);
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
                             }
-                            json_vod_play_from.put(vod_play_from);
 
                         }
                     });
@@ -260,9 +295,13 @@ public class Alist3 extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
-                            JSONObject res = new JSONObject(response);
-                            JSONObject data = res.getJSONObject("data");
-                            result.put(data.getString("raw_url"));
+                            try {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject data = res.getJSONObject("data");
+                                result.put(data.getString("raw_url"));
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
+                            }
                         }
                     });
             return result.getString(0);
