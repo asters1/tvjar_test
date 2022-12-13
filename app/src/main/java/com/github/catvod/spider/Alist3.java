@@ -290,7 +290,6 @@ public class Alist3 extends Spider {
                     new OKCallBack.OKCallBackString() {
                         @Override
                         protected void onFailure(Call call, Exception e) {
-
                         }
 
                         @Override
