@@ -240,7 +240,6 @@ public class Alist3 extends Spider {
             result.put("playUrl", "");
 
             return result.toString();
-
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
