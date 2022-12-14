@@ -1,8 +1,9 @@
 package com.github.catvod.spider;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,29 +18,16 @@ import okhttp3.Call;
 
 public class Alist3 extends Spider {
 
-    private JSONObject get_json(String str) {
-        try {
-            return new JSONObject(OkHttpUtil.string(str, null));
-
-        } catch (Exception e) {
-            return null;
-        }
-
+    public void init(Context context) {
+        super.init(context);
     }
 
-    private String get_jsons(String str) {
-        try {
-            String result = j_ext.getString("url");
-            return result;
-
-        } catch (Exception e) {
-            return "";
-        }
-
+    public void init(Context context, String extend) {
+        super.init(context, extend);
+        this.ext = new JSONObject(extend);
     }
 
-    private JSONObject j_ext = get_json("http://localhost:8080/1.json");
-    private String siteUrl = get_jsons("url");
+    public JSONObject ext = null;
 
     protected HashMap<String, String> getHeaders() {
         HashMap<String, String> headers = new HashMap<>();
@@ -50,10 +38,11 @@ public class Alist3 extends Spider {
 
     public String homeContent(boolean filter) {
         try {
+            System.out.println(ext);
             JSONObject result = new JSONObject();
             JSONArray classses = new JSONArray();
-            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
-                    "{\"path\":\"" + j_ext.getString("path") + "\",\"password\": \"\"}",
+            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), ext.getString("url") + "/api/fs/list",
+                    "{\"path\":\"" + ext.getString("path") + "\",\"password\": \"\"}",
                     new OKCallBack.OKCallBackString() {
                         @Override
                         protected void onFailure(Call call, Exception e) {
@@ -70,7 +59,7 @@ public class Alist3 extends Spider {
                                     jsonObject.put("type_name",
                                             fenlei.getJSONArray("content").getJSONObject(i).getString("name"));
                                     jsonObject.put("type_id",
-                                            j_ext.getString("path") + "/"
+                                            ext.getString("path") + "/"
                                                     + fenlei.getJSONArray("content").getJSONObject(i)
                                                             .getString("name"));
                                     classses.put(jsonObject);
@@ -94,7 +83,7 @@ public class Alist3 extends Spider {
         try {
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
-            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
+            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), ext.getString("url") + "/api/fs/list",
                     "{\"path\":\"" + tid + "\",\"password\": \"\"}",
                     new OKCallBack.OKCallBackString() {
                         @Override
@@ -152,7 +141,7 @@ public class Alist3 extends Spider {
             JSONArray json_vod_play_from = new JSONArray();
             json_vod_play_from.put(0, "");
 
-            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
+            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), ext.getString("url") + "/api/fs/list",
                     "{\"path\":\"" + ids.get(0) + "\",\"password\": \"\"}",
                     new OKCallBack.OKCallBackString() {
                         @Override
@@ -166,7 +155,6 @@ public class Alist3 extends Spider {
 
                                 JSONObject res = new JSONObject(response);
                                 JSONObject data = res.getJSONObject("data");
-                                System.out.println(response);
                                 info.put("vod_id", ids.get(0));
                                 for (int i = 0; i < data.getInt("total"); i++) {
                                     if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
@@ -182,7 +170,8 @@ public class Alist3 extends Spider {
                                         }
                                         json_i.put(0, i);
 
-                                        OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
+                                        OkHttpUtil.postJson(OkHttpUtil.defaultClient(),
+                                                ext.getString("url") + "/api/fs/list",
                                                 "{\"path\":\"" + ids.get(0) + "/"
                                                         + data.getJSONArray("content").getJSONObject(i)
                                                                 .getString("name")
@@ -253,7 +242,6 @@ public class Alist3 extends Spider {
             info.put("vod_play_url", json_vod_play_url.getString(0));
             list_info.put(info);
             result.put("list", list_info);
-            System.out.println(result);
             return result.toString();
 
         } catch (Exception e) {
@@ -289,7 +277,7 @@ public class Alist3 extends Spider {
 
     protected String getraw(String path) {
         try {
-            String get_raw_url = siteUrl + "/api/fs/get";
+            String get_raw_url = ext.getString("url") + "/api/fs/get";
             String jsonstr = "{\"path\": \"" + path + "\",\"password\": \"\"}";
             JSONArray result = new JSONArray();
             OkHttpUtil.postJson(OkHttpUtil.defaultClient(), get_raw_url, jsonstr,
