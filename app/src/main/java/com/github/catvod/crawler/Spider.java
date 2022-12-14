@@ -2,10 +2,19 @@ package com.github.catvod.crawler;
 
 import org.json.JSONObject;
 
+import android.content.Context;
+
 import java.util.HashMap;
 import java.util.List;
 
 public abstract class Spider {
+
+    public void init(Context context) {
+    }
+
+    public void init(Context context, String extend) {
+        init(context);
+    }
 
     public static JSONObject empty = new JSONObject();
 
