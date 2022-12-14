@@ -23,8 +23,17 @@ public class Alist3 extends Spider {
     }
 
     public void init(Context context, String extend) {
-        super.init(context, extend);
-        this.ext = new JSONObject(extend);
+        try {
+            super.init(context, extend);
+            if (extend.startsWith("http")) {
+                this.ext = new JSONObject(OkHttpUtil.string(extend, null));
+            } else {
+                this.ext = new JSONObject(extend);
+            }
+        } catch (Exception e) {
+            SpiderDebug.log(e);
+
+        }
     }
 
     public JSONObject ext = null;
