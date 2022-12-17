@@ -16,12 +16,17 @@ public class MainActivity {
         // TX spider = new TX();
         // HOME spider = new HOME();
         Alist3 spider = new Alist3();
-        spider.init(new Context(), "{\"url\":\"http://jdc.asters.tk:5244\",\"path\":\"/阿里云盘/Alist3\"}");
+        // 外接字符串，可用于自定义
+        spider.init(new Context(),
+                "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/localhost.json");
         // 搜索开关，1为true,0为false
-        int search_switch = 0;
+        int search_switch = 1;
         if (search_switch == 1) {
             // 搜索,key为空的话，将使用默认值:==>琅琊榜
-            test_search(spider, "");
+            List<String> res_search = test_search(spider, "汪汪队");
+            ArrayList<String> res_detail = test_detail(spider, res_search.get(0));
+            test_player(spider, res_detail.get(0));
+
         } else {
             JSONArray res_home = test_home(spider);
 
@@ -209,12 +214,16 @@ public class MainActivity {
         return "";
     }
 
-    public static String test_search(Spider spider, String key) {
+    public static List<String> test_search(Spider spider, String key) {
+        List<String> res = new ArrayList<>();
 
         System.out.println("\r\n==========searchContent=======\r\n");
         if (key.equals("")) {
             System.out.println("关键字为空，使用默认值==>琅琊榜\r\n");
             key = "琅琊榜";
+        } else {
+            System.out.println("你测试的搜索关键字为==>" + key + "\r\n");
+
         }
         String strsearchContent = spider.searchContent(key, true);
         if (strsearchContent.equals("")) {
@@ -233,6 +242,7 @@ public class MainActivity {
 
                         String vod_name = list.getJSONObject(i).getString("vod_name");
                         System.out.println(vod_name + "[" + vod_id + "]");
+                        res.add(vod_id);
                     } catch (Exception e) {
                         System.out.println("没有解析到vod_name");
                     }
@@ -240,6 +250,7 @@ public class MainActivity {
                     System.out.println("没有解析到vod_id");
                 }
             }
+            return res;
 
         } catch (Exception e) {
 
@@ -247,6 +258,6 @@ public class MainActivity {
         }
         System.exit(0);
 
-        return "";
+        return null;
     }
 }
