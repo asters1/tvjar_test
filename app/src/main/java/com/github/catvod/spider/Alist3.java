@@ -295,6 +295,7 @@ public class Alist3 extends Spider {
 
                             } catch (Exception e) {
                                 SpiderDebug.log(e);
+
                             }
 
                         }
