@@ -261,6 +261,46 @@ public class Alist3 extends Spider {
 
     public String searchContent(String key, boolean quick) {
         try {
+            JSONObject result = new JSONObject();
+            JSONArray list = new JSONArray();
+            OkHttpUtil.postJson(OkHttpUtil.defaultClient(), ext.getString("url") + "/api/fs/search",
+                    "{\"parent\": \"" + ext.getString("path") + "\",\"keywords\": \"" + key
+                            + "\",\"page\": 1,\"per_page\": 100}",
+                    new OKCallBack.OKCallBackString() {
+
+                        @Override
+                        protected void onFailure(Call call, Exception e) {
+
+                        }
+
+                        @Override
+                        protected void onResponse(String response) {
+                            try {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject data = res.getJSONObject("data");
+                                for (int i = 0; i < data.getInt("total"); i++) {
+                                    JSONObject info = new JSONObject();
+                                    info.put("vod_id", data.getJSONArray("content").getJSONObject(i).getString("parent")
+                                            + "/" + data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                    info.put("vod_name",
+                                            data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                    info.put("vod_pic",
+                                            getraw(data.getJSONArray("content").getJSONObject(i).getString("parent")
+                                                    + "/"
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")));
+                                    list.put(info);
+
+                                }
+                                result.put("list", list);
+
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
+                            }
+
+                        }
+
+                    });
+            return result.toString();
 
         } catch (Exception e) {
             SpiderDebug.log(e);
