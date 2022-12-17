@@ -287,7 +287,8 @@ public class Alist3 extends Spider {
                                     info.put("vod_pic",
                                             getraw(data.getJSONArray("content").getJSONObject(i).getString("parent")
                                                     + "/"
-                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")));
+                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")
+                                                    + "/1.jpg"));
                                     list.put(info);
 
                                 }
