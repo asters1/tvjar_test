@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.Context;
 
 import com.github.catvod.crawler.Spider;
-import com.github.catvod.spider.Alist3;
+import com.github.catvod.spider.Kunyu77;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -15,7 +15,7 @@ public class MainActivity {
     public static void main(String[] args) {
         // TX spider = new TX();
         // HOME spider = new HOME();
-        Alist3 spider = new Alist3();
+        Kunyu77 spider = new Kunyu77();
         // 外接字符串，可用于自定义
         spider.init(new Context(),
                 "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/localhost.json");
@@ -23,7 +23,7 @@ public class MainActivity {
         int search_switch = 1;
         if (search_switch == 1) {
             // 搜索,key为空的话，将使用默认值:==>琅琊榜
-            List<String> res_search = test_search(spider, "汪汪队");
+            List<String> res_search = test_search(spider, "");
             ArrayList<String> res_detail = test_detail(spider, res_search.get(0));
             test_player(spider, res_detail.get(0));
 
@@ -219,8 +219,8 @@ public class MainActivity {
 
         System.out.println("\r\n==========searchContent=======\r\n");
         if (key.equals("")) {
-            System.out.println("关键字为空，使用默认值==>琅琊榜\r\n");
-            key = "琅琊榜";
+            System.out.println("关键字为空，使用默认值==>斗罗大陆\r\n");
+            key = "斗罗大陆";
         } else {
             System.out.println("你测试的搜索关键字为==>" + key + "\r\n");
 
