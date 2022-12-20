@@ -305,6 +305,7 @@ public class Kunyu77 extends Spider {
                 buf.append(Integer.toHexString(i));
             }
             // System.out.println(buf.toString());
+            //
             // 32位加密
             return buf.toString();
             // 16位的加密
