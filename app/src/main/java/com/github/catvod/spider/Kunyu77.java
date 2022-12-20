@@ -281,6 +281,12 @@ public class Kunyu77 extends Spider {
     public String playerContent(String flag, String id, List<String> vipFlags) {
         try {
 
+            JSONObject result = new JSONObject();
+            result.put("parse", 0);
+            result.put("header", "");
+            result.put("playUrl", "");
+            result.put("url", id);
+            return result.toString();
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
