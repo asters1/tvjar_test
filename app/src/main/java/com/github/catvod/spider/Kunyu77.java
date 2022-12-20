@@ -2,18 +2,14 @@ package com.github.catvod.spider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
 import java.security.MessageDigest;
-import java.math.BigInteger;
 
+import com.github.catvod.utils.Misc;
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 
 import com.github.catvod.crawler.Spider;
@@ -280,10 +276,15 @@ public class Kunyu77 extends Spider {
 
     public String playerContent(String flag, String id, List<String> vipFlags) {
         try {
-
+            if (Misc.isVip(id)) {
+                JSONObject result = new JSONObject();
+                result.put("parse", 1);
+                result.put("jx", "1");
+                result.put("url", id);
+                return result.toString();
+            }
             JSONObject result = new JSONObject();
             result.put("parse", 0);
-            result.put("header", "");
             result.put("playUrl", "");
             result.put("url", id);
             return result.toString();

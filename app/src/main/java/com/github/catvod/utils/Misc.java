@@ -14,6 +14,7 @@ public class Misc {
         try {
             boolean isVip = false;
             String host = new URI(url).getHost();
+            System.out.println(host);
             String[] vipWebsites = new String[] { "iqiyi.com", "v.qq.com", "youku.com", "le.com", "tudou.com",
                     "mgtv.com", "sohu.com", "acfun.cn", "bilibili.com", "baofeng.com", "pptv.com" };
             for (int b = 0; b < vipWebsites.length; b++) {
