@@ -234,6 +234,7 @@ public class Kunyu77 extends Spider {
             JSONObject result = new JSONObject();
             String t = String.valueOf(System.currentTimeMillis() / 1000);
             StringBuilder stringBuilder = new StringBuilder();
+
             stringBuilder.append("http://api.kunyu77.com/api.php/provide/searchVideo");
             stringBuilder.append(
                     "?pcode=010110002&version=2.0.4&devid=4ac3fe96a6133de96904b8d3c8cfe16d&package=com.sevenVideo.app.android&sys=android&sysver=7.1.2&brand=realme&model=RMX1931&sj=");
