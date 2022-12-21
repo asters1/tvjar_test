@@ -35,6 +35,7 @@ public class Misc {
             return isVip;
         } catch (Exception e) {
         }
+
         return false;
     }
 
