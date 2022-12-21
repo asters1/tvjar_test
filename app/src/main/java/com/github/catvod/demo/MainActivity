@@ -6,7 +6,6 @@ import java.util.List;
 import android.content.Context;
 
 import com.github.catvod.crawler.Spider;
-import com.github.catvod.spider.Kunyu77;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
