@@ -87,7 +87,7 @@ public class Douban extends Spider {
 
             result.put("class", classes);
             if (filter) {
-                String filterconfig = "\"filters\": {\"dianying\": [{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianying\" }, {\"n\": \"动作片\",\"v\": \"dongzuopian\"}]}]}";
+                String filterconfig = "{\"dianying\": [{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianying\" }, {\"n\": \"动作片\",\"v\": \"dongzuopian\"}]}]}";
                 result.put("filters", new JSONObject(filterconfig));
 
             }
@@ -119,7 +119,6 @@ public class Douban extends Spider {
                 info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
                 try {
                     info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
-                    System.out.println(items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
 
                 } catch (Exception e) {
                     info.put("vod_remarks", "暂无评分");
