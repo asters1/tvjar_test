@@ -18,6 +18,10 @@ public class Base extends Spider {
 
     private static final String siteUrl = "";
 
+    public void init(Context context) {
+        super.init(context);
+    }
+
     public String homeContent(boolean filter) {
         try {
 
