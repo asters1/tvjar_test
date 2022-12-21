@@ -6,9 +6,16 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.content.Context;
+import okhttp3.Call;
+import okhttp3.Response;
+
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import com.github.catvod.utils.okhttp.OKCallBack;
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 
 import com.github.catvod.crawler.Spider;
@@ -17,6 +24,40 @@ import com.github.catvod.crawler.SpiderDebug;
 public class Douban extends Spider {
 
     private static final String siteUrl = "https://movie.douban.com";
+
+    public HashMap<String, String> headers = new HashMap<>();
+
+    public void init(Context context) {
+        super.init(context);
+        HashMap<String, String> h1 = new HashMap<>();
+        h1.put("User-Agent",
+                "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36");
+        OkHttpUtil.get(OkHttpUtil.defaultClient(), "https://movie.douban.com", new OKCallBack<Response>() {
+            @Override
+            protected void onResponse(Response response) {
+                String str_bid = response.header("Set-Cookie");
+                String pattern_bid = "(bid=.*?);";
+                Pattern r = Pattern.compile(pattern_bid);
+                Matcher m = r.matcher(str_bid);
+                if (m.find()) {
+                    h1.put("Cookie", m.group(1));
+                }
+
+            }
+
+            @Override
+            protected void onFailure(Call call, Exception e) {
+
+            }
+
+            protected Response onParseResponse(Call call, Response response) {
+                return response;
+            }
+
+        });
+        this.headers = h1;
+        this.headers.put("Referer", "https://movie.douban.com/");
+    }
 
     public String homeContent(boolean filter) {
         try {
@@ -55,7 +96,37 @@ public class Douban extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
+            JSONObject result = new JSONObject();
+            JSONArray list = new JSONArray();
 
+            int page = Integer.parseInt(pg);
+            String res = OkHttpUtil.string(
+                    "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                            + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语",
+                    headers);
+            JSONObject json_res = new JSONObject(res);
+            JSONArray items = json_res.getJSONArray("items");
+            for (int i = 0; i < items.length(); i++) {
+                JSONObject info = new JSONObject();
+                info.put("vod_id", items.getJSONObject(i).getString("id"));
+                info.put("vod_name", items.getJSONObject(i).getString("title"));
+                info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
+                try {
+                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").getFloat("value") + "分");
+
+                } catch (Exception e) {
+                    info.put("vod_remarks", "暂无评分");
+                }
+
+                list.put(info);
+            }
+            result.put("page", page);
+            result.put("pagecount", Integer.MAX_VALUE);
+            result.put("limit", 20);
+            result.put("total", Integer.MAX_VALUE);
+            result.put("list", list);
+
+            return result.toString();
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
