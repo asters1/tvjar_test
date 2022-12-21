@@ -86,6 +86,12 @@ public class Douban extends Spider {
             classes.put(dianshiju);
 
             result.put("class", classes);
+            if (filter) {
+                String filterconfig = "\"filters\": {\"dianying\": [{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianying\" }, {\"n\": \"动作片\",\"v\": \"dongzuopian\"}]}]}";
+                result.put("filters", new JSONObject(filterconfig));
+
+            }
+
             return result.toString();
 
         } catch (Exception e) {
