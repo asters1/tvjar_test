@@ -96,8 +96,6 @@ public class MainActivity {
             System.out.println("categoryContent返回为空");
             System.exit(0);
         }
-        System.out.println(strcategoryContent);
-        System.out.println(tid);
         JSONObject result = new JSONObject(new String(strcategoryContent));
         try {
             int page = result.getInt("page");
