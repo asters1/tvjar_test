@@ -16,6 +16,8 @@ import com.github.catvod.crawler.SpiderDebug;
 
 public class Base extends Spider {
 
+    private static final String siteUrl = "";
+
     public String homeContent(boolean filter) {
         try {
 
