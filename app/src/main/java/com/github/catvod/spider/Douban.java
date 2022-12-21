@@ -99,7 +99,6 @@ public class Douban extends Spider {
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
 
-
             int page = Integer.parseInt(pg);
             String res = OkHttpUtil.string(
                     "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
@@ -113,7 +112,8 @@ public class Douban extends Spider {
                 info.put("vod_name", items.getJSONObject(i).getString("title"));
                 info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
                 try {
-                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").getFloat("value") + "分");
+                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
+                    System.out.println(items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
 
                 } catch (Exception e) {
                     info.put("vod_remarks", "暂无评分");
