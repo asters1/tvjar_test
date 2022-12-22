@@ -98,7 +98,8 @@ public class Douban extends Spider {
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
             int page = Integer.parseInt(pg);
-            String url = "";
+            String url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                    + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
 
             if (extend.get("类型").equals("")) {
                 url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
@@ -111,10 +112,6 @@ public class Douban extends Spider {
                 url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
                         + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
                         + "\"}&uncollect=false&tags=华语," + extend.get("类型");
-            } else {
-                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                        + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
-
             }
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
