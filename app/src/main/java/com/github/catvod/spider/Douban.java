@@ -115,6 +115,7 @@ public class Douban extends Spider {
             JSONObject cs = new JSONObject();
             cs.put("vod_id", "aaa");
             cs.put("vod_name", extend.toString());
+            list.put(cs);
             for (int i = 0; i < items.length(); i++) {
                 JSONObject info = new JSONObject();
                 info.put("vod_id", items.getJSONObject(i).getString("id"));
