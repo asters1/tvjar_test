@@ -2,9 +2,6 @@ package com.github.catvod.spider;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import android.content.Context;
 import okhttp3.Call;
@@ -70,8 +67,6 @@ public class Douban extends Spider {
 
             JSONObject dianying = new JSONObject();
             JSONObject dianshiju = new JSONObject();
-            JSONObject dongman = new JSONObject();
-            JSONObject zongyi = new JSONObject();
 
             dianying.put("type_name", "电影");
             dianying.put("type_id", "/rexxar/api/v2/movie");
@@ -88,10 +83,6 @@ public class Douban extends Spider {
             result.put("class", classes);
             if (filter) {
                 String filterconfig = "{\"/rexxar/api/v2/movie\": [{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{ \"n\": \"全部\", \"v\": \"\" }, {\"n\": \"喜剧\",\"v\": \"喜剧\"}, {\"n\": \"爱情\",\"v\": \"爱情\"}, {\"n\": \"动作\",\"v\": \"动作\"}, {\"n\": \"科幻\",\"v\": \"科幻\"}, {\"n\": \"悬疑\",\"v\": \"悬疑\"}, {\"n\": \"犯罪\",\"v\": \"犯罪\"}, {\"n\": \"历史\",\"v\": \"历史\"}, {\"n\": \"奇幻\",\"v\": \"奇幻\"}, {\"n\": \"恐怖\",\"v\": \"恐怖\"},{\"n\": \"战争\",\"v\": \"战争\"} ,{\"n\": \"武侠\",\"v\": \"武侠\"}]}],\"/rexxar/api/v2/tv\": [{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{ \"n\": \"全部\", \"v\": \"\" }, {\"n\": \"喜剧\",\"v\": \"喜剧\"}, {\"n\": \"爱情\",\"v\": \"爱情\"}, {\"n\": \"动作\",\"v\": \"动作\"}, {\"n\": \"科幻\",\"v\": \"科幻\"}, {\"n\": \"悬疑\",\"v\": \"悬疑\"}, {\"n\": \"犯罪\",\"v\": \"犯罪\"}, {\"n\": \"历史\",\"v\": \"历史\"}, {\"n\": \"奇幻\",\"v\": \"奇幻\"}, {\"n\": \"恐怖\",\"v\": \"恐怖\"},{\"n\": \"战争\",\"v\": \"战争\"} ,{\"n\": \"武侠\",\"v\": \"武侠\"}]}]}";
-                // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语"}&uncollect=false&tags=华语"
-                // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语","类型":"爱情"}&uncollect=false&tags=华语,爱情
-                // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=0&count=20&selected_categories={"类型":"科幻","形式":"电视剧"}&uncollect=false&tags=科幻
-                // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=0&count=20&selected_categories={"类型":"科幻","形式":"电视剧","地区":"华语"}&uncollect=false&tags=科幻,华语
                 result.put("filters", new JSONObject(filterconfig));
 
             }
@@ -117,13 +108,14 @@ public class Douban extends Spider {
                         + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
                         + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
             } else if (tid.equals("/rexxar/api/v2/movie")) {
-                // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语","类型":"爱情"}&uncollect=false&tags=华语,爱情
                 url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
                         + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
                         + "\"}&uncollect=false&tags=华语," + extend.get("类型");
-            }
-            System.out.println(url);
+            } else {
+                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                        + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
 
+            }
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
 
