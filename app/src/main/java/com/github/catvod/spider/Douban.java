@@ -106,15 +106,28 @@ public class Douban extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
+            int page = Integer.parseInt(pg);
+            String url = "";
+
+            if (extend.get("类型").equals("")) {
+                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                        + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
+            } else if (tid.equals("/rexxar/api/v2/tv")) {
+                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                        + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
+                        + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
+            } else if (tid.equals("/rexxar/api/v2/movie")) {
+                // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语","类型":"爱情"}&uncollect=false&tags=华语,爱情
+                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                        + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
+                        + "\"}&uncollect=false&tags=华语," + extend.get("类型");
+            }
+            System.out.println(url);
 
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
 
-            int page = Integer.parseInt(pg);
-            String res = OkHttpUtil.string(
-                    "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                            + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语",
-                    headers);
+            String res = OkHttpUtil.string(url, headers);
             JSONObject json_res = new JSONObject(res);
             JSONArray items = json_res.getJSONArray("items");
 
