@@ -106,6 +106,7 @@ public class Douban extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
+
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
 
@@ -117,10 +118,6 @@ public class Douban extends Spider {
             JSONObject json_res = new JSONObject(res);
             JSONArray items = json_res.getJSONArray("items");
 
-            JSONObject cs = new JSONObject();
-            cs.put("vod_id", "aaa");
-            cs.put("vod_name", extend.toString());
-            list.put(cs);
             for (int i = 0; i < items.length(); i++) {
                 JSONObject info = new JSONObject();
                 info.put("vod_id", items.getJSONObject(i).getString("id"));

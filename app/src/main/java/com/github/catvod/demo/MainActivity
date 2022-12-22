@@ -1,6 +1,7 @@
 package com.github.catvod.demo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.Context;
@@ -13,12 +14,12 @@ import org.json.JSONObject;
 
 public class MainActivity {
     public static void main(String[] args) {
-        // TX spider = new TX();
-        // HOME spider = new HOME();
         Douban spider = new Douban();
         // 外接字符串，可用于自定义
         spider.init(new Context(),
                 "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/localhost.json");
+        // 筛选HashMap
+
         // 搜索开关，1为true,0为false
         int search_switch = 0;
         if (search_switch == 1) {
@@ -28,19 +29,27 @@ public class MainActivity {
             test_player(spider, res_detail.get(0));
 
         } else {
-            JSONArray res_home = test_home(spider);
+            Class_res_home res_home = test_home(spider);
 
-            // res_home.getString(0)测试是电视剧还是电影...，可以根据index来切换
-            List<String> res_category = test_category(spider, res_home.getString(1));
+            // res_home.array.getString(0)测试是电视剧还是电影...，可以根据index来切换
+            String tid = res_home.array.getString(1);
+            // 筛选
+            ArrayList<HashMap<String, String>> filters = res_home.extend.get(tid);
+            // filters.get(0)是测试是动作片还是喜剧片...,可以根据index来切换，
+            HashMap<String, String> extend = filters.get(0);
+            List<String> res_category = test_category(spider, tid, extend);
             // res_category.get(1)测试是那一部视频...，可以根据index来切换
             ArrayList<String> res_detail = test_detail(spider, res_category.get(1));
             test_player(spider, res_detail.get(0));
         }
     }
 
-    public static JSONArray test_home(Spider spider) {
+    public static Class_res_home test_home(Spider spider) {
+
         // 标题栏
+        Class_res_home res_class = new Class_res_home();
         JSONArray res = new JSONArray();
+        HashMap<String, ArrayList<HashMap<String, String>>> res_extend = new HashMap<>();
         System.out.println("==========homeContent:=======\n");
         String strhomeContent = spider.homeContent(true);
         if (strhomeContent.equals("")) {
@@ -60,17 +69,25 @@ public class MainActivity {
                                 .getJSONArray(classes.getJSONObject(i).getString("type_id"));
                         for (int j = 0; j < filters.length(); j++) {
 
-                            System.out.print(filters.getJSONObject(i).getString("name") + "  ");
-                            JSONArray value = filters.getJSONObject(i).getJSONArray("value");
+                            System.out.print(filters.getJSONObject(j).getString("name") + "  ");
+                            JSONArray value = filters.getJSONObject(j).getJSONArray("value");
+                            String key = filters.getJSONObject(j).getString("key");
+                            // HashMap<String, ArrayList<HashMap<String, String>>> leixing = new
+                            // HashMap<String, ArrayList<HashMap<String, String>>>();
+                            ArrayList<HashMap<String, String>> leixing = new ArrayList<>();
                             for (int k = 0; k < value.length(); k++) {
+                                HashMap<String, String> hashMap = new HashMap<>();
                                 System.out.print(value.getJSONObject(k).getString("n") + "  ");
+                                hashMap.put(key, value.getJSONObject(k).getString("v"));
+                                leixing.add(hashMap);
 
                             }
-                            System.out.println("");
+                            System.out.println("\r\n");
+                            res_extend.put(classes.getJSONObject(i).getString("type_id"), leixing);
                         }
 
                     } catch (Exception e) {
-                        System.out.println("未读取到[" + classes.getJSONObject(i).get("type_id") + "]的筛选信息");
+                        System.out.println("\r\n未读取到[" + classes.getJSONObject(i).get("type_id") + "]的筛选信息");
                     }
 
                     res.put(classes.getJSONObject(i).get("type_id"));
@@ -83,15 +100,19 @@ public class MainActivity {
             System.out.println("未读取到class，请检查！");
         }
 
-        return res;
+        res_class.array = res;
+        res_class.extend = res_extend;
+        return res_class;
     }
 
-    public static List<String> test_category(Spider spider, String tid) {
+    public static List<String> test_category(Spider spider, String tid, HashMap<String, String> extend) {
         System.out.println("\r\n你测试的分类为:" + tid);
+        System.out.println("\r\n你测试的筛选为:" + extend);
+
         List<String> res = new ArrayList<>();
         // 标题栏下的视频内容
         System.out.println("\r\n==========categoryContent:=======\r\n");
-        String strcategoryContent = spider.categoryContent(tid, "1", true, null);
+        String strcategoryContent = spider.categoryContent(tid, "1", true, extend);
         if (strcategoryContent.equals("")) {
             System.out.println("categoryContent返回为空");
             System.exit(0);
@@ -278,4 +299,10 @@ public class MainActivity {
 
         return null;
     }
+
+}
+
+class Class_res_home {
+    JSONArray array;
+    HashMap<String, ArrayList<HashMap<String, String>>> extend;
 }
