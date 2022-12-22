@@ -87,7 +87,7 @@ public class Douban extends Spider {
 
             result.put("class", classes);
             if (filter) {
-                String filterconfig = "{\"/rexxar/api/v2/movie\": [{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianyings\" }, {\"n\": \"动作片\",\"v\": \"dongzuopians\"}]},{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianying\" }, {\"n\": \"动作片\",\"v\": \"dongzuopian\"}]}]}";
+                String filterconfig = "{\"/rexxar/api/v2/movie\": [{\"key\": \"0\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianyings\" }, {\"n\": \"动作片\",\"v\": \"dongzuopians\"}]},{\"key\": \"1\",\"name\": \"分类\", \"value\": [{ \"n\": \"全部\", \"v\": \"dianying\" }, {\"n\": \"动作片\",\"v\": \"dongzuopian\"}]}]}";
                 result.put("filters", new JSONObject(filterconfig));
 
             }
