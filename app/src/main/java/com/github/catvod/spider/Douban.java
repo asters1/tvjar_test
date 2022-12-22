@@ -98,20 +98,24 @@ public class Douban extends Spider {
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
             int page = Integer.parseInt(pg);
-            String url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                    + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
+            String url = "";
+            try {
 
-            if (extend.get("类型").equals("")) {
+                if (extend.get("类型").equals("")) {
+                    url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                            + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
+                } else if (tid.equals("/rexxar/api/v2/tv")) {
+                    url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                            + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
+                            + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
+                } else if (tid.equals("/rexxar/api/v2/movie")) {
+                    url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                            + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
+                            + "\"}&uncollect=false&tags=华语," + extend.get("类型");
+                }
+            } catch (Exception e) {
                 url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
                         + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
-            } else if (tid.equals("/rexxar/api/v2/tv")) {
-                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                        + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
-                        + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
-            } else if (tid.equals("/rexxar/api/v2/movie")) {
-                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                        + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
-                        + "\"}&uncollect=false&tags=华语," + extend.get("类型");
             }
             JSONObject result = new JSONObject();
             JSONArray list = new JSONArray();
