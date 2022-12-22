@@ -90,6 +90,8 @@ public class Douban extends Spider {
                 String filterconfig = "{\"/rexxar/api/v2/movie\": [{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{ \"n\": \"全部\", \"v\": \"\" }, {\"n\": \"喜剧\",\"v\": \"喜剧\"}, {\"n\": \"爱情\",\"v\": \"爱情\"}, {\"n\": \"动作\",\"v\": \"动作\"}, {\"n\": \"科幻\",\"v\": \"科幻\"}, {\"n\": \"悬疑\",\"v\": \"悬疑\"}, {\"n\": \"犯罪\",\"v\": \"犯罪\"}, {\"n\": \"历史\",\"v\": \"历史\"}, {\"n\": \"奇幻\",\"v\": \"奇幻\"}, {\"n\": \"恐怖\",\"v\": \"恐怖\"},{\"n\": \"战争\",\"v\": \"战争\"} ,{\"n\": \"武侠\",\"v\": \"武侠\"}]}],\"/rexxar/api/v2/tv\": [{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{ \"n\": \"全部\", \"v\": \"\" }, {\"n\": \"喜剧\",\"v\": \"喜剧\"}, {\"n\": \"爱情\",\"v\": \"爱情\"}, {\"n\": \"动作\",\"v\": \"动作\"}, {\"n\": \"科幻\",\"v\": \"科幻\"}, {\"n\": \"悬疑\",\"v\": \"悬疑\"}, {\"n\": \"犯罪\",\"v\": \"犯罪\"}, {\"n\": \"历史\",\"v\": \"历史\"}, {\"n\": \"奇幻\",\"v\": \"奇幻\"}, {\"n\": \"恐怖\",\"v\": \"恐怖\"},{\"n\": \"战争\",\"v\": \"战争\"} ,{\"n\": \"武侠\",\"v\": \"武侠\"}]}]}";
                 // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语"}&uncollect=false&tags=华语"
                 // https://m.douban.com/rexxar/api/v2/movie/recommend?refresh=0&start=0&count=20&selected_categories={"地区":"华语","类型":"爱情"}&uncollect=false&tags=华语,爱情
+                // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=0&count=20&selected_categories={"类型":"科幻","形式":"电视剧"}&uncollect=false&tags=科幻
+                // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=0&count=20&selected_categories={"类型":"科幻","形式":"电视剧","地区":"华语"}&uncollect=false&tags=科幻,华语
                 result.put("filters", new JSONObject(filterconfig));
 
             }
@@ -114,6 +116,11 @@ public class Douban extends Spider {
                     headers);
             JSONObject json_res = new JSONObject(res);
             JSONArray items = json_res.getJSONArray("items");
+
+            JSONObject cs = new JSONObject();
+            cs.put("vod_id", "aaa");
+            cs.put("vod_name", extend.toString());
+            list.put(cs);
             for (int i = 0; i < items.length(); i++) {
                 JSONObject info = new JSONObject();
                 info.put("vod_id", items.getJSONObject(i).getString("id"));
