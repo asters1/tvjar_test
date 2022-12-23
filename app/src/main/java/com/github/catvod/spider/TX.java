@@ -93,9 +93,9 @@ public class TX extends Spider {
                 String result, q_url;
 
                 if (tid.equals("doudou")) {
-                    q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/doudou.json";
+                    q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/doudou.json";
                 } else {
-                    q_url = "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/yangyang.json";
+                    q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/yangyang.json";
 
                 }
 
