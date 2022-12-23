@@ -33,10 +33,17 @@ public class MainActivity {
 
             // res_home.array.getString(0)测试是电视剧还是电影...，可以根据index来切换
             String tid = res_home.array.getString(0);
-            // 筛选
-            ArrayList<HashMap<String, String>> filters = res_home.extend.get(tid);
-            // filters.get(0)是测试是动作片还是喜剧片...,可以根据index来切换，
-            HashMap<String, String> extend = filters.get(1);
+            HashMap<String, String> extend;
+            try {
+
+                // 筛选
+                ArrayList<HashMap<String, String>> filters = res_home.extend.get(tid);
+                // filters.get(0)是测试是动作片还是喜剧片...,可以根据index来切换，
+                extend = filters.get(1);
+            } catch (Exception e) {
+                extend = null;
+
+            }
             List<String> res_category = test_category(spider, tid, extend);
             // res_category.get(1)测试是那一部视频...，可以根据index来切换
             ArrayList<String> res_detail = test_detail(spider, res_category.get(1));
@@ -87,7 +94,7 @@ public class MainActivity {
                         }
 
                     } catch (Exception e) {
-                        System.out.println("\r\n未读取到[" + classes.getJSONObject(i).get("type_id") + "]的筛选信息");
+                        System.out.println("未读取到[" + classes.getJSONObject(i).get("type_id") + "]的筛选信息\r\n");
                     }
 
                     res.put(classes.getJSONObject(i).get("type_id"));
@@ -102,6 +109,7 @@ public class MainActivity {
 
         res_class.array = res;
         res_class.extend = res_extend;
+        System.out.println(res_class.extend);
         return res_class;
     }
 
