@@ -68,6 +68,15 @@ public class Douban extends Spider {
             JSONObject dianying = new JSONObject();
             JSONObject dianshiju = new JSONObject();
 
+            JSONObject doudou = new JSONObject();
+            JSONObject yangyang = new JSONObject();
+
+            doudou.put("type_id", "doudou");
+            doudou.put("type_name", "豆豆");
+
+            yangyang.put("type_id", "yangyang");
+            yangyang.put("type_name", "洋洋");
+
             dianying.put("type_name", "电影");
             dianying.put("type_id", "/rexxar/api/v2/movie");
 
@@ -77,6 +86,8 @@ public class Douban extends Spider {
             // dongman.put("type_name", "动漫");
 
             // zongyi.put("type_name", "综艺");
+            classes.put(doudou);
+            classes.put(yangyang);
             classes.put(dianying);
             classes.put(dianshiju);
 
@@ -97,54 +108,70 @@ public class Douban extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
-            int page = Integer.parseInt(pg);
-            String url = "";
-            try {
+            if (tid.equals("doudou") || tid.equals("yangyang")) {
+                String result, q_url;
 
-                if (extend.get("类型").equals("")) {
+                if (tid.equals("doudou")) {
+                    q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/doudou.json";
+                } else {
+                    q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/yangyang.json";
+
+                }
+
+                result = OkHttpUtil.string(q_url, null);
+
+                return result;
+
+            } else {
+                int page = Integer.parseInt(pg);
+                String url = "";
+                try {
+
+                    if (extend.get("类型").equals("")) {
+                        url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                                + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
+                    } else if (tid.equals("/rexxar/api/v2/tv")) {
+                        url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                                + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
+                                + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
+                    } else if (tid.equals("/rexxar/api/v2/movie")) {
+                        url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
+                                + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
+                                + "\"}&uncollect=false&tags=华语," + extend.get("类型");
+                    }
+                } catch (Exception e) {
                     url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
                             + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
-                } else if (tid.equals("/rexxar/api/v2/tv")) {
-                    url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                            + "&count=20&selected_categories={\"类型\":\"" + extend.get("类型")
-                            + "\",\"形式\":\"电视剧\",\"地区\":\"华语\"}&uncollect=false&tags=" + extend.get("类型") + ",华语";
-                } else if (tid.equals("/rexxar/api/v2/movie")) {
-                    url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                            + "&count=20&selected_categories={\"地区\":\"华语\",\"类型\":\"" + extend.get("类型")
-                            + "\"}&uncollect=false&tags=华语," + extend.get("类型");
                 }
-            } catch (Exception e) {
-                url = "https://m.douban.com/" + tid + "/recommend?refresh=0&start=" + (page - 1) * 20
-                        + "&count=20&selected_categories={\"地区\":\"华语\"}&uncollect=false&tags=华语";
-            }
-            JSONObject result = new JSONObject();
-            JSONArray list = new JSONArray();
+                JSONObject result = new JSONObject();
+                JSONArray list = new JSONArray();
 
-            String res = OkHttpUtil.string(url, headers);
-            JSONObject json_res = new JSONObject(res);
-            JSONArray items = json_res.getJSONArray("items");
+                String res = OkHttpUtil.string(url, headers);
+                JSONObject json_res = new JSONObject(res);
+                JSONArray items = json_res.getJSONArray("items");
 
-            for (int i = 0; i < items.length(); i++) {
-                JSONObject info = new JSONObject();
-                info.put("vod_id", items.getJSONObject(i).getString("id"));
-                info.put("vod_name", items.getJSONObject(i).getString("title"));
-                info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
-                try {
-                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分\r\n测试");
+                for (int i = 0; i < items.length(); i++) {
+                    JSONObject info = new JSONObject();
+                    info.put("vod_id", items.getJSONObject(i).getString("id"));
+                    info.put("vod_name", items.getJSONObject(i).getString("title"));
+                    info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
+                    try {
+                        info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
 
-                } catch (Exception e) {
-                    info.put("vod_remarks", "暂无评分");
+                    } catch (Exception e) {
+                        info.put("vod_remarks", "暂无评分");
+                    }
+
+                    list.put(info);
                 }
+                result.put("page", page);
+                result.put("pagecount", Integer.MAX_VALUE);
+                result.put("limit", 20);
+                result.put("total", Integer.MAX_VALUE);
+                result.put("list", list);
 
-                list.put(info);
+                return result.toString();
             }
-            result.put("page", page);
-            result.put("pagecount", Integer.MAX_VALUE);
-            result.put("limit", 20);
-            result.put("total", Integer.MAX_VALUE);
-            result.put("list", list);
-
-            return result.toString();
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
