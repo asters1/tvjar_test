@@ -130,7 +130,7 @@ public class Douban extends Spider {
                 info.put("vod_name", items.getJSONObject(i).getString("title"));
                 info.put("vod_pic", items.getJSONObject(i).getJSONObject("pic").getString("large"));
                 try {
-                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分");
+                    info.put("vod_remarks", items.getJSONObject(i).getJSONObject("rating").get("value") + "分\r\n测试");
 
                 } catch (Exception e) {
                     info.put("vod_remarks", "暂无评分");
