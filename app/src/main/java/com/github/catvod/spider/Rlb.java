@@ -50,6 +50,7 @@ public class Rlb extends Spider {
             mt.put("type_name", "蜜桃");
 
 
+
             classes.put(madou);
             classes.put(jyzp);
             classes.put(tm);
