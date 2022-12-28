@@ -3,7 +3,6 @@ package com.github.catvod.spider;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import android.content.Context;
@@ -37,11 +36,23 @@ public class Rlb extends Spider {
             JSONArray classes = new JSONArray();
 
             JSONObject madou = new JSONObject();
+            JSONObject jyzp = new JSONObject();
+            JSONObject tm = new JSONObject();
+            JSONObject mt = new JSONObject();
 
             madou.put("type_id", "/index.php/vodtype/161");
             madou.put("type_name", "麻豆");
+            jyzp.put("type_id", "/index.php/vodtype/162");
+            jyzp.put("type_name", "酒衣");
+            tm.put("type_id", "/index.php/vodtype/163");
+            tm.put("type_name", "天美");
+            mt.put("type_id", "/index.php/vodtype/164");
+            mt.put("type_id", "蜜桃");
 
             classes.put(madou);
+            classes.put(jyzp);
+            classes.put(tm);
+            classes.put(mt);
             result.put("class", classes);
             return result.toString();
 
