@@ -47,7 +47,7 @@ public class Rlb extends Spider {
             tm.put("type_id", "/index.php/vodtype/163");
             tm.put("type_name", "天美");
             mt.put("type_id", "/index.php/vodtype/164");
-            mt.put("type_id", "蜜桃");
+            mt.put("type_name", "蜜桃");
 
             classes.put(madou);
             classes.put(jyzp);
