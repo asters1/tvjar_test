@@ -7,8 +7,12 @@ import org.jsoup.select.Elements;
 
 import android.content.Context;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Comparator;
 
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 
@@ -22,8 +26,11 @@ public class Xiaoya extends Spider {
 
     private static final String siteUrl = "http://alist.xiaoya.pro";
 
+    protected ArrayList<Integer> s1 = new ArrayList<Integer>();
+
     public void init(Context context) {
         super.init(context);
+        s1.add(0);
     }
 
     protected HashMap<String, String> getHeaders() {
@@ -56,12 +63,9 @@ public class Xiaoya extends Spider {
             JSONObject result = new JSONObject();
             JSONObject info = new JSONObject();
             JSONArray list_info = new JSONArray();
-            JSONArray json_i = new JSONArray();
-            JSONArray json_vod_play_url = new JSONArray();
-            json_vod_play_url.put(0, "");
-            JSONArray json_vod_play_from = new JSONArray();
-            json_vod_play_from.put(0, "");
 
+            LinkedHashMap<String, ArrayList<String>> source = new LinkedHashMap<>();
+            ArrayList<String> source1 = new ArrayList<String>();
             OkHttpUtil.postJson(OkHttpUtil.defaultClient(), siteUrl + "/api/fs/list",
                     "{\"path\":\"" + ids.get(0) + "\",\"password\": \"\"}",
                     new OKCallBack.OKCallBackString() {
@@ -72,99 +76,102 @@ public class Xiaoya extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
-                            try {
+                            JSONObject res = new JSONObject(response);
+                            JSONObject data = res.getJSONObject("data");
+                            for (int i = 0; i < data.getInt("total"); i++) {
+                                s1.set(0, i);
+                                if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
+                                    OkHttpUtil.postJson(OkHttpUtil.defaultClient(),
+                                            siteUrl + "/api/fs/list",
+                                            "{\"path\":\"" + ids.get(0) + "/"
+                                                    + data.getJSONArray("content").getJSONObject(i)
+                                                            .getString("name")
+                                                    + "\",\"password\": \"\"}",
+                                            new OKCallBack.OKCallBackString() {
+                                                @Override
+                                                protected void onFailure(Call call, Exception e) {
 
-                                JSONObject res = new JSONObject(response);
-                                JSONObject data = res.getJSONObject("data");
-                                info.put("vod_id", ids.get(0));
-                                for (int i = 0; i < data.getInt("total"); i++) {
-                                    if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
+                                                }
 
-                                        if (i < data.getInt("total") - 2) {
-
-                                            json_vod_play_from.put(0, json_vod_play_from.get(0)
-                                                    + data.getJSONArray("content").getJSONObject(i).getString("name")
-                                                    + "$$$");
-                                        } else {
-                                            json_vod_play_from.put(0, json_vod_play_from.get(0)
-                                                    + data.getJSONArray("content").getJSONObject(i).getString("name"));
-                                        }
-                                        json_i.put(0, i);
-
-                                        OkHttpUtil.postJson(OkHttpUtil.defaultClient(),
-                                                siteUrl + "/api/fs/list",
-                                                "{\"path\":\"" + ids.get(0) + "/"
-                                                        + data.getJSONArray("content").getJSONObject(i)
-                                                                .getString("name")
-                                                        + "\",\"password\": \"\"}",
-                                                new OKCallBack.OKCallBackString() {
-                                                    @Override
-                                                    protected void onFailure(Call call, Exception e) {
-
-                                                    }
-
-                                                    @Override
-                                                    protected void onResponse(String response) {
-                                                        try {
-                                                            JSONObject res1 = new JSONObject(response);
-                                                            JSONObject data1 = res1.getJSONObject("data");
-                                                            String list_url = "";
-                                                            for (int j = 0; j < data1.getInt("total"); j++) {
-                                                                if (j < data1.getInt("total") - 1) {
-                                                                    json_vod_play_url.put(0, json_vod_play_url.get(0) +
-
-                                                                            data1.getJSONArray("content")
-                                                                                    .getJSONObject(j)
-                                                                                    .getString("name")
-                                                                            + "$" + ids.get(0) + "/"
-                                                                            + data.getJSONArray("content")
-                                                                                    .getJSONObject(json_i.getInt(0))
-                                                                                    .getString("name")
-                                                                            + "/"
-                                                                            + data1.getJSONArray("content")
-                                                                                    .getJSONObject(j)
-                                                                                    .getString("name")
-                                                                            + "#");
-                                                                } else {
-                                                                    json_vod_play_url.put(0, json_vod_play_url.get(0) +
-
-                                                                            data1.getJSONArray("content")
-                                                                                    .getJSONObject(j)
-                                                                                    .getString("name")
-                                                                            + "$" + ids.get(0) + "/"
-                                                                            + data.getJSONArray("content")
-                                                                                    .getJSONObject(json_i.getInt(0))
-                                                                                    .getString("name")
-                                                                            + "/"
-                                                                            + data1.getJSONArray("content")
-                                                                                    .getJSONObject(j)
-                                                                                    .getString("name")
-                                                                            + "$$$");
-                                                                }
-                                                            }
-                                                            json_vod_play_url.put(list_url);
-                                                        } catch (Exception e) {
-                                                            SpiderDebug.log(e);
+                                                @Override
+                                                protected void onResponse(String response1) {
+                                                    ArrayList<String> sourcei = new ArrayList<String>();
+                                                    JSONObject res1 = new JSONObject(response1);
+                                                    JSONObject data1 = res1.getJSONObject("data");
+                                                    for (int j = 0; j < data1.getInt("total"); j++) {
+                                                        if (!data1.getJSONArray("content").getJSONObject(j)
+                                                                .getBoolean("is_dir")) {
+                                                            sourcei.add(
+                                                                    data1.getJSONArray("content").getJSONObject(j)
+                                                                            .getString("name"));
                                                         }
-
                                                     }
-                                                });
 
-                                    }
+                                                    sourcei.sort(Comparator.naturalOrder());
+
+                                                    source.put(data.getJSONArray("content").getJSONObject(s1.get(0))
+                                                            .getString("name"), sourcei);
+                                                }
+                                            });
+                                } else {
+                                    source1.add(data.getJSONArray("content").getJSONObject(i).getString("name"));
 
                                 }
-                            } catch (Exception e) {
-                                SpiderDebug.log(e);
                             }
-
+                            source1.sort(Comparator.naturalOrder());
+                            source.put("小雅", source1);
                         }
                     });
-            info.put("vod_play_from", json_vod_play_from.getString(0));
-            info.put("vod_play_url", json_vod_play_url.getString(0));
+
+            info.put("vod_id", ids.get(0));
+
+            if (ids.get(0).indexOf("/") != -1) {
+                info.put("vod_name", ids.get(0).substring(ids.get(0).lastIndexOf("/") + 1, ids.get(0).length()));
+            } else {
+                info.put("vod_name", ids.get(0));
+
+            }
+
+            ArrayList<String> vpf = new ArrayList<String>();
+            for (String k : source.keySet()) {
+                vpf.add(k);
+            }
+            Collections.reverse(vpf);
+
+            String vod_play_from = "";
+            String vod_play_url = "";
+            for (int i = 0; i < vpf.size(); i++) {
+
+                String vname = "";
+                if (!vpf.get(i).equals("小雅")) {
+                    vname = vpf.get(i) + "/";
+                }
+
+                if (i == vpf.size() - 1) {
+
+                    vod_play_from = vod_play_from + vpf.get(i);
+                } else {
+                    vod_play_from = vod_play_from + vpf.get(i) + "$$$";
+
+                }
+
+                for (int j = 0; j < source.get(vpf.get(i)).size(); j++) {
+                    if (j == source.get(vpf.get(i)).size() - 1) {
+
+                        vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
+                                + source.get(vpf.get(i)).get(j) + "$$$";
+                    } else {
+                        vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
+                                + source.get(vpf.get(i)).get(j) + "#";
+                    }
+                }
+            }
+
+            info.put("vod_play_from", vod_play_from);
+            info.put("vod_play_url", vod_play_url);
             list_info.put(info);
             result.put("list", list_info);
             return result.toString();
-
         } catch (Exception e) {
             SpiderDebug.log(e);
         }
@@ -186,7 +193,7 @@ public class Xiaoya extends Spider {
 
                     name = path;
                 } else {
-                    name = path.substring(index);
+                    name = path.substring(index).replace("%20", " ");
 
                 }
 
