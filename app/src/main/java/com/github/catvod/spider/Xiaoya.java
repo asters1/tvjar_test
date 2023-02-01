@@ -76,50 +76,60 @@ public class Xiaoya extends Spider {
 
                         @Override
                         protected void onResponse(String response) {
-                            JSONObject res = new JSONObject(response);
-                            JSONObject data = res.getJSONObject("data");
-                            for (int i = 0; i < data.getInt("total"); i++) {
-                                s1.set(0, i);
-                                if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
-                                    OkHttpUtil.postJson(OkHttpUtil.defaultClient(),
-                                            siteUrl + "/api/fs/list",
-                                            "{\"path\":\"" + ids.get(0) + "/"
-                                                    + data.getJSONArray("content").getJSONObject(i)
-                                                            .getString("name")
-                                                    + "\",\"password\": \"\"}",
-                                            new OKCallBack.OKCallBackString() {
-                                                @Override
-                                                protected void onFailure(Call call, Exception e) {
+                            try {
+                                JSONObject res = new JSONObject(response);
+                                JSONObject data = res.getJSONObject("data");
+                                for (int i = 0; i < data.getInt("total"); i++) {
+                                    s1.set(0, i);
+                                    if (data.getJSONArray("content").getJSONObject(i).getBoolean("is_dir")) {
+                                        OkHttpUtil.postJson(OkHttpUtil.defaultClient(),
+                                                siteUrl + "/api/fs/list",
+                                                "{\"path\":\"" + ids.get(0) + "/"
+                                                        + data.getJSONArray("content").getJSONObject(i)
+                                                                .getString("name")
+                                                        + "\",\"password\": \"\"}",
+                                                new OKCallBack.OKCallBackString() {
+                                                    @Override
+                                                    protected void onFailure(Call call, Exception e) {
 
-                                                }
-
-                                                @Override
-                                                protected void onResponse(String response1) {
-                                                    ArrayList<String> sourcei = new ArrayList<String>();
-                                                    JSONObject res1 = new JSONObject(response1);
-                                                    JSONObject data1 = res1.getJSONObject("data");
-                                                    for (int j = 0; j < data1.getInt("total"); j++) {
-                                                        if (!data1.getJSONArray("content").getJSONObject(j)
-                                                                .getBoolean("is_dir")) {
-                                                            sourcei.add(
-                                                                    data1.getJSONArray("content").getJSONObject(j)
-                                                                            .getString("name"));
-                                                        }
                                                     }
 
-                                                    sourcei.sort(Comparator.naturalOrder());
+                                                    @Override
+                                                    protected void onResponse(String response1) {
+                                                        try {
+                                                            ArrayList<String> sourcei = new ArrayList<String>();
+                                                            JSONObject res1 = new JSONObject(response1);
+                                                            JSONObject data1 = res1.getJSONObject("data");
+                                                            for (int j = 0; j < data1.getInt("total"); j++) {
+                                                                if (!data1.getJSONArray("content").getJSONObject(j)
+                                                                        .getBoolean("is_dir")) {
+                                                                    sourcei.add(
+                                                                            data1.getJSONArray("content")
+                                                                                    .getJSONObject(j)
+                                                                                    .getString("name"));
+                                                                }
+                                                            }
 
-                                                    source.put(data.getJSONArray("content").getJSONObject(s1.get(0))
-                                                            .getString("name"), sourcei);
-                                                }
-                                            });
-                                } else {
-                                    source1.add(data.getJSONArray("content").getJSONObject(i).getString("name"));
+                                                            sourcei.sort(Comparator.naturalOrder());
 
+                                                            source.put(data.getJSONArray("content")
+                                                                    .getJSONObject(s1.get(0))
+                                                                    .getString("name"), sourcei);
+                                                        } catch (Exception e) {
+                                                            SpiderDebug.log(e);
+                                                        }
+                                                    }
+                                                });
+                                    } else {
+                                        source1.add(data.getJSONArray("content").getJSONObject(i).getString("name"));
+
+                                    }
                                 }
+                                source1.sort(Comparator.naturalOrder());
+                                source.put("小雅", source1);
+                            } catch (Exception e) {
+                                SpiderDebug.log(e);
                             }
-                            source1.sort(Comparator.naturalOrder());
-                            source.put("小雅", source1);
                         }
                     });
 
