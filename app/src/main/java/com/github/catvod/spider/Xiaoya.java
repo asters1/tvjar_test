@@ -166,13 +166,15 @@ public class Xiaoya extends Spider {
                 }
 
                 for (int j = 0; j < source.get(vpf.get(i)).size(); j++) {
-                    if (j == source.get(vpf.get(i)).size() - 1) {
+                    if (CheckName(source.get(vpf.get(i)).get(j))) {
+                        if (j == source.get(vpf.get(i)).size() - 1) {
 
-                        vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
-                                + source.get(vpf.get(i)).get(j) + "$$$";
-                    } else {
-                        vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
-                                + source.get(vpf.get(i)).get(j) + "#";
+                            vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
+                                    + source.get(vpf.get(i)).get(j) + "$$$";
+                        } else {
+                            vod_play_url = vod_play_url + source.get(vpf.get(i)).get(j) + "$" + ids.get(0) + "/" + vname
+                                    + source.get(vpf.get(i)).get(j) + "#";
+                        }
                     }
                 }
             }
@@ -209,13 +211,16 @@ public class Xiaoya extends Spider {
 
                 if (path.substring(0, 5).indexOf("书") == -1) {
 
-                    JSONObject info = new JSONObject();
-                    info.put("vod_id", path);
-                    info.put("vod_name", name);
-                    list.put(info);
+                    if (CheckName(name)) {
+                        JSONObject info = new JSONObject();
+                        info.put("vod_id", path);
+                        info.put("vod_name", name);
+                        list.put(info);
+                    }
                 }
             }
             result.put("list", list);
+            System.out.println(result);
             return result.toString();
 
         } catch (Exception e) {
@@ -239,6 +244,19 @@ public class Xiaoya extends Spider {
             SpiderDebug.log(e);
         }
         return "";
+    }
+
+    protected boolean CheckName(String str) {
+        String[] check_str = { ".mp3", ".ts", ".jpg", ".nfo", "flac", ".md", ".png", ".ass" };
+
+        for (int i = 0; i < check_str.length; i++) {
+            System.out.println(str.indexOf(check_str[i]));
+            if (str.indexOf(check_str[i]) != -1) {
+
+                return false;
+            }
+        }
+        return true;
     }
 
     protected String getraw(String path) {
