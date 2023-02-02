@@ -247,7 +247,8 @@ public class Xiaoya extends Spider {
     }
 
     protected boolean CheckName(String str) {
-        String[] check_str = { ".mp3", ".ts", ".jpg", ".nfo", "flac", ".md", ".png", ".ass" };
+        String[] check_str = { ".mp3", ".ts", ".jpg", ".nfo", "flac", ".md", ".png", ".ass", ".JPG", ".PNG", ".txt",
+                ".TXT" };
 
         for (int i = 0; i < check_str.length; i++) {
             System.out.println(str.indexOf(check_str[i]));
