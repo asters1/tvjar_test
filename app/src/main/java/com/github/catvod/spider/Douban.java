@@ -70,12 +70,16 @@ public class Douban extends Spider {
 
             JSONObject doudou = new JSONObject();
             JSONObject yangyang = new JSONObject();
+            JSONObject jingdian = new JSONObject();
 
             doudou.put("type_id", "doudou");
             doudou.put("type_name", "豆豆");
 
             yangyang.put("type_id", "yangyang");
             yangyang.put("type_name", "洋洋");
+
+            jingdian.put("type_id", "jingdian");
+            jingdian.put("type_name", "经典");
 
             dianying.put("type_name", "电影");
             dianying.put("type_id", "/rexxar/api/v2/movie");
@@ -88,6 +92,7 @@ public class Douban extends Spider {
             // zongyi.put("type_name", "综艺");
             classes.put(doudou);
             classes.put(yangyang);
+            classes.put(jingdian);
             classes.put(dianying);
             classes.put(dianshiju);
 
@@ -108,13 +113,16 @@ public class Douban extends Spider {
 
     public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
         try {
-            if (tid.equals("doudou") || tid.equals("yangyang")) {
+            if (tid.equals("doudou") || tid.equals("yangyang") || tid.equals("jingdian")) {
                 String result, q_url;
 
                 if (tid.equals("doudou")) {
                     q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/doudou.json";
-                } else {
+                } else if (tid.equals("yangyang")) {
                     q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/yangyang.json";
+
+                } else {
+                    q_url = "https://jihulab.com/asters1/source/-/raw/master/tvbox/json/jingdian.json";
 
                 }
 
