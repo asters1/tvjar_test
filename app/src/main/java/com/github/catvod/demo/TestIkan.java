@@ -3,6 +3,7 @@ package com.github.catvod.demo;
 
 import com.github.catvod.spider.Ikan;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TestIkan {
@@ -13,20 +14,20 @@ public class TestIkan {
 //        System.out.println(s);
 
         // 分类页面数据测试
-        HashMap<String, String> map = new HashMap<>();
-        map.put("area", "大陆");
-        String s = ikan.categoryContent("/vodshow/1", "1", true, map);
-        System.out.println(s);
+//        HashMap<String, String> map = new HashMap<>();
+//        map.put("area", "大陆");
+//        String s = ikan.categoryContent("/vodshow/1", "1", true, map);
+//        System.out.println(s);
 
         // 详情页面数据测试
 //        ArrayList<String> ids = new ArrayList<>();
-//        ids.add("http://ikanys.tv/voddetail/4586");
+//        ids.add("https://ikanys.tv/voddetail/28393");
 //        String s = ikan.detailContent(ids);
 //        System.out.println(s);
 
         // 搜索测试
-//        String s = ikan.searchContent("我", true);
-//        System.out.println(s);
+        String s = ikan.searchContent("我", true);
+        System.out.println(s);
 
 
         // 播放内容数据测试

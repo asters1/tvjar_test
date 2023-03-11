@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class Ikan extends Spider {
 
-    private static final String siteUrl = "http://ikanys.tv";
+    private static final String siteUrl = "https://ikanys.tv";
 
     // 请求头部设置
     protected HashMap<String, String> getHeaders() {
@@ -119,20 +119,19 @@ public class Ikan extends Spider {
 
             String cateUrl = siteUrl + tid + String.format("-%s-%s-%s-----%s---%s", area, by, classType, pg, year);
             // 爱看电影分类页链接拼接后应该是这样的：
-            // cateUrl = "http://ikanys.tv/vodshow/1-大陆-time-喜剧-----2---2022";
+            // cateUrl = "https://ikanys.tv/vodshow/1-大陆-time-喜剧-----2---2022";
             String content = OkHttpUtil.string(cateUrl, getHeaders());
 
             Elements list_el = Jsoup.parse(content)
-                    .select("[class=myui-vodlist clearfix]")
-                    .select("[class=myui-vodlist__thumb lazyload]");
+                    .select("[class=module-poster-item module-item]");
 
             for (int i = 0; i < list_el.size(); i++) {
                 JSONObject vod = new JSONObject();
                 Element item = list_el.get(i);
                 String vod_id = item.attr("href");
                 String vod_name = item.attr("title");
-                String vod_pic = item.attr("data-original");
-                String vod_remarks = item.select(".pic-text").text();
+                String vod_pic = item.select("img").get(0).attr("data-original");
+                String vod_remarks = item.select(".module-item-note").text();
                 vod.put("vod_id", siteUrl + vod_id);
                 vod.put("vod_name", vod_name);
                 vod.put("vod_pic", vod_pic);
@@ -168,9 +167,7 @@ public class Ikan extends Spider {
 //            String durl = ids.get(0);
             String content = OkHttpUtil.string(detailUrl, getHeaders());
             Elements sources = Jsoup.parse(content)
-                    .select("[class=tab-content myui-panel_bd]")
-                    .get(0)
-                    .select(".tab-pane");
+                    .select("[class=module-play-list]");
 
             String vod_play_url = ""; // 线路/播放源 里面的各集的播放页面链接
             String vod_play_from = "";  // 线路 / 播放源标题
@@ -194,14 +191,13 @@ public class Ikan extends Spider {
 
             // 影片标题
             String title = Jsoup.parse(content)
-                    .select(".myui-content__detail")
+                    .select(".module-info-heading")
                     .get(0).getElementsByTag("h1").text();
 
             // 图片
             String pic = Jsoup.parse(content)
-                    .select(".myui-content__thumb")
+                    .select("[class=ls-is-cached lazy lazyload]")
                     .get(0)
-                    .select("img")
                     .attr("data-original");
 
             // 影片名称、图片等赋值
