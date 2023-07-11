@@ -1,0 +1,42 @@
+name: Update Commit
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout codes
+        uses: actions/checkout@v1
+      - name: Clone auto
+        run: |
+
+          git clone https://asters1:${{secrets.USER_TOKEN}}@github.com/asters1/auto
+          cd auto
+          oldcommit=$(./jq ./tvjar/tvjarCommit.json new)
+          newcommit=$(curl -sL https://github.com/asters1/tvjar_test/commits/master |grep -o "/asters1/tvjar_test/commit/[a-z0-9]\+" |head -1 | cut -d\/ -f5)
+          echo "oldcommit=$oldcommit">> $GITHUB_ENV
+          echo "newcommit=$newcommit">> $GITHUB_ENV
+
+      - name: push auto
+        run: |
+          info=$(git log --pretty=format:%B ${{ env.newcommit }} -1 |sed -e "s# \{2,\}#\n#g" -e "/^Merge \(pull\|branch\|remote\)/d" -e '/^$/d' |cat -n |sort -k2,2 -k1,1n |uniq -f1 |sort -k1,1n |cut -f2-)
+          echo $info
+          cd auto
+          sed -i  's/"old": ".*"/"old": "${{ env.oldcommit }}"/g' ./tvjar/tvjarCommit.json
+          sed -i  's/"new": ".*"/"new": "${{ env.newcommit }}"/g' ./tvjar/tvjarCommit.json
+
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add --all
+          git commit -m "${info}"
+          git push -u -f origin master
+
+
+

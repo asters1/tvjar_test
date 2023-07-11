@@ -1,0 +1,15 @@
+# Ignore Gradle project-specific cache directory
+.settings/
+.project
+.gradle
+.gitattributes
+.gradle/
+*.class
+app/src/main/test/*
+app/.classpath
+app/.settings
+app/src/main/java/com/github/catvod/demo/MainActivity.java
+app/.project
+# Ignore Gradle build output directory
+build
+bin
