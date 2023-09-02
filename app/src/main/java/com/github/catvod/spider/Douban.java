@@ -252,6 +252,8 @@ public class Douban extends Spider {
       info.put("vod_name",vod_name);
       
       info.put("vod_id", ids.get(0));
+      // System.out.println(ids.get(0));
+      info.put("vod_pic", getraw(ids.get(0)+"/1.jpg"));
       
       info.put("vod_play_from", "Alist");
       JSONObject result = new JSONObject();
