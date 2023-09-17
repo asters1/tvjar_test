@@ -20,7 +20,7 @@ public class MainActivity {
     System.out.println("你测试的类是--->"+spiderName); // 输出 "Object"
                                                        // 外接字符串，可用于自定义
     spider.init(new Context(),
-        "https://wisteria.cf/raw.githubusercontent.com/asters1/source/master/tvbox/json/localhost.json");
+        "{\"a\":\"b\"}");
     // 筛选HashMap
 
     // 搜索开关，1为true,0为false
@@ -112,6 +112,7 @@ public class MainActivity {
 
     res_class.array = res;
     res_class.extend = res_extend;
+    System.out.print("筛选信息-->");
     System.out.println(res_class.extend);
     return res_class;
   }

@@ -21,13 +21,17 @@ import com.github.catvod.crawler.SpiderDebug;
 public class Base extends Spider {
 
     private static final String siteUrl = "";
+    //ext为外部给的字符串
+    public String ext = "";
 
-    public void init(Context context) {
-        super.init(context);
+    public void init(Context context,String ext) {
+        super.init(context,ext);
+        this.ext=ext;
     }
 
     public String homeContent(boolean filter) {
         try {
+          // System.out.println(ext);
 
         } catch (Exception e) {
             SpiderDebug.log(e);
