@@ -31,12 +31,17 @@ public class Alist3 extends Spider {
   public String alist_name = "";
 
   public void init(Context context,String ext) {
+    try{
     super.init(context,ext);
     this.ext=ext;
     JSONObject extjson=new JSONObject(ext);
     this.alist_name=extjson.getString("name");
     this.siteUrl=extjson.getString("url");
     this.alist_path=extjson.getString("path");
+
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+    }
   }
 
   public String homeContent(boolean filter) {
