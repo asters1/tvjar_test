@@ -187,7 +187,17 @@ public class Alist3 extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      // System.out.println(key);
+      String search_url=siteUrl+"/api/fs/search";
+      OkHttpUtil.postJson(OkHttpUtil.defaultClient(),search_url,"{\"parent\":\"/"+alist_path+"\",\" keywords\":\"+key+\",\"scope\":0}",null,
 
+          new OKCallBack.OKCallBackString() {
+            @Override
+            protected void onFailure(Call call, Exception e) {
+
+            }
+
+            protected void onResponse(String response) {}});
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
