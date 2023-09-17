@@ -9,6 +9,7 @@ import org.jsoup.select.Elements;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
+import netscape.javascript.JSObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,10 +34,10 @@ public class Alist3 extends Spider {
   public void init(Context context,String ext) {
     super.init(context,ext);
     this.ext=ext;
-      JSONObject extjson=new JSONObject(ext);
-      this.alist_name=extjson.getString("name");
-      this.siteUrl=extjson.getString("url");
-      this.alist_path=extjson.getString("path");
+    JSONObject extjson=new JSONObject(ext);
+    this.alist_name=extjson.getString("name");
+    this.siteUrl=extjson.getString("url");
+    this.alist_path=extjson.getString("path");
   }
 
   public String homeContent(boolean filter) {
@@ -188,9 +189,11 @@ public class Alist3 extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      JSONObject result=new JSONObject();
+      JSONArray list=new JSONArray();
       // System.out.println(key);
       String search_url=siteUrl+"/api/fs/search";
-      OkHttpUtil.postJson(OkHttpUtil.defaultClient(),search_url,"{\"parent\":\"/"+alist_path+"\",\" keywords\":\"+key+\",\"scope\":0,\"page\":1,\"per_page\":100,\"password\":\"\"}",null,
+      OkHttpUtil.postJson(OkHttpUtil.defaultClient(),search_url,"{\"parent\":\"/"+alist_path+"\",\"keywords\":\""+key+"\",\"scope\":1,\"page\":1,\"per_page\":100,\"password\":\"\"}",null,
 
           new OKCallBack.OKCallBackString() {
             @Override
@@ -199,10 +202,31 @@ public class Alist3 extends Spider {
             }
 
             protected void onResponse(String response) {
-              System.out.println(response);
+              // System.out.println(response);
 
+              JSONObject res=new JSONObject(response);
+              JSONObject data = res.getJSONObject("data");
+              // System.out.println(data);
+              for (int i = 0; i < data.getInt("total"); i++) {
+                JSONObject jsonObject=new JSONObject();
+              jsonObject.put("vod_id",
+                  "/"+alist_path+"/"
+                  + data.getJSONArray("content").getJSONObject(i).getString("name"));
+              jsonObject.put("vod_pic",
+
+                  getraw( "/"+alist_path+"/"
+                    + data.getJSONArray("content").getJSONObject(i).getString("name")
+
+                    + "/1.jpg"));
+              jsonObject.put("vod_name",
+                  data.getJSONArray("content").getJSONObject(i).getString("name"));
+              // System.out.println(jsonObject);
+              list.put(jsonObject);
+              }
 
             }});
+      result.put("list", list);
+      return result.toString();
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
