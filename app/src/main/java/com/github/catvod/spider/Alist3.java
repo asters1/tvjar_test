@@ -9,7 +9,6 @@ import org.jsoup.select.Elements;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
-import netscape.javascript.JSObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
