@@ -28,21 +28,22 @@ public class Alist3 extends Spider {
   //ext为外部给的字符串
   public String ext = "";
   public String alist_path = "";
+  public String alist_name = "";
 
   public void init(Context context,String ext) {
     super.init(context,ext);
     this.ext=ext;
+      JSONObject extjson=new JSONObject(ext);
+      this.alist_name=extjson.getString("name");
+      this.siteUrl=extjson.getString("url");
+      this.alist_path=extjson.getString("path");
   }
 
   public String homeContent(boolean filter) {
     try {
       // System.out.println(ext);
-      JSONObject extjson=new JSONObject(ext);
-      String type_name=extjson.getString("name");
-      this.siteUrl=extjson.getString("url");
-      this.alist_path=extjson.getString("path");
       JSONObject alist =new JSONObject();
-      alist.put("type_name", type_name);
+      alist.put("type_name", this.alist_name);
       alist.put("type_id", "alist");
       JSONObject result = new JSONObject();
       JSONArray classes = new JSONArray();
@@ -189,7 +190,7 @@ public class Alist3 extends Spider {
     try {
       // System.out.println(key);
       String search_url=siteUrl+"/api/fs/search";
-      OkHttpUtil.postJson(OkHttpUtil.defaultClient(),search_url,"{\"parent\":\"/"+alist_path+"\",\" keywords\":\"+key+\",\"scope\":0}",null,
+      OkHttpUtil.postJson(OkHttpUtil.defaultClient(),search_url,"{\"parent\":\"/"+alist_path+"\",\" keywords\":\"+key+\",\"scope\":0,\"page\":1,\"per_page\":100,\"password\":\"\"}",null,
 
           new OKCallBack.OKCallBackString() {
             @Override
@@ -197,7 +198,11 @@ public class Alist3 extends Spider {
 
             }
 
-            protected void onResponse(String response) {}});
+            protected void onResponse(String response) {
+              System.out.println(response);
+
+
+            }});
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
