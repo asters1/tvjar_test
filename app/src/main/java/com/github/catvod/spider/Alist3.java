@@ -203,27 +203,32 @@ public class Alist3 extends Spider {
 
             protected void onResponse(String response) {
               // System.out.println(response);
+              try {
 
-              JSONObject res=new JSONObject(response);
-              JSONObject data = res.getJSONObject("data");
-              // System.out.println(data);
-              for (int i = 0; i < data.getInt("total"); i++) {
-                JSONObject jsonObject=new JSONObject();
-              jsonObject.put("vod_id",
-                  "/"+alist_path+"/"
-                  + data.getJSONArray("content").getJSONObject(i).getString("name"));
-              jsonObject.put("vod_pic",
 
-                  getraw( "/"+alist_path+"/"
-                    + data.getJSONArray("content").getJSONObject(i).getString("name")
+                JSONObject res=new JSONObject(response);
+                JSONObject data = res.getJSONObject("data");
+                // System.out.println(data);
+                for (int i = 0; i < data.getInt("total"); i++) {
+                  JSONObject jsonObject=new JSONObject();
+                  jsonObject.put("vod_id",
+                      "/"+alist_path+"/"
+                      + data.getJSONArray("content").getJSONObject(i).getString("name"));
+                  jsonObject.put("vod_pic",
 
-                    + "/1.jpg"));
-              jsonObject.put("vod_name",
-                  data.getJSONArray("content").getJSONObject(i).getString("name"));
-              // System.out.println(jsonObject);
-              list.put(jsonObject);
+                      getraw( "/"+alist_path+"/"
+                        + data.getJSONArray("content").getJSONObject(i).getString("name")
+
+                        + "/1.jpg"));
+                  jsonObject.put("vod_name",
+                      data.getJSONArray("content").getJSONObject(i).getString("name"));
+                  // System.out.println(jsonObject);
+                  list.put(jsonObject);
+                }
+
+              } catch (Exception e) {
+                SpiderDebug.log(e);
               }
-
             }});
       result.put("list", list);
       return result.toString();
