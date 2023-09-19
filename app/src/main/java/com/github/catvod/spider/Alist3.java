@@ -29,6 +29,7 @@ public class Alist3 extends Spider {
   public String ext = "";
   public String alist_path = "";
   public String alist_name = "";
+  public String pic_path="";
 
   public void init(Context context,String ext) {
     try{
@@ -38,6 +39,7 @@ public class Alist3 extends Spider {
     this.alist_name=extjson.getString("name");
     this.siteUrl=extjson.getString("url");
     this.alist_path=extjson.getString("path");
+    this.pic_path=extjson.getString("pic");
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -90,12 +92,12 @@ public class Alist3 extends Spider {
               jsonObject.put("vod_id",
                   "/"+alist_path+"/"
                   + data.getJSONArray("content").getJSONObject(i).getString("name"));
-              jsonObject.put("vod_pic",
+              jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
 
-                  getraw( "/"+alist_path+"/"
-                    + data.getJSONArray("content").getJSONObject(i).getString("name")
-
-                    + "/1.jpg"));
+                  // getraw( "/"+alist_path+"/"
+                  //   + data.getJSONArray("content").getJSONObject(i).getString("name")
+                  //
+                  //   + "/1.jpg"));
               list.put(jsonObject);
             }
           } catch (Exception e) {
@@ -133,7 +135,8 @@ public class Alist3 extends Spider {
 
       info.put("vod_id", ids.get(0));
       // System.out.println(ids.get(0));
-      info.put("vod_pic", getraw(ids.get(0)+"/1.jpg"));
+      // info.put("vod_pic", getraw(ids.get(0)+"/1.jpg"));
+       info.put("vod_pic", pic_path+vod_name+".jpg");
 
       info.put("vod_play_from", "Alist");
       JSONObject result = new JSONObject();
@@ -218,12 +221,14 @@ public class Alist3 extends Spider {
                   jsonObject.put("vod_id",
                       "/"+alist_path+"/"
                       + data.getJSONArray("content").getJSONObject(i).getString("name"));
-                  jsonObject.put("vod_pic",
 
-                      getraw( "/"+alist_path+"/"
-                        + data.getJSONArray("content").getJSONObject(i).getString("name")
-
-                        + "/1.jpg"));
+              jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
+                  // jsonObject.put("vod_pic",
+                  //
+                  //     getraw( "/"+alist_path+"/"
+                  //       + data.getJSONArray("content").getJSONObject(i).getString("name")
+                  //
+                  //       + "/1.jpg"));
                   jsonObject.put("vod_name",
                       data.getJSONArray("content").getJSONObject(i).getString("name"));
                   // System.out.println(jsonObject);
