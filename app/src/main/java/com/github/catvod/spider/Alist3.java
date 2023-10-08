@@ -250,6 +250,11 @@ public class Alist3 extends Spider {
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
 
+      printLog("flag", flag);
+      String vf = String.join("_", vipFlags);
+      printLog("vipFlags", flag);
+
+
       String url = getraw(id);
       JSONObject result = new JSONObject();
       result.put("header", "");
