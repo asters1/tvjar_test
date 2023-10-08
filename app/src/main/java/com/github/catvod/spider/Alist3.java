@@ -274,7 +274,7 @@ public class Alist3 extends Spider {
     try {
 
       String str = key + "=" + value;
-      String str1 = "http://localhost:8080/?" + str;
+      String str1 = "http://localhost:8080/" + str;
       String res = OkHttpUtil.string(str1, null);
       System.out.println(res);
     } catch (Exception e) {
