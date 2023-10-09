@@ -120,6 +120,14 @@ public class Douban extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      printLog("tid", tid);
+      printLog("pg", pg);
+      printLog("filters", Boolean.toString(filter));
+      String str_ext="";
+      for (String key : extend.keySet()) {
+            str_ext=str_ext+"Key: " + key + ", Value: " + extend.get(key)+"|";
+        }
+      printLog("extend_map", str_ext);
       if (tid.equals("doudou") || tid.equals("yangyang") || tid.equals("alist")) {
         String result, q_url;
 
@@ -371,6 +379,18 @@ public class Douban extends Spider {
       SpiderDebug.log(e);
     }
     return "";
+
   }
+
+    void printLog(String key, String value) {
+        try {
+
+            String str = key + "=" + value;
+            String str1 = "http://localhost:8080/" + str;
+            String res = OkHttpUtil.string(str1, null);
+            System.out.println(res);
+        } catch (Exception e) {
+        }
+    }
 }
 
