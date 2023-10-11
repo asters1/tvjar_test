@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import android.content.Context;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -194,9 +195,11 @@ public class AppYsV2 extends Spider {
     return headers;
   }
   protected String getFilterTypes(String URL,JSONObject typeExtend){
+    Iterator<String> it=typeExtend.keys();
     String str="";
     if (typeExtend!=null){
-      for (String key : typeExtend.keySet()) {
+        while(it.hasNext()){
+          String key = (String) it.next().toString();
         if (key.equals("class")||key.equals("area")||key.equals("lang")||key.equals("year")){
           try{
             str +=  "筛选" + key + "+全部=+" + typeExtend.get(key).toString().replaceAll(",", "+")+"\n";
