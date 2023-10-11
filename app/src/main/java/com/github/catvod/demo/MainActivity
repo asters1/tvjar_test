@@ -180,8 +180,8 @@ public class MainActivity {
         res_class.extend = res_extend;
         if (filter_switch){
 
-          System.out.print("筛选信息-->");
-          System.out.println(res_class.extend);
+          //System.out.print("筛选信息-->");
+          //System.out.println(res_class.extend);
         }
         return res_class;
       } catch (Exception e) {
