@@ -7,9 +7,9 @@ import java.util.List;
 import android.content.Context;
 
 import com.github.catvod.crawler.Spider;
-import com.github.catvod.spider.Douban;
+// import com.github.catvod.spider.Douban;
 // import com.github.catvod.spider.Alist4;
-// import com.github.catvod.spider.AppYsV2;
+import com.github.catvod.spider.AppYsV2;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,18 +18,23 @@ public class MainActivity {
   public static void main(String[] args) {
 
     // ========================================
-    Douban spider=new Douban();
+    // Douban spider=new Douban();
+    AppYsV2 spider=new AppYsV2();
     //外部字符串
-    String str_extend = "{\"name\":\"阿里\",\"url\":\"http://localhost:5244\",\"path\":\"阿里云盘/Alist3\",\"pic\":\"http://localhost:5244/p/JDC/pic/\"}";
-    // String str_extend = "http://ys.qtw.asia/lvdou_api.php/v1.vod";
+    // String str_extend = "{\"name\":\"阿里\",\"url\":\"http://localhost:5244\",\"path\":\"阿里云盘/Alist3\",\"pic\":\"http://localhost:5244/p/JDC/pic/\"}";
+    // 彩虹
+    String str_extend = "http://ys.qtw.asia/lvdou_api.php/v1.vod";
+    // 明帝
+    // String str_extend = "https://ys.md214.cn/api.php/app/";
+    // 爱迪
+    // String str_extend = "https://api123.adys.app/xgapp.php/v3/";
+
     //筛选开关
-    boolean filter_switch = false;
-    //筛选的第几类下标(如:电影，电视剧，综艺...)
-    int filter_class_index=0;
+    boolean filter_switch = true;
     //筛选类型的第几个的下标(如:类型，地区，语言，年份....)
-    int filter_type_index=0;
+    int filter_type_index=3;
     //测试筛选的下标
-    int filter_num_index=0;
+    int filter_num_index=1;
     //搜索开关
     boolean search_switch = false;
     //搜索关键字
@@ -61,7 +66,7 @@ public class MainActivity {
 
     }else{
 
-      Class_res_home res_home = test_home(spider,filter_switch,filter_class_index,filter_type_index,filter_num_index);
+      Class_res_home res_home = test_home(spider,filter_switch,test_type_index,filter_type_index,filter_num_index);
       String tid = res_home.array.getString(test_type_index);
       List<String> res_category = test_category(spider, tid, test_category_page,filter_switch,res_home.category_extend);
       test_vod=res_category.get(test_vod_index);
@@ -112,7 +117,7 @@ public class MainActivity {
 
 
   //===========函数部分==============
-  public static Class_res_home test_home(Spider spider,boolean filter_switch,int filter_class_index,int filter_type_index,int filter_num_index) {
+  public static Class_res_home test_home(Spider spider,boolean filter_switch,int test_type_index,int filter_type_index,int filter_num_index) {
     Class_res_home res_class = new Class_res_home();
     res_class.category_extend=new HashMap<String,String>();
 
@@ -151,7 +156,7 @@ public class MainActivity {
                   HashMap<String, String> hashMap = new HashMap<>();
                   System.out.print(value.getJSONObject(k).getString("n") + "  ");
                   hashMap.put(key, value.getJSONObject(k).getString("v"));
-                  if(filter_class_index==i&&filter_type_index==j&&filter_num_index==k){
+                  if(test_type_index==i&&filter_type_index==j&&filter_num_index==k){
 
                     res_class.category_extend.put(key, value.getJSONObject(k).getString("v"));
 
@@ -178,11 +183,11 @@ public class MainActivity {
 
         res_class.array = res;
         res_class.extend = res_extend;
-        if (filter_switch){
+        // if (filter_switch){
 
-          //System.out.print("筛选信息-->");
-          //System.out.println(res_class.extend);
-        }
+          // System.out.print("筛选信息-->");
+          // System.out.println(res_class.extend);
+        // }
         return res_class;
       } catch (Exception e) {
         OsExit("未读取到type_name或者type_id,请检查!");
