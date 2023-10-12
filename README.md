@@ -162,3 +162,4 @@
 ## 注意事项
 
 - JSONObject.keySet()被弃用!(请使用迭代器 java.util.Iterator)
+- TextUtils.join("#",play_froms);其中 play_froms 是 ArrayList<String>类型
