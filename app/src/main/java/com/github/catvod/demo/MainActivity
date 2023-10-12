@@ -32,7 +32,7 @@ public class MainActivity {
     //筛选开关
     boolean filter_switch = true;
     //筛选类型的第几个的下标(如:类型，地区，语言，年份....)
-    int filter_type_index=3;
+    int filter_type_index=1;
     //测试筛选的下标
     int filter_num_index=1;
     //搜索开关
@@ -40,11 +40,11 @@ public class MainActivity {
     //搜索关键字
     String search_keyword = "汪汪";
     //测试的类型的下标,从0开始(电影,电视剧...)
-    int test_type_index = 2;
+    int test_type_index = 0;
     //测试category的页数,从1开始
     int test_category_page = 1;
     //测试的视频下标，从0开始
-    int test_vod_index =0;
+    int test_vod_index =2;
     //测试视频源的下标,从0开始
     int test_vod_from_index = 0;
 
@@ -126,6 +126,7 @@ public class MainActivity {
 
     System.out.println("==========homeContent:=======\n");
     String strhomeContent = spider.homeContent(filter_switch);
+    // System.out.println(strhomeContent);
     if (strhomeContent.equals("")) {
       System.out.println("homeContent返回为空");
       System.exit(0);
@@ -415,7 +416,7 @@ public class MainActivity {
 
       // System.out.println(list);
     } catch (Exception e) {
-      System.out.println("未读取到list,请检查!!");
+      OsExit("未读取到list,请检查!!");
     }
 
     return null;
@@ -427,6 +428,9 @@ public class MainActivity {
     System.out.println("测试源为:"+flag);
     System.out.println("测试ID为:" + id);
     String strplayerContent = spider.playerContent(flag, id, null);
+    if(strplayerContent.equals("")){
+      OsExit("playerContent返回为空");
+    }
     JSONObject res_play=new JSONObject(strplayerContent);
 
     return res_play;

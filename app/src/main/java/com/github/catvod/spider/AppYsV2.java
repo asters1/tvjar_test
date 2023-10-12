@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,6 +22,7 @@ public class AppYsV2 extends Spider {
   public  String siteUrl = "";
 
   public List<String> siteFormPasre = new ArrayList<>();
+  public HashMap<String,ArrayList<String>> parseUrlMap =new HashMap<>();
 
   //===========================
 
@@ -171,67 +173,67 @@ public class AppYsV2 extends Spider {
 
       JSONObject json_obj=new JSONObject( OkHttpUtil.string(url,getHeaders(url)));
       int totalPg=Integer.MAX_VALUE;
-        if(json_obj.has("totalpage")&&isJsonInt(json_obj, "totalpage")){
-          totalPg = json_obj.getInt("totalpage");
+      if(json_obj.has("totalpage")&&isJsonInt(json_obj, "totalpage")){
+        totalPg = json_obj.getInt("totalpage");
 
-        }else if(json_obj.has("pagecount")&&isJsonInt(json_obj, "pagecount")){
-          totalPg = json_obj.getInt("pagecount");
-        }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("total")&&isJsonInt(json_obj.getJSONObject("data"), "total")&&json_obj.getJSONObject("data").has("limit")&&isJsonInt(json_obj.getJSONObject("data"), "limit")){
-          int limit=json_obj.getJSONObject("data").getInt("limit");
-          int total=json_obj.getJSONObject("data").getInt("total");
-          if(total%limit==0){
-            totalPg=total/limit;
-          }else{
-            totalPg=total/limit+1;
+      }else if(json_obj.has("pagecount")&&isJsonInt(json_obj, "pagecount")){
+        totalPg = json_obj.getInt("pagecount");
+      }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("total")&&isJsonInt(json_obj.getJSONObject("data"), "total")&&json_obj.getJSONObject("data").has("limit")&&isJsonInt(json_obj.getJSONObject("data"), "limit")){
+        int limit=json_obj.getJSONObject("data").getInt("limit");
+        int total=json_obj.getJSONObject("data").getInt("total");
+        if(total%limit==0){
+          totalPg=total/limit;
+        }else{
+          totalPg=total/limit+1;
+        }
+      }
+      JSONArray jsonArray=null;
+      if(json_obj.has("list")){
+        jsonArray=json_obj.getJSONArray("list");
+      }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("list")){
+        jsonArray=json_obj.getJSONObject("data").getJSONArray("list");
+
+      }else if (json_obj.has("data")&& isJsonArray(json_obj.get("data").toString())){
+        jsonArray=json_obj.getJSONArray("data");
+
+      }
+
+      JSONArray videos=new JSONArray();
+      if (jsonArray!=null){
+        for (int i = 0; i < jsonArray.length(); i++) {
+          JSONObject vObj=jsonArray.getJSONObject(i);
+          JSONObject v=new JSONObject() ;
+          if (vObj.has("vod_id")){
+            v.put("vod_id", vObj.get("vod_id").toString());
+          }else if(vObj.has("nextlink")){
+            v.put("vod_id", vObj.get("nextlink").toString());
           }
-        }
-        JSONArray jsonArray=null;
-        if(json_obj.has("list")){
-          jsonArray=json_obj.getJSONArray("list");
-        }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("list")){
-          jsonArray=json_obj.getJSONObject("data").getJSONArray("list");
-
-        }else if (json_obj.has("data")&& isJsonArray(json_obj.get("data").toString())){
-          jsonArray=json_obj.getJSONArray("data");
-
-        }
-
-        JSONArray videos=new JSONArray();
-        if (jsonArray!=null){
-          for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject vObj=jsonArray.getJSONObject(i);
-            JSONObject v=new JSONObject() ;
-            if (vObj.has("vod_id")){
-              v.put("vod_id", vObj.get("vod_id").toString());
-            }else if(vObj.has("nextlink")){
-              v.put("vod_id", vObj.get("nextlink").toString());
-            }
-            if (vObj.has("vod_name")){
-              v.put("vod_name", vObj.get("vod_name").toString());
-            }else if(vObj.has("title")){
-              v.put("vod_name", vObj.get("title").toString());
-            }
-            if (vObj.has("vod_pic")){
-              v.put("vod_pic", vObj.get("vod_pic").toString());
-            }else if(vObj.has("pic")){
-              v.put("vod_pic", vObj.get("piv").toString());
-            }
-            if (vObj.has("vod_remarks")){
-              v.put("vod_remarks", vObj.get("vod_remarks").toString());
-            }else if(vObj.has("state")){
-              v.put("vod_remarks", vObj.get("state").toString());
-            }
-            videos.put(v);
+          if (vObj.has("vod_name")){
+            v.put("vod_name", vObj.get("vod_name").toString());
+          }else if(vObj.has("title")){
+            v.put("vod_name", vObj.get("title").toString());
           }
+          if (vObj.has("vod_pic")){
+            v.put("vod_pic", vObj.get("vod_pic").toString());
+          }else if(vObj.has("pic")){
+            v.put("vod_pic", vObj.get("piv").toString());
+          }
+          if (vObj.has("vod_remarks")){
+            v.put("vod_remarks", vObj.get("vod_remarks").toString());
+          }else if(vObj.has("state")){
+            v.put("vod_remarks", vObj.get("state").toString());
+          }
+          videos.put(v);
         }
-        JSONObject result=new JSONObject();
-        result.put("page", Integer.parseInt(pg));
-        result.put("pagecount",totalPg);
-        result.put("limit", 90);
-        result.put("total", Integer.MAX_VALUE);
-        result.put("list", videos);
-        // System.out.println(jsonArray);
-        return result.toString();
+      }
+      JSONObject result=new JSONObject();
+      result.put("page", Integer.parseInt(pg));
+      result.put("pagecount",totalPg);
+      result.put("limit", 90);
+      result.put("total", Integer.MAX_VALUE);
+      result.put("list", videos);
+      // System.out.println(jsonArray);
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -241,6 +243,21 @@ public class AppYsV2 extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+      String apiUrl=siteUrl;
+      String url=getPlayUrlPrefix(apiUrl) + ids.get(0);
+
+      JSONObject json_obj=new JSONObject( OkHttpUtil.string(url,getHeaders(url)));
+      JSONObject pl_obj= genPlayList(apiUrl, json_obj,ids.get(0));
+      if (pl_obj!=null){
+        JSONObject result=new JSONObject();
+        JSONArray lis=new JSONArray();
+        lis.put(pl_obj);
+        result.put("list", lis);
+        return result.toString();
+
+      }else{
+        return "";
+      }
 
 
     } catch (Exception e) {
@@ -274,6 +291,316 @@ public class AppYsV2 extends Spider {
     }else{
       return "";
     }
+  }
+  protected JSONObject genPlayList(String URL,JSONObject object,String vid) {
+    try{
+      JSONObject vod =new JSONObject();
+      ArrayList<String> playUrls= new ArrayList<String>();
+      ArrayList<String> playFlags= new ArrayList<String>();
+      if (URL.contains("api.php/app")) {
+        JSONObject data=object.getJSONObject("data");
+        if (data.has("vod_id")){
+          vod.put("vod_id", data.get("vod_id").toString());
+          vod.put("vod_id", data.get("vod_id").toString());
+
+        }else{
+          vod.put("vod_id", "");
+
+        }
+        if (data.has("vod_name")){
+          vod.put("vod_name", data.get("vod_name").toString());
+          vod.put("vod_name", data.get("vod_name").toString());
+
+        }else{
+          vod.put("vod_name", "");
+
+        }
+        if (data.has("vod_pic")){
+          vod.put("vod_pic", data.get("vod_pic").toString());
+          vod.put("vod_pic", data.get("vod_pic").toString());
+
+        }else{
+          vod.put("vod_pic", "");
+
+        }
+        if (data.has("vod_class")){
+          vod.put("type_name", data.get("vod_class").toString());
+          vod.put("vod_class", data.get("vod_class").toString());
+
+        }else{
+          vod.put("vod_class", "");
+
+        }
+        if (data.has("vod_year")){
+          vod.put("vod_year", data.get("vod_year").toString());
+          vod.put("vod_year", data.get("vod_year").toString());
+
+        }else{
+          vod.put("vod_year", "");
+
+        }
+        if (data.has("vod_area")){
+          vod.put("vod_area", data.get("vod_area").toString());
+          vod.put("vod_area", data.get("vod_area").toString());
+
+        }else{
+          vod.put("vod_area", "");
+
+        }
+        if (data.has("vod_remarks")){
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+
+        }else{
+          vod.put("vod_remarks", "");
+
+        }
+        if (data.has("vod_actor")){
+          vod.put("vod_actor", data.get("vod_actor").toString());
+          vod.put("vod_actor", data.get("vod_actor").toString());
+
+        }else{
+          vod.put("vod_actor", "");
+
+        }
+        if (data.has("vod_director")){
+          vod.put("vod_director", data.get("vod_director").toString());
+          vod.put("vod_director", data.get("vod_director").toString());
+
+        }else{
+          vod.put("vod_director", "");
+
+        }
+        if (data.has("vod_content")){
+          vod.put("vod_content", data.get("vod_content").toString());
+          vod.put("vod_content", data.get("vod_content").toString());
+
+        }else{
+          vod.put("vod_content", "");
+
+        }
+        JSONArray vodUrlWithPlayer=data.getJSONArray("vod_url_with_player");
+        for (int i = 0; i < vodUrlWithPlayer.length(); i++) {
+          JSONObject from=vodUrlWithPlayer.getJSONObject(i);
+          String flag=from.get("code").toString().trim();
+          if (flag.equals("")){flag = from.get("name").toString().trim();}
+          playFlags.add(flag);
+          playUrls.add(from.get("url").toString());
+          String purl =from.getString("parse_api");
+          ArrayList<String> purl_list = new ArrayList<>();
+          purl_list.add(purl);
+          parseUrlMap.put(flag, purl_list);
+
+
+        }
+      }else if (URL.contains("xgapp")) {
+
+        JSONObject data=object.getJSONObject("data").getJSONObject("vod_info");
+        if (data.has("vod_id")){
+          vod.put("vod_id", data.get("vod_id").toString());
+          vod.put("vod_id", data.get("vod_id").toString());
+
+        }else{
+          vod.put("vod_id", "");
+
+        }
+        if (data.has("vod_name")){
+          vod.put("vod_name", data.get("vod_name").toString());
+          vod.put("vod_name", data.get("vod_name").toString());
+
+        }else{
+          vod.put("vod_name", "");
+
+        }
+        if (data.has("vod_pic")){
+          vod.put("vod_pic", data.get("vod_pic").toString());
+          vod.put("vod_pic", data.get("vod_pic").toString());
+
+        }else{
+          vod.put("vod_pic", "");
+
+        }
+        if (data.has("vod_class")){
+          vod.put("type_name", data.get("vod_class").toString());
+          vod.put("vod_class", data.get("vod_class").toString());
+
+        }else{
+          vod.put("vod_class", "");
+
+        }
+        if (data.has("vod_year")){
+          vod.put("vod_year", data.get("vod_year").toString());
+          vod.put("vod_year", data.get("vod_year").toString());
+
+        }else{
+          vod.put("vod_year", "");
+
+        }
+        if (data.has("vod_area")){
+          vod.put("vod_area", data.get("vod_area").toString());
+          vod.put("vod_area", data.get("vod_area").toString());
+
+        }else{
+          vod.put("vod_area", "");
+
+        }
+        if (data.has("vod_remarks")){
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+
+        }else{
+          vod.put("vod_remarks", "");
+
+        }
+        if (data.has("vod_actor")){
+          vod.put("vod_actor", data.get("vod_actor").toString());
+          vod.put("vod_actor", data.get("vod_actor").toString());
+
+        }else{
+          vod.put("vod_actor", "");
+
+        }
+        if (data.has("vod_director")){
+          vod.put("vod_director", data.get("vod_director").toString());
+          vod.put("vod_director", data.get("vod_director").toString());
+
+        }else{
+          vod.put("vod_director", "");
+
+        }
+        if (data.has("vod_content")){
+          vod.put("vod_content", data.get("vod_content").toString());
+          vod.put("vod_content", data.get("vod_content").toString());
+
+        }else{
+          vod.put("vod_content", "");
+
+        }
+        JSONArray vodUrlWithPlayer=data.getJSONArray("vod_url_with_player");
+        for (int i = 0; i < vodUrlWithPlayer.length(); i++) {
+          JSONObject from=vodUrlWithPlayer.getJSONObject(i);
+          String flag=from.get("code").toString().trim();
+          if (flag.equals("")){flag = from.get("name").toString().trim();}
+          playFlags.add(flag);
+          playUrls.add(from.get("url").toString());
+          String purl =from.getString("parse_api");
+          ArrayList<String> purl_list = new ArrayList<>();
+          purl_list.add(purl);
+          parseUrlMap.put(flag, purl_list);
+        }
+      }else if (URL.contains(".vod")) {
+        JSONObject data=object.getJSONObject("data");
+        if (data.has("vod_id")){
+          vod.put("vod_id", data.get("vod_id").toString());
+          vod.put("vod_id", data.get("vod_id").toString());
+
+        }else{
+          vod.put("vod_id", "");
+
+        }
+        if (data.has("vod_name")){
+          vod.put("vod_name", data.get("vod_name").toString());
+          vod.put("vod_name", data.get("vod_name").toString());
+
+        }else{
+          vod.put("vod_name", "");
+
+        }
+        if (data.has("vod_pic")){
+          vod.put("vod_pic", data.get("vod_pic").toString());
+          vod.put("vod_pic", data.get("vod_pic").toString());
+
+        }else{
+          vod.put("vod_pic", "");
+
+        }
+        if (data.has("vod_class")){
+          vod.put("type_name", data.get("vod_class").toString());
+          vod.put("vod_class", data.get("vod_class").toString());
+
+        }else{
+          vod.put("vod_class", "");
+
+        }
+        if (data.has("vod_year")){
+          vod.put("vod_year", data.get("vod_year").toString());
+          vod.put("vod_year", data.get("vod_year").toString());
+
+        }else{
+          vod.put("vod_year", "");
+
+        }
+        if (data.has("vod_area")){
+          vod.put("vod_area", data.get("vod_area").toString());
+          vod.put("vod_area", data.get("vod_area").toString());
+
+        }else{
+          vod.put("vod_area", "");
+
+        }
+        if (data.has("vod_remarks")){
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+          vod.put("vod_remarks", data.get("vod_remarks").toString());
+
+        }else{
+          vod.put("vod_remarks", "");
+
+        }
+        if (data.has("vod_actor")){
+          vod.put("vod_actor", data.get("vod_actor").toString());
+          vod.put("vod_actor", data.get("vod_actor").toString());
+
+        }else{
+          vod.put("vod_actor", "");
+
+        }
+        if (data.has("vod_director")){
+          vod.put("vod_director", data.get("vod_director").toString());
+          vod.put("vod_director", data.get("vod_director").toString());
+
+        }else{
+          vod.put("vod_director", "");
+
+        }
+        if (data.has("vod_content")){
+          vod.put("vod_content", data.get("vod_content").toString());
+          vod.put("vod_content", data.get("vod_content").toString());
+
+        }else{
+          vod.put("vod_content", "");
+
+        }
+        JSONArray vodUrlWithPlayer=data.getJSONArray("vod_play_list");
+
+        for (int i = 0; i < vodUrlWithPlayer.length(); i++) {
+          JSONObject from=vodUrlWithPlayer.getJSONObject(i);
+          String flag=from.getJSONObject("player_info").get("from").toString().trim();
+          if (flag.equals("")){flag = from.getJSONObject("player_info").get("show").toString().trim();}
+          playFlags.add(flag);
+          playUrls.add(from.get("url").toString());
+          String parse1 =from.getJSONObject("player_info").getString("parse");
+          String parse2 =from.getJSONObject("player_info").getString("parse2");
+          ArrayList<String> purl_list = new ArrayList<>();
+          purl_list.add(RemoveTwoPoint( parse1));
+          purl_list.add(RemoveTwoPoint(parse2));
+          parseUrlMap.put(flag, purl_list);
+          
+
+        }
+
+      }
+      vod.put("vod_play_from",  TextUtils.join("$$$", playFlags));
+      vod.put("vod_play_url",  TextUtils.join("$$$", playUrls));
+      return vod;
+
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+    }
+    return null;
+  }
+  protected String RemoveTwoPoint(String Str) {
+    return Str.replaceAll("\\.\\.","\\.");
+
   }
   protected boolean isBan(String key) {
     return "伦理".equals(key) || "情色".equals(key) || "福利".equals(key);
@@ -329,6 +656,15 @@ public class AppYsV2 extends Spider {
       return true;
     } catch (Exception e) {
       return false;
+    }
+  }
+  protected String getPlayUrlPrefix(String URL){
+    if (URL.contains("api.php/app") || URL.contains("xgapp")) {
+      return URL + "video_detail?id=";
+    } else if (URL.contains(".vod")) {
+      return URL + "/detail?vod_id=";
+    } else {
+      return "";
     }
   }
   protected String getCateFilterUrlSuffix(String URL){
