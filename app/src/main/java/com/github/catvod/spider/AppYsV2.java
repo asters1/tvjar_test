@@ -277,11 +277,57 @@ public class AppYsV2 extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+      JSONObject result =new JSONObject();
+      id=id.trim();
+      String parse =GetparseUrlMapValue(parseUrlMap);
+      if(id.startsWith("http")&&isVideo(id) ) {
+        result.put("header", getHeaders(id));
+        result.put("parse", 0);
+        result.put("url", id);
+        return result.toString();
+      }else if(!parse.equals("")){
+        String url=parse+id;
+        String purl=getPlayUrl(url);
+        result.put("header", getHeaders(purl));
+        result.put("parse", 0);
+        result.put("url", purl);
+        return result.toString();
+      }else{
+        result.put("header", getHeaders(id));
+        result.put("parse", 2);
+        result.put("url", id);
+
+        return "";
+      }
 
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
     return "";
+  }
+  public String GetparseUrlMapValue(HashMap<String,ArrayList<String>> m){
+    for(String key:m.keySet()){
+      for (int i = 0; i < m.get(key).size(); i++) {
+        if (!m.get(key).get(i).equals("")){
+          return m.get(key).get(i);
+        }
+      }
+    }
+
+
+    return "";
+  }
+  public String getPlayUrl(String URL){
+    try{
+      System.out.println(URL);
+      JSONObject json_obj=new JSONObject( OkHttpUtil.string(URL,getHeaders(URL)));
+      return json_obj.get("url").toString();
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+    }
+    return "";
+
+
   }
   public String getCateUrl(String URL){
     if(URL.contains("api.php/app")||URL.contains("xgapp")){
@@ -584,7 +630,7 @@ public class AppYsV2 extends Spider {
           purl_list.add(RemoveTwoPoint( parse1));
           purl_list.add(RemoveTwoPoint(parse2));
           parseUrlMap.put(flag, purl_list);
-          
+
 
         }
 
@@ -676,6 +722,15 @@ public class AppYsV2 extends Spider {
       return "&page=#PN#&area=筛选area&type=筛选class&start=筛选year";
     }
   }
+  protected boolean isVideo(String URL){
+    String[] video_type_list={"\\.m3u8","\\.mp4","\\.mkv"};
+    for (int i=0;i<video_type_list.length;i++){
+      if(URL.contains(video_type_list[i])){
+        return true;
+      }
+    }
+    return false;
+  }
   protected String getCateFilterUrlPrefix(String URL){
     if (URL.contains("api.php/app")||URL.contains("xgapp")){
       return URL + "video?tid=";
@@ -686,6 +741,7 @@ public class AppYsV2 extends Spider {
 
     }
   }
+
 
 
   //.equls=================

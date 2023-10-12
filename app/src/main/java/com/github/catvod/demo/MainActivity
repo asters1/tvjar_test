@@ -103,12 +103,13 @@ public class MainActivity {
       System.out.println("未定义");
     }
     try{
-      System.out.print("\n//url");
+      System.out.print("\n//url\n");
       System.out.println(res_play.getString("url"));
 
     } catch (Exception e) {
       System.out.println("未定义");
     }
+    System.exit(0);
   }
 
 
