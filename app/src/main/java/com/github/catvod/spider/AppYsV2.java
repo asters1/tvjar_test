@@ -69,12 +69,13 @@ public class AppYsV2 extends Spider {
           if (filter){
             if(!isJsonArray( jobj.get("type_extend").toString())){
               typeExtend=jobj.getJSONObject("type_extend");
+              // System.out.println(typeExtend);
             }
             String filterStr = getFilterTypes(url, typeExtend);
             String[] filters = filterStr.split("\n");
 
             JSONArray class_value=new JSONArray();
-            for(int k=1;k<filters.length;k++){
+            for(int k=0;k<filters.length;k++){
               JSONArray class_one_value=new JSONArray();
               String l=filters[k].trim();
               if(l.equals("")){
@@ -138,6 +139,99 @@ public class AppYsV2 extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      String apiUrl=siteUrl;
+      String url=getCateFilterUrlPrefix(apiUrl) + tid + getCateFilterUrlSuffix(apiUrl);
+
+      url = url.replace("#PN#", pg);
+      if (extend.containsKey("class")){
+        url = url.replace("筛选class", extend.get("class"));
+      }else{
+        url = url.replace("筛选class", "");
+      }
+      if (extend.containsKey("area")){
+        url = url.replace("筛选area", extend.get("area"));
+      }else{
+        url = url.replace("筛选area", "");
+      }
+      if (extend.containsKey("lang")){
+        url = url.replace("筛选lang", extend.get("lang"));
+      }else{
+        url = url.replace("筛选lang", "");
+      }
+      if (extend.containsKey("year")){
+        url = url.replace("筛选year", extend.get("year"));
+      }else{
+        url = url.replace("筛选year", "");
+      }
+      if (extend.containsKey("排序")){
+        url = url.replace("排序", extend.get("排序"));
+      }else{
+        url = url.replace("排序", "");
+      }
+
+      JSONObject json_obj=new JSONObject( OkHttpUtil.string(url,getHeaders(url)));
+      int totalPg=Integer.MAX_VALUE;
+        if(json_obj.has("totalpage")&&isJsonInt(json_obj, "totalpage")){
+          totalPg = json_obj.getInt("totalpage");
+
+        }else if(json_obj.has("pagecount")&&isJsonInt(json_obj, "pagecount")){
+          totalPg = json_obj.getInt("pagecount");
+        }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("total")&&isJsonInt(json_obj.getJSONObject("data"), "total")&&json_obj.getJSONObject("data").has("limit")&&isJsonInt(json_obj.getJSONObject("data"), "limit")){
+          int limit=json_obj.getJSONObject("data").getInt("limit");
+          int total=json_obj.getJSONObject("data").getInt("total");
+          if(total%limit==0){
+            totalPg=total/limit;
+          }else{
+            totalPg=total/limit+1;
+          }
+        }
+        JSONArray jsonArray=null;
+        if(json_obj.has("list")){
+          jsonArray=json_obj.getJSONArray("list");
+        }else if (json_obj.has("data")&&!isJsonArray(json_obj.get("data").toString())&&json_obj.getJSONObject("data").has("list")){
+          jsonArray=json_obj.getJSONObject("data").getJSONArray("list");
+
+        }else if (json_obj.has("data")&& isJsonArray(json_obj.get("data").toString())){
+          jsonArray=json_obj.getJSONArray("data");
+
+        }
+
+        JSONArray videos=new JSONArray();
+        if (jsonArray!=null){
+          for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject vObj=jsonArray.getJSONObject(i);
+            JSONObject v=new JSONObject() ;
+            if (vObj.has("vod_id")){
+              v.put("vod_id", vObj.get("vod_id").toString());
+            }else if(vObj.has("nextlink")){
+              v.put("vod_id", vObj.get("nextlink").toString());
+            }
+            if (vObj.has("vod_name")){
+              v.put("vod_name", vObj.get("vod_name").toString());
+            }else if(vObj.has("title")){
+              v.put("vod_name", vObj.get("title").toString());
+            }
+            if (vObj.has("vod_pic")){
+              v.put("vod_pic", vObj.get("vod_pic").toString());
+            }else if(vObj.has("pic")){
+              v.put("vod_pic", vObj.get("piv").toString());
+            }
+            if (vObj.has("vod_remarks")){
+              v.put("vod_remarks", vObj.get("vod_remarks").toString());
+            }else if(vObj.has("state")){
+              v.put("vod_remarks", vObj.get("state").toString());
+            }
+            videos.put(v);
+          }
+        }
+        JSONObject result=new JSONObject();
+        result.put("page", Integer.parseInt(pg));
+        result.put("pagecount",totalPg);
+        result.put("limit", 90);
+        result.put("total", Integer.MAX_VALUE);
+        result.put("list", videos);
+        // System.out.println(jsonArray);
+        return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -198,8 +292,8 @@ public class AppYsV2 extends Spider {
     Iterator<String> it=typeExtend.keys();
     String str="";
     if (typeExtend!=null){
-        while(it.hasNext()){
-          String key = (String) it.next().toString();
+      while(it.hasNext()){
+        String key = (String) it.next().toString();
         if (key.equals("class")||key.equals("area")||key.equals("lang")||key.equals("year")){
           try{
             str +=  "筛选" + key + "+全部=+" + typeExtend.get(key).toString().replaceAll(",", "+")+"\n";
@@ -220,6 +314,14 @@ public class AppYsV2 extends Spider {
     }
     return str;
   }
+  protected boolean isJsonInt(JSONObject json,String key){
+    try{
+      json.getInt(key);
+      return true;
+    } catch (Exception e) {
+      return false;
+    }
+  }
   protected boolean isJsonArray(String str_obj){
     try{
       new JSONArray(str_obj);
@@ -228,6 +330,26 @@ public class AppYsV2 extends Spider {
       return false;
     }
   }
+  protected String getCateFilterUrlSuffix(String URL){
+    if (URL.contains("api.php/app") || URL.contains("xgapp")) {
+      return "&class=筛选class&area=筛选area&lang=筛选lang&year=筛选year&limit=18&pg=#PN#";
+    } else if (URL.contains(".vod")) {
+      return "&class=筛选class&area=筛选area&lang=筛选lang&year=筛选year&by=排序&limit=18&page=#PN#";
+    } else {
+      return "&page=#PN#&area=筛选area&type=筛选class&start=筛选year";
+    }
+  }
+  protected String getCateFilterUrlPrefix(String URL){
+    if (URL.contains("api.php/app")||URL.contains("xgapp")){
+      return URL + "video?tid=";
+    }else if (URL.contains(".vod")){
+      return URL + "?type=";
+    }else{
+      return URL + "?ac=list&class=";
+
+    }
+  }
+
 
   //.equls=================
   void printLog(String key, String value) {
