@@ -242,6 +242,7 @@ public class AppYsV2 extends Spider {
   public String detailContent(List<String> ids) {
     try {
 
+
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
