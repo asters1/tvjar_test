@@ -6,6 +6,10 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.text.TextUtils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -268,6 +272,9 @@ public class AppYsV2 extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      String apiUrl=siteUrl;
+      System.out.println(encodeURIComponent(key));
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -305,6 +312,16 @@ public class AppYsV2 extends Spider {
       SpiderDebug.log(e);
     }
     return "";
+  }
+
+  public String encodeURIComponent(String key){
+    try{
+      String encodedKey = URLEncoder.encode(key, StandardCharsets.UTF_8);
+      return encodedKey;
+    } catch (Exception e) {
+    }
+    return "";
+
   }
   public String GetparseUrlMapValue(HashMap<String,ArrayList<String>> m){
     for(String key:m.keySet()){
