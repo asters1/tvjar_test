@@ -280,6 +280,7 @@ public class AppYsV2 extends Spider {
       JSONObject result =new JSONObject();
       id=id.trim();
       String parse =GetparseUrlMapValue(parseUrlMap);
+      System.out.println(id.startsWith("http"));
       if(id.startsWith("http")&&isVideo(id) ) {
         result.put("header", getHeaders(id));
         result.put("parse", 0);
@@ -296,8 +297,8 @@ public class AppYsV2 extends Spider {
         result.put("header", getHeaders(id));
         result.put("parse", 2);
         result.put("url", id);
+        return result.toString();
 
-        return "";
       }
 
     } catch (Exception e) {
@@ -723,7 +724,7 @@ public class AppYsV2 extends Spider {
     }
   }
   protected boolean isVideo(String URL){
-    String[] video_type_list={"\\.m3u8","\\.mp4","\\.mkv"};
+    String[] video_type_list={".m3u8",".mp4",".mkv"};
     for (int i=0;i<video_type_list.length;i++){
       if(URL.contains(video_type_list[i])){
         return true;
