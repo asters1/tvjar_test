@@ -272,7 +272,37 @@ public class AppYsV2 extends Spider {
   public String searchContent(String key, boolean quick) {
     try {
       String apiUrl=siteUrl;
-      System.out.println(encodeURIComponent(key));
+      String url= getSearchUrl(apiUrl, encodeURIComponent(key));
+      JSONObject json_obj=new JSONObject( OkHttpUtil.string(url,getHeaders(url)));
+      JSONArray jsonArray=null;
+      JSONArray videos=new JSONArray();
+
+      if ( json_obj.has("list")&&isJsonArray( json_obj.get("list").toString())){
+        jsonArray=json_obj.getJSONArray("list");
+      }else if(json_obj.has("data") &&(!isJsonArray(json_obj.get("data").toString()))&&json_obj.getJSONObject("data").has("list")&&isJsonArray(json_obj.getJSONObject("data").get("list").toString())){
+
+        jsonArray=json_obj.getJSONObject("data").getJSONArray("list");
+      }else if(json_obj.has("data")&&isJsonArray(json_obj.get("data").toString())){
+
+        jsonArray=json_obj.getJSONArray("data");
+      }
+      if(jsonArray!=null){
+        for (int i = 0; i < jsonArray.length(); i++) {
+          JSONObject v=new JSONObject();
+
+          if (jsonArray.getJSONObject(i).has("vod_id")){
+            v.put("vod_id",jsonArray.getJSONObject(i).get("vod_id").toString() );
+            v.put("vod_name",jsonArray.getJSONObject(i).get("vod_name").toString() );
+            v.put("vod_remarks",jsonArray.getJSONObject(i).get("vod_remarks").toString() );
+            v.put("vod_pic",jsonArray.getJSONObject(i).get("vod_pic").toString() );
+            videos.put(v);
+          }
+        }
+      }
+
+      JSONObject result =new JSONObject();
+      result.put("list", videos);
+      return result.toString();
 
 
     } catch (Exception e) {
@@ -345,6 +375,14 @@ public class AppYsV2 extends Spider {
     return "";
 
 
+  }
+  public String getSearchUrl(String URL,String KEY){
+    if (URL.contains(".vod")) {
+      return URL + "?wd=" + KEY + "&page=";
+    } else if (URL.contains("api.php/app") || URL.contains("xgapp")) {
+      return URL + "search?text=" + KEY + "&pg=";
+    }
+    return "";
   }
   public String getCateUrl(String URL){
     if(URL.contains("api.php/app")||URL.contains("xgapp")){
