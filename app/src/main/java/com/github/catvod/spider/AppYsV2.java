@@ -7,7 +7,6 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 
 
 import java.util.HashMap;
@@ -316,7 +315,7 @@ public class AppYsV2 extends Spider {
 
   public String encodeURIComponent(String key){
     try{
-      String encodedKey = URLEncoder.encode(key, StandardCharsets.UTF_8);
+      String encodedKey = URLEncoder.encode(key);
       return encodedKey;
     } catch (Exception e) {
     }
