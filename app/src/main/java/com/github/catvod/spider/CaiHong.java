@@ -443,7 +443,7 @@ public class CaiHong extends Spider {
     }
   }
   protected JSONObject genPlayList(String URL,JSONObject object,String vid) {
-
+try{
     JSONObject vod =new JSONObject();
     ArrayList<String> playUrls= new ArrayList<String>();
     ArrayList<String> playFlags= new ArrayList<String>();
@@ -545,6 +545,10 @@ public class CaiHong extends Spider {
     // System.out.println(vodUrlWithPlayer);
 
     return vod;
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+    }
+return null;
   }
   protected boolean isVideo(String URL){
     String[] video_type_list={".m3u8",".mp4",".mkv"};
