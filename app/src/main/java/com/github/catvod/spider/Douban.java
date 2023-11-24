@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.os.Build;
 import okhttp3.Call;
 import okhttp3.Response;
 
@@ -62,6 +63,9 @@ public class Douban extends Spider {
 
   public String homeContent(boolean filter) {
     try {
+
+      printLog("Build.VERSION.RELEASE", Build.VERSION.RELEASE);
+      printLog("Build.BRAND", Build.BRAND);
       // 电视剧
       // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=20&count=20&selected_categories={"地区":"华语"}&uncollect=false&tags=华语
       // 电影
@@ -382,15 +386,15 @@ public class Douban extends Spider {
 
   }
 
-    void printLog(String key, String value) {
-        try {
+  void printLog(String key, String value) {
+    try {
 
-            String str = key + "=" + value;
-            String str1 = "http://localhost:8080/" + str;
-            String res = OkHttpUtil.string(str1, null);
-            System.out.println(res);
-        } catch (Exception e) {
-        }
+      String str = key + "=" + value;
+      String str1 = "http://localhost:8080/?" + str;
+      String res = OkHttpUtil.string(str1, null);
+      System.out.println(res);
+    } catch (Exception e) {
     }
+  }
 }
 
