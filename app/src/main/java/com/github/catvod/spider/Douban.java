@@ -66,6 +66,7 @@ public class Douban extends Spider {
 
       printLog("Build.VERSION.RELEASE", Build.VERSION.RELEASE);
       printLog("Build.BRAND", Build.BRAND);
+      printLog("Build.MODEL", Build.MODEL);
       // 电视剧
       // https://m.douban.com/rexxar/api/v2/tv/recommend?refresh=0&start=20&count=20&selected_categories={"地区":"华语"}&uncollect=false&tags=华语
       // 电影
