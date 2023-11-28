@@ -59,6 +59,18 @@ public class ShaoEr extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+      String StrTime=String.valueOf(System.currentTimeMillis());
+      StringBuilder URLSB = new StringBuilder();
+      URLSB.append("http://ys.changmengyun.com/api.php/provide/vod_detail?appVersionName="+appVersionName);
+      URLSB.append("&imei=&time="+StrTime);
+      URLSB.append("&id="+ids.get(0));
+      URLSB.append("&deviceScreen=2340*1080&appVersionCode="+appVersionCode);
+      URLSB.append("&deviceModel="+deviceModel);
+      URLSB.append("&app=ylys&deviceBrand="+deviceBrand);
+      URLSB.append("&devices=android&deviceVersion="+deviceVersion);
+      String res=OkHttpUtil.string(URLSB.toString(), GetHeaders(StrTime));
+
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
