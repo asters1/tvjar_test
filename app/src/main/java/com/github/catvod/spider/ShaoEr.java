@@ -17,6 +17,7 @@ import android.os.Build;
 import java.util.HashMap;
 import java.net.URLEncoder;
 import java.util.List;
+import java.util.ArrayList;
 
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 
@@ -59,6 +60,8 @@ public class ShaoEr extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+      JSONObject result = new JSONObject();
+      JSONArray list =new JSONArray();
       String StrTime=String.valueOf(System.currentTimeMillis());
       StringBuilder URLSB = new StringBuilder();
       URLSB.append("http://ys.changmengyun.com/api.php/provide/vod_detail?appVersionName="+appVersionName);
@@ -69,6 +72,44 @@ public class ShaoEr extends Spider {
       URLSB.append("&app=ylys&deviceBrand="+deviceBrand);
       URLSB.append("&devices=android&deviceVersion="+deviceVersion);
       String res=OkHttpUtil.string(URLSB.toString(), GetHeaders(StrTime));
+
+      JSONObject res_obj=new JSONObject(res);
+      JSONObject data_obj=res_obj.getJSONObject("data");
+      JSONObject vod_obj = new JSONObject();
+      vod_obj.put("vod_id", ids.get(0));
+      vod_obj.put("vod_name", data_obj.getString("name"));
+      vod_obj.put("vod_pic", data_obj.getString("img"));
+      vod_obj.put("type_name", data_obj.getString("type"));
+      vod_obj.put("vod_year", data_obj.getString("year"));
+      vod_obj.put("vod_remarks", data_obj.getString("msg"));
+      vod_obj.put("vod_content", data_obj.getString("info"));
+      // vod_obj.put("", data_obj.getString(""));
+JSONArray player_info_array = data_obj.getJSONArray("player_info");
+ ArrayList<String> play_from_array = new ArrayList<String>();
+ ArrayList<String> play_url_list = new ArrayList<String>();
+
+for (int i=0;i<player_info_array.length();i++){
+  JSONObject v_obj=player_info_array.getJSONObject(i);
+  play_from_array.add(v_obj.getString("show"));
+
+  JSONArray u_array=v_obj.getJSONArray("video_info");
+
+ ArrayList<String> url_list = new ArrayList<String>();
+  for(int j=0;j<u_array.length();j++){
+    url_list.add( u_array.getJSONObject(j).getString("name")+"$"+u_array.getJSONObject(j).getJSONArray("url").getString(0));
+  }
+
+  play_url_list.add(TextUtils.join("#", url_list));
+  
+
+}
+       vod_obj.put("vod_play_from", TextUtils.join("$$$",  play_from_array));
+       vod_obj.put("vod_play_url", TextUtils.join("$$$",  play_url_list));
+       
+       list.put(vod_obj);
+       result.put("list", list);
+
+            return result.toString();
 
 
 
@@ -116,6 +157,15 @@ public class ShaoEr extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+      String StrTime=String.valueOf(System.currentTimeMillis());
+      String res= OkHttpUtil.string(id, GetHeaders(StrTime));
+      JSONObject r_obj=new JSONObject(res);
+      JSONObject result=new JSONObject();
+      result.put("parse", 0);
+      result.put("header", r_obj.getJSONObject("data").get("header").toString());
+      result.put("url", r_obj.getJSONObject("data").getString("url"));
+      return result.toString();
+      
 
     } catch (Exception e) {
       SpiderDebug.log(e);
