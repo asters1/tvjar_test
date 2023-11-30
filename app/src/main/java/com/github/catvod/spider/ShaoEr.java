@@ -83,7 +83,6 @@ public class ShaoEr extends Spider {
         result.put("filters", filters);
 
       }
-      System.out.println(result.toString());
       return result.toString();
 
 
@@ -95,12 +94,36 @@ public class ShaoEr extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      String SX="";
+      for (String key : extend.keySet()) {
+        SX=SX+key+"="+extend.get(key);
+      }
+      // System.out.println(SX);
       if (tid.equals("TX")){
 
-        String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset=0&pagesize=21&iarea=-1&iyear=2&gender=-1&itype=5&sort=75";
 
-        // String a=OkHttpUtil.string(url, null);
-        // System.out.println(a);
+        String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage="+pg+"&offset=0&pagesize=21&sort=75"+SX;
+        String content=OkHttpUtil.string(url, null);
+         Elements listItems = Jsoup.parse(content).select(".list_item");
+
+           for (int i = 0; i < listItems.size(); i++) {
+                    Element item = listItems.get(i);
+                    String title = item.select("a").attr("title");
+ String a= item.select("img").attr("src");
+ System.out.println(a);
+                    // if (item.select(".figure_caption") == null) {
+                    //     str3 = "";
+                    // } else {
+                    //     str3 = item.select(".figure_caption").text();
+                    // }
+                    // String Pd2 = item.select("a").attr("data-float");
+                    // JSONObject jSONObject2 = new JSONObject();
+                    // jSONObject2.put("vod_id", Pd2);
+                    // jSONObject2.put("vod_name", Pd);
+                    // jSONObject2.put("vod_pic", q);
+                    // jSONObject2.put("vod_remarks", str3);
+                    // jSONArray.put(jSONObject2);
+                }
 
 
       }
@@ -288,70 +311,92 @@ public class ShaoEr extends Spider {
     }
   }
   public JSONObject GetFilter(String key,String name,JSONArray value){
-try {
-  JSONObject result= new JSONObject();
-  result.put("key", key);
-  result.put("name", name);
-  result.put("value", value);
-  return result;
-  
-} catch (Exception e) {
-}
+    try {
+      JSONObject result= new JSONObject();
+      result.put("key", key);
+      result.put("name", name);
+      result.put("value", value);
+      return result;
+
+    } catch (Exception e) {
+    }
 
 
-return null;
+    return null;
 
   }
   public JSONArray GetTXFilters(){
-try {
-  JSONArray result=new JSONArray();
-        // String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset=0&pagesize=21&iarea=-1&iyear=2&gender=-1&itype=5&sort=75";
-  //地区
-  JSONArray iarea=new JSONArray();
-  iarea.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
-  iarea.put(new JSONObject("{\"n\":\"国内\",\"v\":\"3\"}"));
-  iarea.put(new JSONObject("{\"n\":\"欧美\",\"v\":\"1\"}"));
-  iarea.put(new JSONObject("{\"n\":\"日韩\",\"v\":\"2\"}"));
-   //年龄
-  JSONArray iyear=new JSONArray();
-  iyear.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
-  iyear.put(new JSONObject("{\"n\":\"0-3岁\",\"v\":\"1\"}"));
-  iyear.put(new JSONObject("{\"n\":\"4-6岁\",\"v\":\"2\"}"));
-  iyear.put(new JSONObject("{\"n\":\"7-9岁\",\"v\":\"3\"}"));
-  iyear.put(new JSONObject("{\"n\":\"10岁以上\",\"v\":\"4\"}"));
-   //性别
-  JSONArray gender=new JSONArray();
-  gender.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
-  gender.put(new JSONObject("{\"n\":\"男孩\",\"v\":\"2\"}"));
-  gender.put(new JSONObject("{\"n\":\"女孩\",\"v\":\"1\"}"));
-  //类型
-  JSONArray itype=new JSONArray();
-  itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"益智早教\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"手工·绘画\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"玩具\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"英语\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"早教\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"数学\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"国学\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"冒险\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"交通工具\",\"v\":\"1\"}"));
-  itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
+    try {
+      JSONArray result=new JSONArray();
+      // String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset=0&pagesize=21&iarea=-1&iyear=2&gender=-1&itype=5&sort=75";
+      //地区
+      JSONArray iarea=new JSONArray();
+      iarea.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+      iarea.put(new JSONObject("{\"n\":\"国内\",\"v\":\"3\"}"));
+      iarea.put(new JSONObject("{\"n\":\"欧美\",\"v\":\"1\"}"));
+      iarea.put(new JSONObject("{\"n\":\"日韩\",\"v\":\"2\"}"));
+      //年龄
+      JSONArray iyear=new JSONArray();
+      iyear.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+      iyear.put(new JSONObject("{\"n\":\"0-3岁\",\"v\":\"1\"}"));
+      iyear.put(new JSONObject("{\"n\":\"4-6岁\",\"v\":\"2\"}"));
+      iyear.put(new JSONObject("{\"n\":\"7-9岁\",\"v\":\"3\"}"));
+      iyear.put(new JSONObject("{\"n\":\"10岁以上\",\"v\":\"4\"}"));
+      //性别
+      JSONArray gender=new JSONArray();
+      gender.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+      gender.put(new JSONObject("{\"n\":\"男孩\",\"v\":\"2\"}"));
+      gender.put(new JSONObject("{\"n\":\"女孩\",\"v\":\"1\"}"));
+      //类型
+      JSONArray itype=new JSONArray();
+      itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"益智早教\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"手工·绘画\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"玩具\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"英语\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"早教\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"数学\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"国学\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"冒险\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"交通工具\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"魔幻·科幻\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"动物\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"真人·特摄\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"探索\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"其他\",\"v\":\"1\"}"));
 
 
 
 
 
-   result.put(GetFilter("&iarea", "地区", iarea));
-   result.put(GetFilter("&iyear", "年龄", iyear));
-   result.put(GetFilter("&gender", "性别", gender));
-   result.put(GetFilter("&itype", "类型", itype));
-  
-  return result;
-} catch (Exception e) {
-}
-return null;
+      result.put(GetFilter("&iarea", "地区", iarea));
+      result.put(GetFilter("&iyear", "年龄", iyear));
+      result.put(GetFilter("&gender", "性别", gender));
+      result.put(GetFilter("&itype", "类型", itype));
+
+      return result;
+    } catch (Exception e) {
+    }
+    return null;
 
 
   }
+      private String q(String str, String str2) {
+        String str3;
+        try {
+            if (str2.startsWith("//")) {
+                Uri parse = Uri.parse(str);
+                str3 = parse.getScheme() + ":" + str2;
+            } else if (str2.contains("://")) {
+                return str2;
+            } else {
+                Uri parse2 = Uri.parse(str);
+                str3 = parse2.getScheme() + "://" + parse2.getHost() + str2;
+            }
+            return str3;
+        } catch (Exception e) {
+            SpiderDebug.log(e);
+            return str2;
+        }
+    }
 }
