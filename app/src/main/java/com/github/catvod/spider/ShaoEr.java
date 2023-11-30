@@ -13,6 +13,7 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.os.Build;
+import android.net.Uri;
 
 import java.util.HashMap;
 import java.net.URLEncoder;
@@ -95,6 +96,7 @@ public class ShaoEr extends Spider {
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
       String SX="";
+      JSONObject result=new JSONObject();
       for (String key : extend.keySet()) {
         SX=SX+key+"="+extend.get(key);
       }
@@ -102,30 +104,39 @@ public class ShaoEr extends Spider {
       if (tid.equals("TX")){
 
 
+        String vod_remarks="";
         String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage="+pg+"&offset=0&pagesize=21&sort=75"+SX;
         String content=OkHttpUtil.string(url, null);
-         Elements listItems = Jsoup.parse(content).select(".list_item");
-
-           for (int i = 0; i < listItems.size(); i++) {
-                    Element item = listItems.get(i);
-                    String title = item.select("a").attr("title");
- String a= item.select("img").attr("src");
- System.out.println(a);
-                    // if (item.select(".figure_caption") == null) {
-                    //     str3 = "";
-                    // } else {
-                    //     str3 = item.select(".figure_caption").text();
-                    // }
-                    // String Pd2 = item.select("a").attr("data-float");
-                    // JSONObject jSONObject2 = new JSONObject();
-                    // jSONObject2.put("vod_id", Pd2);
-                    // jSONObject2.put("vod_name", Pd);
-                    // jSONObject2.put("vod_pic", q);
-                    // jSONObject2.put("vod_remarks", str3);
-                    // jSONArray.put(jSONObject2);
-                }
+        Elements listItems = Jsoup.parse(content).select(".list_item");
+        JSONArray jSONArray = new JSONArray();
 
 
+        for (int i = 0; i < listItems.size(); i++) {
+          Element item = listItems.get(i);
+          String v_name = item.select("a").attr("title");
+          String pic= q(url, item.select("img").attr("src"));
+          if (item.select(".figure_caption") == null) {
+            vod_remarks = "";
+          } else {
+            vod_remarks = item.select(".figure_caption").text();
+          }
+          String vid = item.select("a").attr("data-float");
+          JSONObject vod = new JSONObject();
+          vod.put("vod_id", vid);
+          vod.put("vod_name", v_name);
+          vod.put("vod_pic", pic);
+          vod.put("vod_remarks", vod_remarks);
+
+          jSONArray.put(vod);
+        }
+        result.put("page", pg);
+        result.put("pagecount", Integer.MAX_VALUE);
+        result.put("limit", 90);
+        result.put("total", Integer.MAX_VALUE);
+        result.put("list", jSONArray);
+
+
+        return result.toString();
       }
 
 
@@ -381,22 +392,22 @@ public class ShaoEr extends Spider {
 
 
   }
-      private String q(String str, String str2) {
-        String str3;
-        try {
-            if (str2.startsWith("//")) {
-                Uri parse = Uri.parse(str);
-                str3 = parse.getScheme() + ":" + str2;
-            } else if (str2.contains("://")) {
-                return str2;
-            } else {
-                Uri parse2 = Uri.parse(str);
-                str3 = parse2.getScheme() + "://" + parse2.getHost() + str2;
-            }
-            return str3;
-        } catch (Exception e) {
-            SpiderDebug.log(e);
-            return str2;
-        }
+  private String q(String str, String str2) {
+    String str3;
+    try {
+      if (str2.startsWith("//")) {
+        Uri parse = Uri.parse(str);
+        str3 = parse.getScheme() + ":" + str2;
+      } else if (str2.contains("://")) {
+        return str2;
+      } else {
+        Uri parse2 = Uri.parse(str);
+        str3 = parse2.getScheme() + "://" + parse2.getHost() + str2;
+      }
+      return str3;
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+      return str2;
     }
+  }
 }
