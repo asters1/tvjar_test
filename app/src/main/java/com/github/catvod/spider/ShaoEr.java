@@ -324,13 +324,28 @@ try {
   gender.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
   gender.put(new JSONObject("{\"n\":\"男孩\",\"v\":\"2\"}"));
   gender.put(new JSONObject("{\"n\":\"女孩\",\"v\":\"1\"}"));
+  //类型
+  JSONArray itype=new JSONArray();
+  itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"益智早教\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"手工·绘画\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"玩具\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"英语\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"早教\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"数学\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"国学\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"冒险\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"交通工具\",\"v\":\"1\"}"));
+  itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
+
 
 
 
 
    result.put(GetFilter("&iarea", "地区", iarea));
    result.put(GetFilter("&iyear", "年龄", iyear));
-   result.put(GetFilter("&gender", "性别", iyear));
+   result.put(GetFilter("&gender", "性别", gender));
+   result.put(GetFilter("&itype", "类型", itype));
   
   return result;
 } catch (Exception e) {
