@@ -20,9 +20,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.github.catvod.utils.okhttp.OkHttpUtil;
+import com.github.catvod.utils.okhttp.OKCallBack;
+import okhttp3.Call;
+import okhttp3.Response;
 
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderDebug;
+
 
 public class ShaoEr extends Spider {
 
@@ -41,7 +45,47 @@ public class ShaoEr extends Spider {
 
   public String homeContent(boolean filter) {
     try {
-      // System.out.println(ext);
+
+      JSONObject result = new JSONObject();
+      JSONArray classes = new JSONArray();
+
+      JSONObject TX = new JSONObject();
+
+
+      JSONObject IQY = new JSONObject();
+      JSONObject IQYfilter = new JSONObject();
+
+      JSONObject MG = new JSONObject();
+      JSONObject MGfilter = new JSONObject();
+
+
+      TX.put("type_id", "TX");
+      TX.put("type_name", "TX");
+
+
+
+
+      IQY.put("type_id", "IQY");
+      IQY.put("type_name", "IQY");
+
+      MG.put("type_id", "MG");
+      MG.put("type_name", "MG");
+
+
+
+      classes.put(TX);
+      classes.put(IQY);
+      classes.put(MG);
+      result.put("class", classes);
+      if (filter) {
+        JSONObject filters=new JSONObject();
+        filters.put("TX", GetTXFilters());
+        result.put("filters", filters);
+
+      }
+      System.out.println(result.toString());
+      return result.toString();
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -51,6 +95,18 @@ public class ShaoEr extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      if (tid.equals("TX")){
+
+        String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset=0&pagesize=21&iarea=-1&iyear=2&gender=-1&itype=5&sort=75";
+
+        // String a=OkHttpUtil.string(url, null);
+        // System.out.println(a);
+
+
+      }
+
+
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -84,32 +140,32 @@ public class ShaoEr extends Spider {
       vod_obj.put("vod_remarks", data_obj.getString("msg"));
       vod_obj.put("vod_content", data_obj.getString("info"));
       // vod_obj.put("", data_obj.getString(""));
-JSONArray player_info_array = data_obj.getJSONArray("player_info");
- ArrayList<String> play_from_array = new ArrayList<String>();
- ArrayList<String> play_url_list = new ArrayList<String>();
+      JSONArray player_info_array = data_obj.getJSONArray("player_info");
+      ArrayList<String> play_from_array = new ArrayList<String>();
+      ArrayList<String> play_url_list = new ArrayList<String>();
 
-for (int i=0;i<player_info_array.length();i++){
-  JSONObject v_obj=player_info_array.getJSONObject(i);
-  play_from_array.add(v_obj.getString("show"));
+      for (int i=0;i<player_info_array.length();i++){
+        JSONObject v_obj=player_info_array.getJSONObject(i);
+        play_from_array.add(v_obj.getString("show"));
 
-  JSONArray u_array=v_obj.getJSONArray("video_info");
+        JSONArray u_array=v_obj.getJSONArray("video_info");
 
- ArrayList<String> url_list = new ArrayList<String>();
-  for(int j=0;j<u_array.length();j++){
-    url_list.add( u_array.getJSONObject(j).getString("name")+"$"+u_array.getJSONObject(j).getJSONArray("url").getString(0));
-  }
+        ArrayList<String> url_list = new ArrayList<String>();
+        for(int j=0;j<u_array.length();j++){
+          url_list.add( u_array.getJSONObject(j).getString("name")+"$"+u_array.getJSONObject(j).getJSONArray("url").getString(0));
+        }
 
-  play_url_list.add(TextUtils.join("#", url_list));
-  
+        play_url_list.add(TextUtils.join("#", url_list));
 
-}
-       vod_obj.put("vod_play_from", TextUtils.join("$$$",  play_from_array));
-       vod_obj.put("vod_play_url", TextUtils.join("$$$",  play_url_list));
-       
-       list.put(vod_obj);
-       result.put("list", list);
 
-            return result.toString();
+      }
+      vod_obj.put("vod_play_from", TextUtils.join("$$$",  play_from_array));
+      vod_obj.put("vod_play_url", TextUtils.join("$$$",  play_url_list));
+
+      list.put(vod_obj);
+      result.put("list", list);
+
+      return result.toString();
 
 
 
@@ -165,7 +221,7 @@ for (int i=0;i<player_info_array.length();i++){
       result.put("header", r_obj.getJSONObject("data").get("header").toString());
       result.put("url", r_obj.getJSONObject("data").getString("url"));
       return result.toString();
-      
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -201,6 +257,7 @@ for (int i=0;i<player_info_array.length();i++){
     } catch (Exception e) {
     }
   }
+
   // ====================
   public String getMd5(String str) {
     try {
@@ -229,5 +286,57 @@ for (int i=0;i<player_info_array.length();i++){
       e.printStackTrace();
       return null;
     }
+  }
+  public JSONObject GetFilter(String key,String name,JSONArray value){
+try {
+  JSONObject result= new JSONObject();
+  result.put("key", key);
+  result.put("name", name);
+  result.put("value", value);
+  return result;
+  
+} catch (Exception e) {
+}
+
+
+return null;
+
+  }
+  public JSONArray GetTXFilters(){
+try {
+  JSONArray result=new JSONArray();
+        // String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset=0&pagesize=21&iarea=-1&iyear=2&gender=-1&itype=5&sort=75";
+  //地区
+  JSONArray iarea=new JSONArray();
+  iarea.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+  iarea.put(new JSONObject("{\"n\":\"国内\",\"v\":\"3\"}"));
+  iarea.put(new JSONObject("{\"n\":\"欧美\",\"v\":\"1\"}"));
+  iarea.put(new JSONObject("{\"n\":\"日韩\",\"v\":\"2\"}"));
+   //年龄
+  JSONArray iyear=new JSONArray();
+  iyear.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+  iyear.put(new JSONObject("{\"n\":\"0-3岁\",\"v\":\"1\"}"));
+  iyear.put(new JSONObject("{\"n\":\"4-6岁\",\"v\":\"2\"}"));
+  iyear.put(new JSONObject("{\"n\":\"7-9岁\",\"v\":\"3\"}"));
+  iyear.put(new JSONObject("{\"n\":\"10岁以上\",\"v\":\"4\"}"));
+   //性别
+  JSONArray gender=new JSONArray();
+  gender.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
+  gender.put(new JSONObject("{\"n\":\"男孩\",\"v\":\"2\"}"));
+  gender.put(new JSONObject("{\"n\":\"女孩\",\"v\":\"1\"}"));
+
+
+
+
+   result.put(GetFilter("&iarea", "地区", iarea));
+   result.put(GetFilter("&iyear", "年龄", iyear));
+   result.put(GetFilter("&gender", "性别", iyear));
+  
+  return result;
+} catch (Exception e) {
+}
+return null;
+
+
   }
 }
