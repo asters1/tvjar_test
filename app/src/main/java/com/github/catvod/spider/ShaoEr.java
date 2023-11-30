@@ -105,7 +105,7 @@ public class ShaoEr extends Spider {
 
 
         String vod_remarks="";
-        String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage="+pg+"&offset=0&pagesize=21&sort=75"+SX;
+        String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset="+((Integer.parseInt(pg) - 1) * 21)+"&pagesize=21&sort=75"+SX;
         String content=OkHttpUtil.string(url, null);
         Elements listItems = Jsoup.parse(content).select(".list_item");
         JSONArray jSONArray = new JSONArray();
