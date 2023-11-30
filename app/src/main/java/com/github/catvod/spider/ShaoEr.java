@@ -361,21 +361,21 @@ public class ShaoEr extends Spider {
       //类型
       JSONArray itype=new JSONArray();
       itype.put(new JSONObject("{\"n\":\"全部\",\"v\":\"-1\"}"));
-      itype.put(new JSONObject("{\"n\":\"手工·绘画\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"玩具\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"交通工具\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"玩具\",\"v\":\"4\"}"));
+      itype.put(new JSONObject("{\"n\":\"交通工具\",\"v\":\"10\"}"));
+      itype.put(new JSONObject("{\"n\":\"手工·绘画\",\"v\":\"3\"}"));
       itype.put(new JSONObject("{\"n\":\"儿歌\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"益智早教\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"英语\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"早教\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"数学\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"国学\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"冒险\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"魔幻·科幻\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"动物\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"真人·特摄\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"探索\",\"v\":\"1\"}"));
-      itype.put(new JSONObject("{\"n\":\"其他\",\"v\":\"1\"}"));
+      itype.put(new JSONObject("{\"n\":\"益智早教\",\"v\":\"2\"}"));
+      itype.put(new JSONObject("{\"n\":\"英语\",\"v\":\"5\"}"));
+      itype.put(new JSONObject("{\"n\":\"早教\",\"v\":\"6\"}"));
+      itype.put(new JSONObject("{\"n\":\"数学\",\"v\":\"7\"}"));
+      itype.put(new JSONObject("{\"n\":\"国学\",\"v\":\"8\"}"));
+      itype.put(new JSONObject("{\"n\":\"冒险\",\"v\":\"9\"}"));
+      itype.put(new JSONObject("{\"n\":\"魔幻·科幻\",\"v\":\"11\"}"));
+      itype.put(new JSONObject("{\"n\":\"动物\",\"v\":\"12\"}"));
+      itype.put(new JSONObject("{\"n\":\"真人·特摄\",\"v\":\"13\"}"));
+      itype.put(new JSONObject("{\"n\":\"探索\",\"v\":\"14\"}"));
+      itype.put(new JSONObject("{\"n\":\"其他\",\"v\":\"15\"}"));
 
 
 
