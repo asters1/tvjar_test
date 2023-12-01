@@ -83,6 +83,7 @@ public class ShaoEr extends Spider {
         JSONObject filters=new JSONObject();
         filters.put("TX", GetTXFilters());
         filters.put("IQY", GetIQYFilters());
+        filters.put("MG", GetMGFilters());
         result.put("filters", filters);
 
       }
@@ -96,6 +97,7 @@ public class ShaoEr extends Spider {
   }
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
+  // public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
       if (tid.equals("TX")){
       //筛选
@@ -109,7 +111,7 @@ public class ShaoEr extends Spider {
 
         String vod_remarks="";
         String url="https://v.qq.com/x/bu/pagesheet/list?_all=1&append=1&channel=child&listpage=1&offset="+((Integer.parseInt(pg) - 1) * 21)+"&pagesize=21&sort=75"+SX;
-        String content=OkHttpUtil.string(url, null);
+        String content=OkHttpUtil.string(url, GetNormalHeaders());
         Elements listItems = Jsoup.parse(content).select(".list_item");
         JSONArray jSONArray = new JSONArray();
 
@@ -158,7 +160,7 @@ public class ShaoEr extends Spider {
 
           }
 
-String res=OkHttpUtil.string(url, null);
+String res=OkHttpUtil.string(url, GetNormalHeaders());
 System.out.println(res);
 JSONObject jSONObject = new JSONObject();
             try {
@@ -198,7 +200,47 @@ JSONObject jSONObject = new JSONObject();
                 SpiderDebug.log(e);
             }
             return jSONObject.toString(4);
-        // } catch (JSONException e) {
+      }else if(tid.equals("MG")){
+        String str3 = "https://pianku.api.mgtv.com/rider/list/msite/v2?platform=msite&channelId=50&pn=" + pg + "&chargeInfo=&sort=c2";
+        if (extend != null) {
+                for (String str4 : extend.keySet()) {
+                    String trim = extend.get(str4).trim();
+                    if (trim.length() != 0) {
+                        str3 = str3 + "&" + str4 + "=" + URLEncoder.encode(trim);
+                    }
+                }
+            }
+            String content = OkHttpUtil.string(str3, GetNormalHeaders());
+            JSONObject jSONObject = new JSONObject();
+            try {
+                JSONArray optJSONArray = new JSONObject(content).optJSONObject("data").optJSONArray("hitDocs");
+                JSONArray jSONArray = new JSONArray();
+                for (int i = 0; i < optJSONArray.length(); i++) {
+                    JSONObject optJSONObject = optJSONArray.optJSONObject(i);
+                    String optString = optJSONObject.optString("title");
+                    String q = q(str3, optJSONObject.optString("img"));
+                    String optString2 = optJSONObject.optString("updateInfo");
+                    if (optString2.equals("")) {
+                        optString2 = optJSONObject.optString("subtitle");
+                    }
+                    String vodId = optJSONObject.optString("playPartId");
+                    JSONObject jSONObject2 = new JSONObject();
+                    jSONObject2.put("vod_id", vodId);
+                    jSONObject2.put("vod_name", optString);
+                    jSONObject2.put("vod_pic", q);
+                    jSONObject2.put("vod_remarks", optString2);
+                    jSONArray.put(jSONObject2);
+                }
+                jSONObject.put("list", jSONArray);
+                jSONObject.put("page", pg);
+                jSONObject.put("pagecount", Integer.MAX_VALUE);
+                jSONObject.put("limit", 90);
+                jSONObject.put("total", Integer.MAX_VALUE);
+                jSONObject.put("list", jSONArray);
+            } catch (Exception e) {
+                SpiderDebug.log(e);
+            }
+            return jSONObject.toString(4);
 
 
       }
@@ -400,6 +442,16 @@ JSONObject jSONObject = new JSONObject();
     return null;
 
   }
+  public JSONArray GetMGFilters(){
+try {
+JSONArray result=new JSONArray("[{\"name\":\"类型\",\"value\":[{\"v\":\"a1\",\"n\":\"全部\"},{\"v\":\"60\",\"n\":\"恋爱少女\"},{\"v\":\"86\",\"n\":\"热血\"},{\"v\":\"62\",\"n\":\"搞笑\"},{\"v\":\"63\",\"n\":\"青春\"},{\"v\":\"64\",\"n\":\"魔幻仙侠\"},{\"v\":\"65\",\"n\":\"激燃运动\"},{\"v\":\"66\",\"n\":\"特摄\"},{\"v\":\"67\",\"n\":\"推理\"},{\"v\":\"68\",\"n\":\"亲子幼教\"},{\"v\":\"69\",\"n\":\"芒果出品\"},{\"v\":\"70\",\"n\":\"动漫音乐\"},{\"v\":\"71\",\"n\":\"经典\"},{\"v\":\"72\",\"n\":\"其他\"}],\"key\":\"kind\"},{\"name\":\"地区\",\"value\":[{\"v\":\"a1\",\"n\":\"全部\"},{\"v\":\"52\",\"n\":\"内地\"},{\"v\":\"53\",\"n\":\"欧美\"},{\"v\":\"54\",\"n\":\"日韩\"},{\"v\":\"55\",\"n\":\"其他\"}],\"key\":\"area\"},{\"name\":\"版本\",\"value\":[{\"v\":\"a1\",\"n\":\"全部\"},{\"v\":\"165\",\"n\":\"剧场版\"},{\"v\":\"57\",\"n\":\"TV版\"},{\"v\":\"166\",\"n\":\"OVA版\"},{\"v\":\"167\",\"n\":\"真人版\"}],\"key\":\"edition\"},{\"name\":\"排序\",\"value\":[{\"v\":\"c2\",\"n\":\"最热\"},{\"v\":\"c1\",\"n\":\"最新\"}],\"key\":\"sort\"}]");
+  
+return result;
+} catch (Exception e) {
+  // TODO: handle exception
+}
+return null;
+  }
   public JSONArray GetIQYFilters(){
 try {
 JSONArray result=new JSONArray("[{\"name\":\"地区\",\"value\":[{\"v\":\"1261\",\"n\":\"欧美\"},{\"v\":\"1259\",\"n\":\"大陆\"},{\"v\":\"1260\",\"n\":\"港台\"},{\"v\":\"28933\",\"n\":\"韩国\"},{\"v\":\"1263\",\"n\":\"其它\"}],\"key\":\"18057\"},{\"name\":\"年龄段\",\"value\":[{\"v\":\"4489\",\"n\":\"0-3岁\"},{\"v\":\"28929\",\"n\":\"4-6岁\"},{\"v\":\"4493\",\"n\":\"7-10岁\"},{\"v\":\"4494\",\"n\":\"11-13岁\"}],\"key\":\"20288\"},{\"name\":\"类型\",\"value\":[{\"v\":\"28988\",\"n\":\"玩具\"},{\"v\":\"28983\",\"n\":\"儿歌\"},{\"v\":\"28984\",\"n\":\"故事\"},{\"v\":\"28985\",\"n\":\"学英语\"},{\"v\":\"28986\",\"n\":\"百科\"},{\"v\":\"28987\",\"n\":\"国学\"},{\"v\":\"28989\",\"n\":\"识字\"},{\"v\":\"28990\",\"n\":\"数学\"},{\"v\":\"28991\",\"n\":\"美术\"},{\"v\":\"28993\",\"n\":\"舞蹈\"},{\"v\":\"30918\",\"n\":\"音乐\"},{\"v\":\"30919\",\"n\":\"诗词\"},{\"v\":\"28994\",\"n\":\"其他\"}],\"key\":\"28982\"}]");
@@ -484,5 +536,18 @@ return null;
       SpiderDebug.log(e);
       return str2;
     }
+  }
+
+  HashMap<String,String>  GetNormalHeaders(){
+    try {
+      HashMap<String, String> headers = new HashMap<>();
+      headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36");
+      
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+    return null;
+
+
   }
 }
