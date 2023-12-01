@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.net.URLEncoder;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 import com.github.catvod.utils.okhttp.OkHttpUtil;
 import com.github.catvod.utils.okhttp.OKCallBack;
@@ -81,6 +82,7 @@ public class ShaoEr extends Spider {
       if (filter) {
         JSONObject filters=new JSONObject();
         filters.put("TX", GetTXFilters());
+        filters.put("IQY", GetIQYFilters());
         result.put("filters", filters);
 
       }
@@ -95,13 +97,14 @@ public class ShaoEr extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      if (tid.equals("TX")){
+      //筛选
       String SX="";
       JSONObject result=new JSONObject();
       for (String key : extend.keySet()) {
-        SX=SX+key+"="+extend.get(key);
+        SX=SX+"&"+key+"="+extend.get(key);
       }
       // System.out.println(SX);
-      if (tid.equals("TX")){
 
 
         String vod_remarks="";
@@ -137,6 +140,67 @@ public class ShaoEr extends Spider {
 
 
         return result.toString();
+      }else if (tid.equals("IQY")){
+        String SX="";
+        String url = "https://pcw-api.iqiyi.com/search/video/videolists?channel_id=15&is_purchase=&mode=24&pageNum=" + pg + "&pageSize=24"+SX;
+          if (extend != null) {
+                Set<String> keySet = extend.keySet();
+                ArrayList arrayList = new ArrayList();
+                for (String key : keySet) {
+                  String trim = extend.get(key).trim();
+                    if (key.matches("\\d+")) {
+                        arrayList.add(trim + ";must");
+                    } else {
+                        url = url + "&" + key + "=" + trim;
+                    }
+                }
+                url = url + "&three_category_id=" + TextUtils.join(",", arrayList);
+
+          }
+
+String res=OkHttpUtil.string(url, null);
+System.out.println(res);
+JSONObject jSONObject = new JSONObject();
+            try {
+                JSONArray optJSONArray = new JSONObject(res).optJSONObject("data").optJSONArray("list");
+                JSONArray jSONArray = new JSONArray();
+                int i = 0;
+                while (i < optJSONArray.length()) {
+                    JSONObject optJSONObject = optJSONArray.optJSONObject(i);
+                    String optString = optJSONObject.optString("name");
+                    String q = q(url, optJSONObject.optString("imageUrl"));
+                    String optString2 = optJSONObject.optString("score");
+                    String optString3 = optJSONObject.optString("playUrl");
+                    if (!optJSONObject.optString("albumId").equals("")) {
+                        if (optJSONObject.optInt("sourceId") != 0) {
+                            optString3 = "/video/video/baseinfo/" + optJSONObject.optString("tvId") + "?userInfo=verify&jsonpCbName=videoInfo39";
+                        } else {
+                            optString3 = "/albums/album/avlistinfo?aid=" + optJSONObject.optString("albumId") + "&size=5000&page=1&url=" + optString3;
+                        }
+                    } else if (optJSONObject.optLong("tvId") != 0) {
+                        optString3 = "/video/video/baseinfo/" + optJSONObject.optString("tvId") + "?userInfo=verify&jsonpCbName=videoInfo39";
+                    }
+                    JSONObject jSONObject2 = new JSONObject();
+                    jSONObject2.put("vod_id", optString3);
+                    jSONObject2.put("vod_name", optString);
+                    jSONObject2.put("vod_pic", q);
+                    jSONObject2.put("vod_remarks", optString2);
+                    jSONArray.put(jSONObject2);
+                    i++;
+                    optJSONArray = optJSONArray;
+                }
+                jSONObject.put("page", pg);
+                jSONObject.put("pagecount", Integer.MAX_VALUE);
+                jSONObject.put("limit", 90);
+                jSONObject.put("total", Integer.MAX_VALUE);
+                jSONObject.put("list", jSONArray);
+            } catch (Exception e) {
+                SpiderDebug.log(e);
+            }
+            return jSONObject.toString(4);
+        // } catch (JSONException e) {
+
+
       }
 
 
@@ -336,6 +400,16 @@ public class ShaoEr extends Spider {
     return null;
 
   }
+  public JSONArray GetIQYFilters(){
+try {
+JSONArray result=new JSONArray("[{\"name\":\"地区\",\"value\":[{\"v\":\"1261\",\"n\":\"欧美\"},{\"v\":\"1259\",\"n\":\"大陆\"},{\"v\":\"1260\",\"n\":\"港台\"},{\"v\":\"28933\",\"n\":\"韩国\"},{\"v\":\"1263\",\"n\":\"其它\"}],\"key\":\"18057\"},{\"name\":\"年龄段\",\"value\":[{\"v\":\"4489\",\"n\":\"0-3岁\"},{\"v\":\"28929\",\"n\":\"4-6岁\"},{\"v\":\"4493\",\"n\":\"7-10岁\"},{\"v\":\"4494\",\"n\":\"11-13岁\"}],\"key\":\"20288\"},{\"name\":\"类型\",\"value\":[{\"v\":\"28988\",\"n\":\"玩具\"},{\"v\":\"28983\",\"n\":\"儿歌\"},{\"v\":\"28984\",\"n\":\"故事\"},{\"v\":\"28985\",\"n\":\"学英语\"},{\"v\":\"28986\",\"n\":\"百科\"},{\"v\":\"28987\",\"n\":\"国学\"},{\"v\":\"28989\",\"n\":\"识字\"},{\"v\":\"28990\",\"n\":\"数学\"},{\"v\":\"28991\",\"n\":\"美术\"},{\"v\":\"28993\",\"n\":\"舞蹈\"},{\"v\":\"30918\",\"n\":\"音乐\"},{\"v\":\"30919\",\"n\":\"诗词\"},{\"v\":\"28994\",\"n\":\"其他\"}],\"key\":\"28982\"}]");
+  
+return result;
+} catch (Exception e) {
+}
+return null;
+
+  }
   public JSONArray GetTXFilters(){
     try {
       JSONArray result=new JSONArray();
@@ -381,10 +455,10 @@ public class ShaoEr extends Spider {
 
 
 
-      result.put(GetFilter("&iarea", "地区", iarea));
-      result.put(GetFilter("&iyear", "年龄", iyear));
-      result.put(GetFilter("&gender", "性别", gender));
-      result.put(GetFilter("&itype", "类型", itype));
+      result.put(GetFilter("iarea", "地区", iarea));
+      result.put(GetFilter("iyear", "年龄", iyear));
+      result.put(GetFilter("gender", "性别", gender));
+      result.put(GetFilter("itype", "类型", itype));
 
       return result;
     } catch (Exception e) {
