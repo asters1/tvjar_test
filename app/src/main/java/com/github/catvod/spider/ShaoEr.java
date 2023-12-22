@@ -358,7 +358,8 @@ JSONObject jSONObject = new JSONObject();
       JSONObject r_obj=new JSONObject(res);
       JSONObject result=new JSONObject();
       result.put("parse", 0);
-      result.put("header", r_obj.getJSONObject("data").get("header").toString());
+      // result.put("header", r_obj.getJSONObject("data").get("header").toString());
+      result.put("header", "");
       result.put("url", r_obj.getJSONObject("data").getString("url"));
       return result.toString();
 
