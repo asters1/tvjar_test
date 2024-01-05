@@ -87,6 +87,7 @@ public class R extends Spider {
 
       String   cateUrl="";
       if (extend.size()==0){
+
         switch (tid) {
           case "1":
             //天美
