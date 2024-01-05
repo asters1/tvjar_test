@@ -89,13 +89,16 @@ public class R extends Spider {
       if (extend.size()==0){
         switch (tid) {
           case "1":
-            cateUrl=siteUrl+"/t/227-"+pg+"/";
+            //天美
+            cateUrl=siteUrl+"/t/111-"+pg+"/";
             break;
           case "2":
-            cateUrl=siteUrl+"/t/115-"+pg+"/";
+            //蜜桃
+            cateUrl=siteUrl+"/t/113-"+pg+"/";
             break;
           case "3":
-            cateUrl=siteUrl+"/t/86-"+pg+"/";
+            //日本无码
+            cateUrl=siteUrl+"/t/5-"+pg+"/";
             break;
           case "4":
             cateUrl=siteUrl+"/t/103-"+pg+"/";
@@ -175,6 +178,38 @@ public class R extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      JSONObject result = new JSONObject();
+      JSONArray jSONArray = new JSONArray();
+      String searchUrl= "https://91gaoqingheiliao.com/s/?wd="+key;
+      String res=OkHttpUtil.string(searchUrl, getHeaders());
+      Elements list_el = Jsoup.parse(res).select("[class=row row-space8 row-m-space8]").get(0).select("[class=col-25 col-m-12 mb20]");
+
+      System.out.println(list_el.size());
+      for (int i = 0; i < list_el.size(); i++) {
+        JSONObject vod = new JSONObject();
+        JSONObject res_detail=new JSONObject();
+        String vod_name = list_el.get(i).select("img").attr("alt");
+        String vod_id = list_el.get(i).select("a").attr("href").replace("/voddetail/", "");
+        String vod_pic = CompletionUrl( list_el.get(i).select("img").attr("src"));
+        String vod_remarks =  list_el.get(i).select("small").text();
+        res_detail.put("vod_id", vod_id);
+        res_detail.put("vod_name", vod_name);
+        res_detail.put("vod_pic", vod_pic);
+        res_detail.put("vod_remarks", vod_remarks);
+
+        vod.put("vod_id", res_detail.toString() );
+        vod.put("vod_name", vod_name);
+        vod.put("vod_pic", vod_pic);
+        vod.put("vod_remarks", vod_remarks);
+        // System.out.println(vod);
+        jSONArray.put(vod);
+      result.put("list", jSONArray);
+
+      }
+      // System.out.println("==");
+      // System.out.println(result.toString());
+      // System.out.println("==");
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
