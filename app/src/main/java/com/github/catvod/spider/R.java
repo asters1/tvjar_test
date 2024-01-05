@@ -150,7 +150,13 @@ JSONArray list=new JSONArray();
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+JSONObject result = new JSONObject();
 
+            result.put("parse", 1);
+            result.put("header", "");
+            result.put("playUrl", "");
+            result.put("url", id);
+            return result.toString();
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
