@@ -31,39 +31,49 @@ public class R extends Spider {
 
   public String homeContent(boolean filter) {
     try {
-      // System.out.println(ext);
-      JSONObject result = new JSONObject();
-      JSONArray classes = new JSONArray();
-      JSONObject A = new JSONObject();
-      JSONObject B = new JSONObject();
-      JSONObject C = new JSONObject();
-      JSONObject D = new JSONObject();
-      JSONObject E = new JSONObject();
+      JSONObject result=new JSONObject();
+      JSONArray classes=new JSONArray();
+      JSONObject filters=new JSONObject();
 
-      A.put("type_id", "/t/111");
-      A.put("type_name", "国产1区");
+      String res= OkHttpUtil.string(siteUrl, getHeaders());
+      Elements list_el = Jsoup.parse(res).select("[id=youmu]").select("[class=area]");
+      for (int i = 1; i < list_el.size(); i++) {
+        String type_name=list_el.get(i).select("dt").text();
+        String type_id=Integer.toString(i);
+        JSONObject t_obj=new JSONObject();
+        t_obj.put("type_id", type_id);
+        t_obj.put("type_name", type_name);
+        classes.put(t_obj);
 
-      B.put("type_id", "/t/120");
-      B.put("type_name", "国产2区");
+        JSONArray f_array=new JSONArray();
+        JSONObject f_obj=new JSONObject();
 
-      C.put("type_id", "/t/86");
-      C.put("type_name", "视频区");
 
-      D.put("type_id", "/t/89");
-      D.put("type_name", "女优区");
+        Elements list_f=list_el.get(i).select("dd");
+        for(int j=0;j<list_f.size();j++){
+          JSONObject f_array_obj=new JSONObject();
+          String n= list_f.get(j).select("a").text();
+          String v1= list_f.get(j).select("a").attr("href");
+          String v=v1.substring(0,v1.length()-1);
+          // System.out.println(v);
+          f_array_obj.put("n", n);
+          f_array_obj.put("v", v);
+          f_array.put(f_array_obj);
 
-      E.put("type_id", "/t/225");
-      E.put("type_name", "番号区");
+        }
+        f_obj.put("key", type_name);
+        f_obj.put("name", "分类");
+        f_obj.put("value", f_array);
+        // System.out.println(f_obj);
+        filters.put(Integer.toString(i), new JSONArray().put(f_obj));
 
-      classes.put(A);
-      classes.put(B);
-      classes.put(C);
-      classes.put(D);
-      classes.put(E);
 
+      }
+      // System.out.println(filters);
       result.put("class", classes);
-      return result.toString();
+      result.put("filters", filters);
 
+      return result.toString();
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
@@ -75,13 +85,37 @@ public class R extends Spider {
       JSONObject result = new JSONObject();
       JSONArray jSONArray = new JSONArray();
 
-
       String   cateUrl="";
       if (extend.size()==0){
-        cateUrl=siteUrl+tid+"-"+pg+"/";
+        switch (tid) {
+          case "1":
+            cateUrl=siteUrl+"/t/227-"+pg+"/";
+            break;
+          case "2":
+            cateUrl=siteUrl+"/t/115-"+pg+"/";
+            break;
+          case "3":
+            cateUrl=siteUrl+"/t/86-"+pg+"/";
+            break;
+          case "4":
+            cateUrl=siteUrl+"/t/103-"+pg+"/";
+            break;
+          case "5":
+            cateUrl=siteUrl+"/t/225-"+pg+"/";
+            break;
 
+          default:
+            break;
+        }
+
+      }else {
+        String tyid="";
+        for (String key : extend.keySet()) {
+          tyid=extend.get(key);
+        }
+        cateUrl=siteUrl+tyid+"-"+pg+"/";
       }
-      // System.out.println(cateUrl);
+
       String res = OkHttpUtil.string(cateUrl, getHeaders());
       Elements list_el = Jsoup.parse(res).select("[class=row row-space8 row-m-space8]").get(0).select("[class=col-25 col-m-12 mb20]");
       for (int i = 0; i < list_el.size(); i++) {
@@ -122,7 +156,7 @@ public class R extends Spider {
   public String detailContent(List<String> ids) {
     try {
       JSONObject result=new JSONObject();
-JSONArray list=new JSONArray();
+      JSONArray list=new JSONArray();
 
 
       JSONObject vod=new JSONObject(ids.get(0));
@@ -150,13 +184,13 @@ JSONArray list=new JSONArray();
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
-JSONObject result = new JSONObject();
+      JSONObject result = new JSONObject();
 
-            result.put("parse", 1);
-            result.put("header", "");
-            result.put("playUrl", "");
-            result.put("url", id);
-            return result.toString();
+      result.put("parse", 1);
+      result.put("header", "");
+      result.put("playUrl", "");
+      result.put("url", id);
+      return result.toString();
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
