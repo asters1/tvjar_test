@@ -21,7 +21,7 @@ import com.github.catvod.crawler.SpiderDebug;
 public class R extends Spider {
   //https://theporndude.com/zh
 
-  private static final String siteUrl = "https://91gaoqingheiliao.com";
+  private static final String siteUrl = "https://r.wisteria.cf";
   //ext为外部给的字符串
   public String ext = "";
 
