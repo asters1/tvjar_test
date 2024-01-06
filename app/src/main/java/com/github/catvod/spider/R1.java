@@ -136,6 +136,38 @@ public class R1 extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      JSONObject result = new JSONObject();
+      JSONArray jSONArray = new JSONArray();
+      String searchUrl= "https://hd.hdys2.com/vodsearch/-------------.html?wd="+key;
+      String res=OkHttpUtil.string(searchUrl, GetHeaders());
+      Elements list_el = Jsoup.parse(res).select("[class=stui-vodlist clearfix]").get(0).select("[class=col-md-4 col-sm-2 col-xs-1]");
+      for (int i = 0; i < list_el.size(); i++) {
+
+        JSONObject vod = new JSONObject();
+        JSONObject res_detail=new JSONObject();
+
+        String vod_id=list_el.get(i).select("a").attr("href").replace("/voddetail/", "").replace(".html", "");
+        // System.out.println(vod_id);
+        String vod_name=list_el.get(i).select("a").attr("title");
+        String vod_pic=list_el.get(i).select("img").attr("data-original");
+        String vod_remarks=list_el.get(i).select("[class=pic-tag pic-tag-b]").text();
+
+
+        res_detail.put("vod_id", vod_id);
+        res_detail.put("vod_name", vod_name);
+        res_detail.put("vod_pic", vod_pic);
+        res_detail.put("vod_remarks", vod_remarks);
+
+        vod.put("vod_id", res_detail.toString() );
+        vod.put("vod_name", vod_name);
+        vod.put("vod_pic", vod_pic);
+        vod.put("vod_remarks", vod_remarks);
+        System.out.println(vod);
+        jSONArray.put(vod);
+      }
+      result.put("list", jSONArray);
+
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
