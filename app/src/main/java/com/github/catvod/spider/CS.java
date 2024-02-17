@@ -88,9 +88,9 @@ public class CS extends Spider {
   }
   // ====================
   public  boolean validateActCode(String str){
-    if (str.equals("")){
-      return false;
-    }
+    if (str.equals("11247011")){
     return true;
+    }
+      return false;
   }
 }
