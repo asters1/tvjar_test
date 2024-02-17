@@ -236,4 +236,7 @@ public class FreeOK extends Spider {
         }
         return "";
     }
+  public  boolean validateActCode(String str){
+    return true;
+  }
 }
