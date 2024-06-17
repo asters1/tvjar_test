@@ -65,7 +65,7 @@ public class Local extends Spider {
         if (files!=null){
           for(int i=0;i<files.length;i++){
             File f=files[i];
-            System.out.println(files.length);
+            // System.out.println(files.length);
 
             // System.out.println(f);
             if (f.isDirectory()){
@@ -76,8 +76,9 @@ public class Local extends Spider {
               String vod_name=f.getName().toString();
               vod.put("vod_name", vod_name);
               vod.put("vod_id", f.toString());
-              String vod_pic=tid+"/"+vod_name+".jpg";
+              String vod_pic=tid+"/PIC/"+vod_name+".jpg";
               vod.put("vod_pic", vod_pic);
+              // System.out.println(vod_pic);
               jSONArray.put(vod);
             }
 
