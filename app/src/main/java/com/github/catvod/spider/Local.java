@@ -120,10 +120,11 @@ public class Local extends Spider {
         }
 
       }
+      System.out.println(arr.toString());
       String vod_name=VideosDir.getName();
 
       String vod_play_from="Local";
-      String vod_play_url=TextUtils.join("$$$", arr);
+      String vod_play_url=TextUtils.join("#", arr);
 
       info.put("vod_id", ids.get(0));
       info.put("vod_name", vod_name);
