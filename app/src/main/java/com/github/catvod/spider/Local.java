@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class Local extends Spider {
           for(int i=0;i<files.length;i++){
             File f=files[i];
             System.out.println(files.length);
-            
+
             // System.out.println(f);
             if (f.isDirectory()){
               if(f.getName().equals("PIC")){
@@ -78,12 +79,12 @@ public class Local extends Spider {
               String vod_pic=tid+"/"+vod_name+".jpg";
               vod.put("vod_pic", vod_pic);
               jSONArray.put(vod);
-              }
-
             }
-          }
 
+          }
         }
+
+      }
       result.put("page", "1");
       result.put("pagecount", Integer.MAX_VALUE);
       result.put("limit", Integer.MAX_VALUE);
@@ -99,6 +100,42 @@ public class Local extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+      JSONObject result = new JSONObject();
+      JSONObject info = new JSONObject();
+      JSONArray list_info = new JSONArray();
+
+      String url = ids.get(0);
+      File VideosDir=new File(url);
+      ArrayList<String> arr = new ArrayList<String>();
+      if (VideosDir.exists()){
+        File[] files=VideosDir.listFiles();
+        if (files!=null){
+          for(int i=0;i<files.length;i++){
+            File f=files[i];
+            String vname=f.getName();
+            String vurl=f.toString();
+            // System.out.println(vname+"$"+vurl);
+            arr.add(vname+"$"+vurl);
+          }
+        }
+
+      }
+      String vod_name=VideosDir.getName();
+
+      String vod_play_from="Local";
+      String vod_play_url=TextUtils.join("$$$", arr);
+
+      info.put("vod_id", ids.get(0));
+      info.put("vod_name", vod_name);
+
+      info.put("vod_play_from", vod_play_from);
+      info.put("vod_play_url", vod_play_url);
+
+      list_info.put(info);
+      result.put("list", list_info);
+
+      return result.toString();
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -117,6 +154,12 @@ public class Local extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+      JSONObject result = new JSONObject();
+            result.put("parse", 0);
+            result.put("header", "");
+            result.put("playUrl", id);
+            result.put("url", "");
+            return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
