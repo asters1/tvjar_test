@@ -84,7 +84,7 @@ public class Local extends Spider {
           }
 
         }
-      result.put("page", pg);
+      result.put("page", "1");
       result.put("pagecount", Integer.MAX_VALUE);
       result.put("limit", Integer.MAX_VALUE);
       result.put("total", Integer.MAX_VALUE);
