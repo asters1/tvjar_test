@@ -18,9 +18,9 @@ import com.github.catvod.utils.okhttp.OkHttpUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderDebug;
 
-public class CS extends Spider {
+public class ASA extends Spider {
 
-  private static final String siteUrl = "";
+  private static final String siteUrl = "https://www.crvcd.cc";
   //ext为外部给的字符串
   public String ext = "";
 
@@ -31,7 +31,52 @@ public class CS extends Spider {
 
   public String homeContent(boolean filter) {
     try {
-      // System.out.println(ext);
+      JSONObject result = new JSONObject();
+      JSONArray classes = new JSONArray();
+
+      JSONObject RM = new JSONObject();
+      JSONObject ZX = new JSONObject();
+      JSONObject TJ = new JSONObject();
+      JSONObject RH = new JSONObject();
+      JSONObject GC = new JSONObject();
+      JSONObject LL = new JSONObject();
+
+      RM.put("type_id", "/vod/search/by/hits");
+      RM.put("type_name", "热门");
+
+      ZX.put("type_id", "/label/new");
+      ZX.put("type_name", "最新");
+
+      TJ.put("type_id", "/vodplay/7121-1-1");
+      TJ.put("type_name", "推荐");
+
+      RH.put("type_id", "/vodtype/2");
+      RH.put("type_name", "日韩");
+
+      GC.put("type_id", "/vodtype/20");
+      GC.put("type_name", "国产");
+
+      if (filter) {
+        System.out.println("====");
+        String filterconfig ="{\"/vodtype/2\":{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/2\" },{\"n\": \"热门\", \"v\": \"/vodshow/2--hits---------\" }]}}";
+        result.put("filters", new JSONObject(filterconfig));
+
+      }
+
+      classes.put(RM);
+      classes.put(ZX);
+      classes.put(TJ);
+      classes.put(RH);
+      classes.put(GC);
+
+      result.put("class", classes);
+      // System.out.println(result.toString());
+      return result.toString();
+
+
+
+
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -87,10 +132,4 @@ public class CS extends Spider {
     }
   }
   // ====================
-  public  boolean validateActCode(String str){
-    if (str.equals("11247011")){
-    return true;
-    }
-      return false;
-  }
 }
