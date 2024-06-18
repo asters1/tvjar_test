@@ -78,7 +78,7 @@ public class Local extends Spider {
               vod.put("vod_id", f.toString());
               String vod_pic=tid+"/PIC/"+vod_name+".jpg";
               vod.put("vod_pic", vod_pic);
-              // System.out.println(vod_pic);
+              System.out.println(vod_pic);
               jSONArray.put(vod);
             }
 
