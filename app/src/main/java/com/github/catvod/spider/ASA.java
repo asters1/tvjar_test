@@ -57,7 +57,7 @@ public class ASA extends Spider {
       GC.put("type_name", "国产");
 
       if (filter) {
-        String filterconfig ="{\"/vodtype/2\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/2\" },{\"n\": \"热门\", \"v\": \"/vodshow/2--hits---------\" }]}],\"/vodtype/20\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/20\" },{\"n\": \"热门\", \"v\": \"/vodshow/20--hits---------\" }]}]}";
+        String filterconfig ="{\"/vodtype/2\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/2\" },{\"n\": \"热门\", \"v\": \"/vodshow/2--hits------\" }]}],\"/vodtype/20\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/20\" },{\"n\": \"热门\", \"v\": \"/vodshow/20--hits------\" }]}]}";
         result.put("filters", new JSONObject(filterconfig));
 
       }
@@ -89,10 +89,20 @@ public class ASA extends Spider {
             JSONArray jSONArray = new JSONArray();
             JSONObject res_detail=new JSONObject();
 
-      String url=siteUrl+tid;
+      String url="";
+      if (tid.equals("/vod/search/by/hits")||tid.equals("/label/new")){
+      url=siteUrl+tid+"/page/"+pg;
+      }else{
+      url=siteUrl+tid+"-"+pg;
+
+      }
+
 
       for (String key : extend.keySet()) {
-     url=siteUrl+extend.get(key).trim();;
+        //https://www.crvcd.cc/vodshow/2--hits---------/
+        //https://www.crvcd.cc/vodshow/2--hits------2---/
+        //https://www.crvcd.cc/vodshow/20--hits------2---/
+     url=siteUrl+extend.get(key).trim()+pg+"---";
       }
       System.out.println(url);
       String res=OkHttpUtil.string(url, GetNormalHeaders());
