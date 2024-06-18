@@ -57,8 +57,7 @@ public class ASA extends Spider {
       GC.put("type_name", "国产");
 
       if (filter) {
-        System.out.println("====");
-        String filterconfig ="{\"/vodtype/2\":{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/2\" },{\"n\": \"热门\", \"v\": \"/vodshow/2--hits---------\" }]}}";
+        String filterconfig ="{\"/vodtype/2\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/2\" },{\"n\": \"热门\", \"v\": \"/vodshow/2--hits---------\" }]}],\"/vodtype/20\":[{\"key\": \"类型\",\"name\": \"类型\", \"value\": [{\"n\": \"全部\", \"v\": \"/vodtype/20\" },{\"n\": \"热门\", \"v\": \"/vodshow/20--hits---------\" }]}]}";
         result.put("filters", new JSONObject(filterconfig));
 
       }
@@ -86,6 +85,46 @@ public class ASA extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      JSONObject result = new JSONObject();
+            JSONArray jSONArray = new JSONArray();
+            JSONObject res_detail=new JSONObject();
+
+      String url=siteUrl+tid;
+
+      for (String key : extend.keySet()) {
+     url=siteUrl+extend.get(key).trim();;
+      }
+      System.out.println(url);
+      String res=OkHttpUtil.string(url, GetNormalHeaders());
+      Elements list_el = Jsoup.parse(res).select("[class=margin-fix]").select("[class=item]");
+      System.out.println(list_el.size());
+            for (int i = 0; i < list_el.size(); i++) {
+                JSONObject vod = new JSONObject();
+                String vod_pic = siteUrl+ list_el.get(i).select("img").attr("data-original");
+                String vod_id = list_el.get(i).select("a").attr("href");
+                String vod_name = list_el.get(i).select("a").attr("title");
+                // System.out.println(vod_pic);
+                //
+                res_detail.put("vod_id", vod_id);
+        res_detail.put("vod_name", vod_name);
+        res_detail.put("vod_pic", vod_pic);
+
+
+                vod.put("vod_id", res_detail.toString());
+                vod.put("vod_name", vod_name);
+                vod.put("vod_pic", vod_pic);
+                jSONArray.put(vod);
+            }
+
+            result.put("page", pg);
+            result.put("pagecount", Integer.MAX_VALUE);
+            result.put("limit", 24);
+            result.put("total", Integer.MAX_VALUE);
+            result.put("list", jSONArray);
+            return result.toString();
+
+      // System.out.println(content);
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -95,6 +134,16 @@ public class ASA extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+JSONObject result=new JSONObject();
+      JSONArray list=new JSONArray();
+
+
+      JSONObject vod=new JSONObject(ids.get(0));
+      vod.put("vod_play_from", vod.getString("vod_name"));
+      vod.put("vod_play_url", "第一集$"+siteUrl+vod.getString("vod_id"));
+      list.put(vod);
+      result.put("list", list);
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -113,6 +162,13 @@ public class ASA extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+      JSONObject result = new JSONObject();
+
+      result.put("parse", 1);
+      result.put("header", "");
+      result.put("playUrl", "");
+      result.put("url", id);
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -131,5 +187,18 @@ public class ASA extends Spider {
     } catch (Exception e) {
     }
   }
+
   // ====================
+  HashMap<String,String>  GetNormalHeaders(){
+    try {
+      HashMap<String, String> headers = new HashMap<>();
+      headers.put("user-agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36");
+
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+    return null;
+
+
+  }
 }
