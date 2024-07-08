@@ -20,7 +20,7 @@ import com.github.catvod.crawler.SpiderDebug;
 
 public class ASA extends Spider {
 
-  private static final String siteUrl = "https://www.crvcd.cc";
+  private static final String siteUrl = "https://wisteria.cf/https://www.crvcd.cc";
   //ext为外部给的字符串
   public String ext = "";
 
