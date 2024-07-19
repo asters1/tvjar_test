@@ -1,5 +1,8 @@
 package com.github.catvod.spider;
 
+import java.net.URLEncoder;
+
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -161,9 +164,42 @@ JSONObject result=new JSONObject();
     }
     return "";
   }
+  public String encodeURIComponent(String key){
+    try{
+      String encodedKey = URLEncoder.encode(key);
+      return encodedKey;
+    } catch (Exception e) {
+    }
+    return "";
+
+  }
 
   public String searchContent(String key, boolean quick) {
     try {
+// https://r.wisteria.cf/vod/search/?wd=%E5%BC%BA
+      JSONArray videos=new JSONArray();
+      String url= siteUrl +"vod/search/?wd="+ encodeURIComponent(key);
+       String content=OkHttpUtil.string(url,GetNormalHeaders());
+      Elements list_el = Jsoup.parse(content).select("[class=margin-fix]").select("[class=item]");
+
+            for (int i = 0; i < list_el.size(); i++) {
+                JSONObject vod = new JSONObject();
+                String vod_pic = siteUrl+ list_el.get(i).select("img").attr("data-original");
+                String vod_id = list_el.get(i).select("a").attr("href");
+                String vod_name = list_el.get(i).select("a").attr("title");
+
+
+                vod.put("vod_id", vod_id);
+                vod.put("vod_name", vod_name);
+                vod.put("vod_pic", vod_pic);
+                // jSONArray.put(vod);
+                // System.out.println(vod);
+                videos.put(vod);
+            }
+            JSONObject result =new JSONObject();
+      result.put("list", videos);
+      return result.toString();
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
