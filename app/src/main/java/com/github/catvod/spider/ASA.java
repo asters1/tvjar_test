@@ -177,23 +177,28 @@ JSONObject result=new JSONObject();
   public String searchContent(String key, boolean quick) {
     try {
 // https://r.wisteria.cf/vod/search/?wd=%E5%BC%BA
+// https://r.wisteria.cf/vod/search/page/2/wd/%E5%BC%BA/
       JSONArray videos=new JSONArray();
       String url= siteUrl +"vod/search/?wd="+ encodeURIComponent(key);
        String content=OkHttpUtil.string(url,GetNormalHeaders());
       Elements list_el = Jsoup.parse(content).select("[class=margin-fix]").select("[class=item]");
 
             for (int i = 0; i < list_el.size(); i++) {
+            JSONObject res_detail=new JSONObject();
                 JSONObject vod = new JSONObject();
                 String vod_pic = siteUrl+ list_el.get(i).select("img").attr("data-original");
                 String vod_id = list_el.get(i).select("a").attr("href");
                 String vod_name = list_el.get(i).select("a").attr("title");
+                // System.out.println(vod_pic);
+                //
+                res_detail.put("vod_id", vod_id);
+        res_detail.put("vod_name", vod_name);
+        res_detail.put("vod_pic", vod_pic);
 
 
-                vod.put("vod_id", vod_id);
+                vod.put("vod_id", res_detail.toString());
                 vod.put("vod_name", vod_name);
                 vod.put("vod_pic", vod_pic);
-                // jSONArray.put(vod);
-                // System.out.println(vod);
                 videos.put(vod);
             }
             JSONObject result =new JSONObject();
