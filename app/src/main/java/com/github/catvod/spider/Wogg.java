@@ -29,12 +29,12 @@ public class Wogg extends Spider {
 
   public void init(Context context,String ext) {
     try {
-    super.init(context,ext);
-    JSONObject json_ext=new JSONObject(ext);
+      super.init(context,ext);
+      JSONObject json_ext=new JSONObject(ext);
 
 
-    this.siteUrl=json_ext.getString("wogg_url");
-    this.ali_token=json_ext.getString("ali_token");
+      this.siteUrl=json_ext.getString("wogg_url");
+      this.ali_token=json_ext.getString("ali_token");
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
@@ -97,10 +97,69 @@ public class Wogg extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
-      String str_ext="";
+      JSONObject result = new JSONObject();
+      JSONArray jSONArray = new JSONArray();
+      int page = Integer.parseInt(pg);
+
+      String L="";
+      String D="";
+      String Y="";
+      String T="";
+      String AZ="";
+      String PX="";
       for (String key : extend.keySet()) {
-        printLog(key, extend.get(key));
+        switch (key) {
+          case "L":
+            L=extend.get(key);
+            break;
+          case "D":
+            D=extend.get(key);
+            break;
+          case "Y":
+            Y=extend.get(key);
+            break;
+          case "T":
+            T=extend.get(key);
+            break;
+          case "AZ":
+            AZ=extend.get(key);
+            break;
+          case "PX":
+            PX=extend.get(key);
+            break;
+          default:
+            break;
         }
+
+        String str_ext="-"+D+"-"+PX+"-"+L+"-"+Y+"-"+AZ+"---"+pg+"---"+T+".html";
+        String url=siteUrl+"/vodshow"+tid+str_ext;
+        // System.out.println(url);
+        String res = OkHttpUtil.string(url, getHeaders());
+        Elements list_el = Jsoup.parse(res).select("[class=module-items]").select("[class=module-item]");
+
+        for (int i = 0; i < list_el.size(); i++) {
+          JSONObject vod = new JSONObject();
+          String vod_pic = list_el.get(i).select("[class=module-item-pic]").select("img").attr("data-src");
+          String vod_id = list_el.get(i).select("[class=module-item-pic]").select("a").attr("href");
+          String vod_name = list_el.get(i).select("[class=module-item-pic]").select("a").attr("title");
+          String vod_remarks = list_el.get(i).select("[class=module-item-text]").text();
+          // System.out.println(vod_pic);
+          vod.put("vod_id", vod_id);
+          vod.put("vod_name", vod_name);
+          vod.put("vod_pic", vod_pic);
+          vod.put("vod_remarks", vod_remarks);
+          jSONArray.put(vod);
+        }
+        result.put("page", page);
+        result.put("pagecount", Integer.MAX_VALUE);
+        result.put("limit", 40);
+        result.put("total", Integer.MAX_VALUE);
+        result.put("list", jSONArray);
+        return result.toString();
+
+
+
+      }
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -156,7 +215,7 @@ public class Wogg extends Spider {
       String D_leixing="[{\"n\":\"全部\",\"v\":\"\"},{\"n\":\"情感\",\"v\":\"情感\"},{\"n\":\"科幻\",\"v\":\"科幻\"},{\"n\":\"热血\",\"v\":\"热血\"},{\"n\":\"推理\",\"v\":\"推理\"},{\"n\":\"搞笑\",\"v\":\"搞笑\"},{\"n\":\"冒险\",\"v\":\"冒险\"},{\"n\":\"萝莉\",\"v\":\"萝莉\"},{\"n\":\"校园\",\"v\":\"校园\"},{\"n\":\"动作\",\"v\":\"动作\"},{\"n\":\"机战\",\"v\":\"机战\"},{\"n\":\"运动\",\"v\":\"运动\"},{\"n\":\"战争\",\"v\":\"战争\"},{\"n\":\"少年\",\"v\":\"少年\"},{\"n\":\"少女\",\"v\":\"少女\"},{\"n\":\"社会\",\"v\":\"社会\"},{\"n\":\"原创\",\"v\":\"原创\"},{\"n\":\"亲子\",\"v\":\"亲子\"},{\"n\":\"益智\",\"v\":\"益智\"},{\"n\":\"励志\",\"v\":\"励志\"},{\"n\":\"其他\",\"v\":\"其他\"}]";
 
       //短剧的类型
-        // []";
+      // []";
       String DJ_leixing="[{\"n\":\"全部\",\"v\":\"\"},{\"n\":\"古装\",\"v\":\"古装\"},{\"n\":\"战争\",\"v\":\"战争\"},{\"n\":\"青春偶像\",\"v\":\"青春偶像\"},{\"n\":\"喜剧\",\"v\":\"喜剧\"},{\"n\":\"家庭\",\"v\":\"家庭\"},{\"n\":\"犯罪\",\"v\":\"犯罪\"},{\"n\":\"动作\",\"v\":\"动作\"},{\"n\":\"奇幻\",\"v\":\"奇幻\"},{\"n\":\"剧情\",\"v\":\"剧情\"},{\"n\":\"历史\",\"v\":\"历史\"},{\"n\":\"经典\",\"v\":\"经典\"},{\"n\":\"乡村\",\"v\":\"乡村\"},{\"n\":\"情景\",\"v\":\"情景\"},{\"n\":\"商战\",\"v\":\"商战\"},{\"n\":\"网剧\",\"v\":\"网剧\"},{\"n\":\"其他\",\"v\":\"其他\"}]";
       //电影和电视的地区
       String M_and_T_diqu="[{\"n\":\"全部\",\"v\":\"\"},{\"n\":\"大陆\",\"v\":\"大陆\"},{\"n\":\"香港\",\"v\":\"香港\"},{\"n\":\"台湾\",\"v\":\"台湾\"},{\"n\":\"美国\",\"v\":\"美国\"},{\"n\":\"法国\",\"v\":\"法国\"},{\"n\":\"英国\",\"v\":\"英国\"},{\"n\":\"日本\",\"v\":\"日本\"},{\"n\":\"韩国\",\"v\":\"韩国\"},{\"n\":\"德国\",\"v\":\"德国\"},{\"n\":\"泰国\",\"v\":\"泰国\"},{\"n\":\"印度\",\"v\":\"印度\"},{\"n\":\"意大利\",\"v\":\"意大利\"},{\"n\":\"西班牙\",\"v\":\"西班牙\"},{\"n\":\"加拿大\",\"v\":\"加拿大\"},{\"n\":\"其他\",\"v\":\"其他\"}]";
@@ -187,5 +246,11 @@ public class Wogg extends Spider {
       return "";
     }
 
+  }
+  protected HashMap<String, String> getHeaders() {
+    HashMap<String, String> headers = new HashMap<>();
+    headers.put("User-Agent",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36");
+    return headers;
   }
 }
