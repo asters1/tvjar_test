@@ -68,7 +68,7 @@ public class Wogg extends Spider {
       zongyi.put("type_id", "/4");
       duanju.put("type_name", "短剧");
       duanju.put("type_id", "/6");
-      yingyue.put("type_name", "音乐");
+      yingyue.put("type_name", "音乐1");
       yingyue.put("type_id", "/5");
 
       classes.put(dianying);
