@@ -28,12 +28,16 @@ public class Wogg extends Spider {
   public String siteUrl = "";
 
   public void init(Context context,String ext) {
+    try {
     super.init(context,ext);
     JSONObject json_ext=new JSONObject(ext);
 
 
     this.siteUrl=json_ext.getString("wogg_url");
     this.ali_token=json_ext.getString("ali_token");
+    } catch (Exception e) {
+      SpiderDebug.log(e);
+    }
   }
 
   public String homeContent(boolean filter) {
