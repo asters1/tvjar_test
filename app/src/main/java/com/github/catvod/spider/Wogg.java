@@ -68,8 +68,8 @@ public class Wogg extends Spider {
       zongyi.put("type_id", "/4");
       duanju.put("type_name", "短剧");
       duanju.put("type_id", "/6");
-      // yingyue.put("type_name", "音乐");
-      yingyue.put("type_name", siteUrl);
+      yingyue.put("type_name", "音乐");
+      // yingyue.put("type_name", siteUrl);
       yingyue.put("type_id", "/5");
 
       classes.put(dianying);
@@ -98,6 +98,7 @@ public class Wogg extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+        printLog("tid", tid);
       JSONObject result = new JSONObject();
       JSONArray jSONArray = new JSONArray();
       int page = Integer.parseInt(pg);
@@ -132,6 +133,10 @@ public class Wogg extends Spider {
             break;
         }
 
+
+
+      }
+
         String str_ext="-"+D+"-"+PX+"-"+L+"-"+Y+"-"+AZ+"---"+pg+"---"+T+".html";
         String url=siteUrl+"/vodshow"+tid+str_ext;
         printLog("url", url);
@@ -159,11 +164,8 @@ public class Wogg extends Spider {
         result.put("list", jSONArray);
         return result.toString();
 
-
-
-      }
-
     } catch (Exception e) {
+        printLog("tid", tid);
       SpiderDebug.log(e);
     }
     return "";
