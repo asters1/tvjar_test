@@ -68,7 +68,7 @@ public class Wogg extends Spider {
       zongyi.put("type_id", "/4");
       duanju.put("type_name", "短剧");
       duanju.put("type_id", "/6");
-      yingyue.put("type_name", "音乐1");
+      yingyue.put("type_name", "音乐");
       yingyue.put("type_id", "/5");
 
       classes.put(dianying);
@@ -133,6 +133,7 @@ public class Wogg extends Spider {
 
         String str_ext="-"+D+"-"+PX+"-"+L+"-"+Y+"-"+AZ+"---"+pg+"---"+T+".html";
         String url=siteUrl+"/vodshow"+tid+str_ext;
+        printLog("url", url);
         // System.out.println(url);
         String res = OkHttpUtil.string(url, getHeaders());
         Elements list_el = Jsoup.parse(res).select("[class=module-items]").select("[class=module-item]");
