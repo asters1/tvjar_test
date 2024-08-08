@@ -97,6 +97,10 @@ public class Wogg extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
+      String str_ext="";
+      for (String key : extend.keySet()) {
+        printLog(key, extend.get(key));
+        }
 
     } catch (Exception e) {
       SpiderDebug.log(e);
