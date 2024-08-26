@@ -98,7 +98,7 @@ public class Wogg extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
-        printLog("tid", tid);
+        // printLog("tid", tid);
       JSONObject result = new JSONObject();
       JSONArray jSONArray = new JSONArray();
       int page = Integer.parseInt(pg);
@@ -139,7 +139,7 @@ public class Wogg extends Spider {
 
         String str_ext="-"+D+"-"+PX+"-"+L+"-"+Y+"-"+AZ+"---"+pg+"---"+T+".html";
         String url=siteUrl+"/vodshow"+tid+str_ext;
-        printLog("url", url);
+        // printLog("url", url);
         // System.out.println(url);
         String res = OkHttpUtil.string(url, getHeaders());
         Elements list_el = Jsoup.parse(res).select("[class=module-items]").select("[class=module-item]");
@@ -173,6 +173,37 @@ public class Wogg extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+        String url=siteUrl+ids.get(0);
+        // System.out.println(url);
+        String res = OkHttpUtil.string(url, getHeaders());
+        Elements list_els = Jsoup.parse(res).select("[class=box view-heading]");
+
+        String vod_id=ids.get(0);
+        String vod_name=list_els.select("[class=page-title]").text();
+        String vod_pic=list_els.select("[class=module-item-pic]").select("img").attr("data-src");
+        String type_name=list_els.select("[class=tag-link]").get(1).text();       
+        type_name=type_name.substring(1,type_name.length()-1);
+        // System.out.println(type_name);
+        String vod_year=list_els.select("[class=video-info-items]").get(2).select("[class=video-info-item video-info-actor]").select("a").text();
+        String vod_remarks=list_els.select("[class=video-info-items]").get(3).select("[class=video-info-item]").text();
+        String vod_content=list_els.select("[class=video-info-items]").get(4).select("p").first().ownText();
+        // vod_content=vod_content.replaceAll("[]", replacement)
+        String vod_play_from="";
+        Elements list_els_froms=Jsoup.parse(res).select("[class=scroll-box-y]").select("[class=module-row-one]");
+        for(int i=0;i<list_els_froms.size();i++){
+          System.out.println(list_els_froms.get(i).select("[class=module-row-title]").select("p").text());
+
+
+        }
+        
+
+
+
+//
+        System.out.println(vod_content);
+
+
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
