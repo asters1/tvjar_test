@@ -223,24 +223,25 @@ public class Alist3 extends Spider {
                     Alist3_play_froms.add(name+"$"+id);
 
                   }
+
+                }
+                  // System.out.println(Alist3_play_froms.toString());
                   String astr=TextUtils.join("#", Alist3_play_froms);
                               if(!astr.equals("")){
                   play_froms.add(astr);
                               }
-
-                }
                 // info.put("vod_play_url",TextUtils.join("#", play_froms));
                 String vod_play_url=TextUtils.join("$$$", play_froms);
                 String vod_play_from=TextUtils.join("$$$", vod_play_froms);
                 // System.out.println(vod_play_from);
                 info.put("vod_play_from", vod_play_from);
-                printLog("vod_play_from", vod_play_from);
+                // printLog("vod_play_from", vod_play_from);
                 // System.out.println(vod_play_url);
                 info.put("vod_play_url", vod_play_url);
 
                 result.put("list", info);
-                System.out.println(info);
-                System.out.println(result);
+                // System.out.println(info);
+                // System.out.println(result);
 
 
               } catch (Exception e) {
@@ -294,12 +295,6 @@ public class Alist3 extends Spider {
                       + data.getJSONArray("content").getJSONObject(i).getString("name"));
 
                   jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
-                  // jsonObject.put("vod_pic",
-                  //
-                  //     getraw( "/"+alist_path+"/"
-                  //       + data.getJSONArray("content").getJSONObject(i).getString("name")
-                  //
-                  //       + "/1.jpg"));
                   jsonObject.put("vod_name",
                       data.getJSONArray("content").getJSONObject(i).getString("name"));
                   // System.out.println(jsonObject);
