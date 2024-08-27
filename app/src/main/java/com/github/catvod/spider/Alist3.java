@@ -40,6 +40,7 @@ public class Alist3 extends Spider {
       this.siteUrl=extjson.getString("url");
       this.alist_path=extjson.getString("path");
       this.pic_path=extjson.getString("pic");
+      // System.out.println(pic_path);
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -92,13 +93,8 @@ public class Alist3 extends Spider {
               jsonObject.put("vod_id",
                   alist_path+"/"
                   + data.getJSONArray("content").getJSONObject(i).getString("name"));
-              jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
-              // System.out.println(pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
-
-              // getraw( "/"+alist_path+"/"
-              //   + data.getJSONArray("content").getJSONObject(i).getString("name")
-              //
-              //   + "/1.jpg"));
+              jsonObject.put("vod_pic","https://c-ssl.duitang.com/uploads/blog/202108/02/20210802084614_b445b.jpg");
+              // jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
               list.put(jsonObject);
             }
           } catch (Exception e) {
@@ -116,7 +112,8 @@ public class Alist3 extends Spider {
       result_json.put("list", list);
 
 
-      printLog("cate",result_json.toString());
+      // printLog("cate",result_json.toString());
+      System.out.println(result_json.toString());
       return result_json.toString();
 
     } catch (Exception e) {
