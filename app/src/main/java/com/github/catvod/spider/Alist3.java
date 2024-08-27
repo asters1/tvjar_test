@@ -320,13 +320,13 @@ public class Alist3 extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
-      // String url = getraw(id);
-      // JSONObject result = new JSONObject();
-      // result.put("header", "");
-      // result.put("parse", 0);
-      // result.put("url", url);
-      // result.put("playUrl", "");
-      // return result.toString();
+      String url = getraw(id);
+      JSONObject result = new JSONObject();
+      result.put("header", "");
+      result.put("parse", 0);
+      result.put("url", url);
+      result.put("playUrl", "");
+      return result.toString();
 
     } catch (Exception e) {
       SpiderDebug.log(e);
