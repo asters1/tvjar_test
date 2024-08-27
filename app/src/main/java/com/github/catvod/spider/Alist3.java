@@ -114,6 +114,9 @@ public class Alist3 extends Spider {
       result_json.put("limit", Integer.MAX_VALUE);
       result_json.put("total", Integer.MAX_VALUE);
       result_json.put("list", list);
+
+
+      printLog("cate",result_json.toString());
       return result_json.toString();
 
     } catch (Exception e) {
@@ -255,6 +258,7 @@ public class Alist3 extends Spider {
       // System.out.println(info);
       list_info.put(info);
       result.put("list", list_info);
+      printLog("detail",result.toString());
 
       return result.toString();
 
