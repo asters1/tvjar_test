@@ -234,11 +234,12 @@ public class Alist3 extends Spider {
                 String vod_play_from=TextUtils.join("$$$", vod_play_froms);
                 // System.out.println(vod_play_from);
                 info.put("vod_play_from", vod_play_from);
+                printLog("vod_play_from", vod_play_from);
                 // System.out.println(vod_play_url);
                 info.put("vod_play_url", vod_play_url);
 
-                // System.out.println(info);
                 result.put("list", info);
+                System.out.println(info);
                 System.out.println(result);
 
 
@@ -319,14 +320,14 @@ public class Alist3 extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
-      String url = getraw(id);
-      JSONObject result = new JSONObject();
-      result.put("header", "");
-      result.put("parse", 0);
-      result.put("url", url);
-      result.put("playUrl", "");
+      // String url = getraw(id);
+      // JSONObject result = new JSONObject();
+      // result.put("header", "");
+      // result.put("parse", 0);
+      // result.put("url", url);
+      // result.put("playUrl", "");
+      // return result.toString();
 
-      return result.toString();
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
