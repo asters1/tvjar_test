@@ -93,7 +93,7 @@ public class Alist3 extends Spider {
               jsonObject.put("vod_id",
                   alist_path+"/"
                   + data.getJSONArray("content").getJSONObject(i).getString("name"));
-              jsonObject.put("vod_pic","https://c-ssl.duitang.com/uploads/blog/202108/02/20210802084614_b445b.jpg");
+              jsonObject.put("vod_pic","https://ts1.cn.mm.bing.net/th/id/R-C.bd12b388d1e8886aef27fcc88c95d064?rik=jL0Pm39EN8SOIA&riu=http%3a%2f%2fpuui.qpic.cn%2fvcover_vt_pic%2f0%2fpz3dfed6uxwj6gt1618467298871%2f0&ehk=W8CCwFYHjU0JTvCfNFX1LH5A3w6nmgnhMPlaTSFKG6Y%3d&risl=&pid=ImgRaw&r=0");
               // jsonObject.put("vod_pic",pic_path+data.getJSONArray("content").getJSONObject(i).getString("name")+".jpg");
               list.put(jsonObject);
             }
