@@ -104,6 +104,7 @@ public class IkanBot extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+
       JSONObject result = new JSONObject();
       JSONObject info = new JSONObject();
       JSONArray list_info = new JSONArray();
