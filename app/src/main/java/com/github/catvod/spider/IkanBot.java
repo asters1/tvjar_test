@@ -136,6 +136,7 @@ public class IkanBot extends Spider {
       list_info.put(info);
       result.put("list", list_info);
 
+
       return result.toString();
 
     } catch (Exception e) {
