@@ -259,7 +259,7 @@ public class IkanBot extends Spider {
       JSONObject result = new JSONObject();
       result.put("parse", 0);
       result.put("header", "");
-      result.put("playUrl", id);
+      result.put("playUrl", "");
       result.put("url", id);
 
       return result.toString();
