@@ -121,12 +121,12 @@ public class IkanBot extends Spider {
       info.put("vod_id", ids.get(0));
       info.put("vod_name", vod_name);
       info.put("vod_pic", vod_pic);
-      info.put("type_name", "type_name");
+      info.put("type_name", "");
       info.put("vod_year", vod_year);
       info.put("vod_area", vod_area);
-      info.put("vod_remarks", "Remarks");
+      info.put("vod_remarks", "");
       info.put("vod_actor", vod_actor);
-      info.put("vod_director", "Director");
+      info.put("vod_director", "");
       info.put("vod_content", vod_content);
       String v_tks = getToken(res);
       int vid_index=u.lastIndexOf("/")+1;
@@ -260,7 +260,7 @@ public class IkanBot extends Spider {
       result.put("parse", 0);
       result.put("header", "");
       result.put("playUrl", id);
-      result.put("url", "");
+      result.put("url", id);
       return result.toString();
 
 
