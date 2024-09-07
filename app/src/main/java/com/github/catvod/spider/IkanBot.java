@@ -114,9 +114,24 @@ public class IkanBot extends Spider {
       // String vod_id = Jsoup.parse(res).select("[id=current_id]").attr("value");
       String vod_name = Jsoup.parse(res).select("h2").text();
       String vod_pic = Jsoup.parse(res).select("[class=item-root]").select("img").attr("data-src");
-      String vod_actor=Jsoup.parse(res).select("[class=meta]").get(3).text();
-      String vod_area=Jsoup.parse(res).select("[class=meta]").get(2).text();
-      String vod_year=Jsoup.parse(res).select("[class=meta]").get(1).text();
+
+String vod_actor="";
+String vod_area="";
+String vod_year="";
+
+      try {
+      vod_actor=Jsoup.parse(res).select("[class=meta]").get(3).text();
+      } catch (Exception e) {
+      }
+      try {
+       vod_area=Jsoup.parse(res).select("[class=meta]").get(2).text();
+      } catch (Exception e) {
+      }
+      try {
+       vod_year=Jsoup.parse(res).select("[class=meta]").get(1).text();
+        
+      } catch (Exception e) {
+      }
       String vod_content=Jsoup.parse(res).select("[class=line-tips]").text();
       info.put("vod_id", ids.get(0));
       info.put("vod_name", vod_name);
