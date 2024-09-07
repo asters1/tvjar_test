@@ -127,10 +127,81 @@ public class IkanBot extends Spider {
       // info.put("vod_actor", vod_actor);
       // info.put("vod_director", vod_director);
       info.put("vod_content", vod_content);
-
-
       String v_tks = getToken(res);
+      int vid_index=u.lastIndexOf("/")+1;
+      String uu=siteUrl+"/api/getResN?videoId=" + u.substring(vid_index)+"&mtype=2&token="+v_tks;
+      // System.out.println(uu);
+      String res_m3u8 = OkHttpUtil.string(uu, getHeaders());
+      // System.out.println(res_m3u8);
+      JSONObject json_res_m3u8=new JSONObject(res_m3u8);
+      HashMap<String, String> m = new HashMap<>();
+      m.put("bfzym3u8", "暴风");
+      m.put("1080zyk", "优质");
+      m.put("kuaikan", "快看");
+      m.put("lzm3u8", "量子");
+      m.put("ffm3u8", "非凡");
+      m.put("haiwaikan", "海外看");
+      m.put("gsm3u8", "光速");
+      m.put("zuidam3u8", "最大");
+      m.put("bjm3u8", "八戒");
+      m.put("snm3u8", "索尼");
+      m.put("wolong", "卧龙");
+      m.put("xlm3u8", "新浪");
+      m.put("yhm3u8", "樱花");
+      m.put("tkm3u8", "天空");
+      m.put("jsm3u8", "极速");
+      m.put("wjm3u8", "无尽");
+      m.put("sdm3u8", "闪电");
+      m.put("kcm3u8", "快车");
+      m.put("jinyingm3u8", "金鹰");
+      m.put("fsm3u8", "飞速");
+      m.put("tpm3u8", "淘片");
+      m.put("lem3u8", "鱼乐");
+      m.put("dbm3u8", "百度");
+      m.put("tomm3u8", "番茄");
+      m.put("ukm3u8", "U酷");
+      m.put("ikm3u8", "爱坤");
+      m.put("hnzym3u8", "红牛资源");
+      m.put("hnm3u8", "红牛");
+      m.put("68zy_m3u8", "68");
+      m.put("kdm3u8", "酷点");
+      m.put("bdxm3u8", "北斗星");
+      m.put("qhm3u8", "奇虎");
+      m.put("hhm3u8", "豪华");
+      JSONArray res_list=json_res_m3u8.getJSONObject("data").getJSONArray("list");
+      // System.out.println(res_list);
+      ArrayList<String> play_from_array = new ArrayList<String>();
+      ArrayList<String> play_url_array = new ArrayList<String>();
+      for(int i=0;i<res_list.length();i++){
+        JSONArray json_resData=new JSONArray( res_list.getJSONObject(i).getString("resData"));
+        JSONObject f_and_u=json_resData.getJSONObject(0);
 
+        try {
+          String flag=f_and_u.getString("flag");
+          String res_url=f_and_u.getString("url");
+          // System.out.println(flag);
+          if(m.containsKey(flag)){
+            // System.out.println(m.get(flag));
+            play_from_array.add(m.get(flag));
+
+
+          }else{
+            play_from_array.add(flag);
+
+          }
+
+          play_url_array.add(res_url.replaceAll("##", "#"));
+
+
+        } catch (Exception e) {
+          System.out.println("运行时解析Url出错");
+        }
+      }
+      String vod_play_from=TextUtils.join("$$$", play_from_array);
+      String vod_play_url=TextUtils.join("$$$", play_url_array);
+
+      info.put("vod_play_from", vod_play_from);
+      info.put("vod_play_url", vod_play_url);
 
 
       list_info.put(info);
@@ -156,11 +227,25 @@ public class IkanBot extends Spider {
 
   public String playerContent(String flag, String id, List<String> vipFlags) {
     try {
+      JSONObject result = new JSONObject();
+      result.put("parse", 0);
+      result.put("header", "");
+      result.put("playUrl", id);
+      result.put("url", "");
+      return result.toString();
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
     }
     return "";
+  }
+  protected HashMap<String, String> getM3u8Headers(String Url) {
+    HashMap<String, String> headers = new HashMap<>();
+    headers.put("User-Agent",
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1");
+    headers.put("Referer",Url);
+    return headers;
   }
   protected HashMap<String, String> getHeaders() {
     HashMap<String, String> headers = new HashMap<>();
