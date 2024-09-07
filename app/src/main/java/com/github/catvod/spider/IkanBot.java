@@ -7,10 +7,11 @@ import org.jsoup.select.Elements;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Base64;
 
 import java.util.HashMap;
 import java.util.List;
+
+
 import java.util.ArrayList;
 
 import com.github.catvod.utils.okhttp.OkHttpUtil;
@@ -110,7 +111,7 @@ public class IkanBot extends Spider {
       JSONArray list_info = new JSONArray();
       String u=siteUrl+ids.get(0);
       String res = OkHttpUtil.string(u, getHeaders());
-      String vod_id = Jsoup.parse(res).select("[id=current_id]").attr("value");
+      // String vod_id = Jsoup.parse(res).select("[id=current_id]").attr("value");
       String vod_name = Jsoup.parse(res).select("h2").text();
       String vod_pic = Jsoup.parse(res).select("[class=item-root]").select("img").attr("data-src");
       // String vod_actor=Jsoup.parse(res).select("[class=meta]").get(4).text();
@@ -218,6 +219,34 @@ public class IkanBot extends Spider {
 
   public String searchContent(String key, boolean quick) {
     try {
+      JSONObject result=new JSONObject();
+      JSONArray list=new JSONArray();
+      String u=siteUrl+"/search?q="+key;
+      String res = OkHttpUtil.string(u, getHeaders());
+      // System.out.println(res);
+      Elements  list_el = Jsoup.parse(res).select("[class=ol-xs-12 col-md-8]").select("[class=media]");
+      // System.out.println("===");
+      // System.out.println(list_el.toString());
+      // System.out.println("===");
+      for (int i = 0; i < list_el.size(); i++) {
+        JSONObject vod = new JSONObject();
+        String vod_id=list_el.get(i).select("[class=title-text]").attr("href");
+        String vod_name=list_el.get(i).select("[class=title-text]").text();
+        String vod_remarks=list_el.get(i).select("[class=label]").text();
+        String vod_pic=list_el.get(i).select("img").attr("data-src");
+
+        vod.put("vod_id", vod_id);
+        vod.put("vod_name", vod_name);
+        vod.put("vod_pic", vod_pic);
+        vod.put("vod_remarks", vod_remarks);
+        list.put(vod);
+
+      }
+      result.put("list", list);
+      return result.toString();
+
+
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
