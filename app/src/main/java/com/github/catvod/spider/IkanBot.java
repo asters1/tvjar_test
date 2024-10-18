@@ -22,9 +22,9 @@ import com.github.catvod.crawler.SpiderDebug;
 public class IkanBot extends Spider {
 
   private static final String siteUrl = "https://v.aikanbot.com";
+
   //ext为外部给的字符串
   public String ext = "";
-
 
   public void init(Context context,String ext) {
     super.init(context,ext);
@@ -84,7 +84,7 @@ public class IkanBot extends Spider {
         String vod_pic = list_el.get(i).select("img").attr("data-src");
         vod.put("vod_id", vod_id);
         vod.put("vod_name", vod_name);
-        vod.put("vod_pic", vod_pic);
+        vod.put("vod_pic", vod_pic+"@Referer=https://v.ikanbot.com/@User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
         jSONArray.put(vod);
       }
       result.put("page", page);
