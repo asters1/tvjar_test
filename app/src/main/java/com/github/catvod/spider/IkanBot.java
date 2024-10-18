@@ -10,7 +10,10 @@ import android.text.TextUtils;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
 
+
+import java.io.File;
 
 import java.util.ArrayList;
 
@@ -22,6 +25,8 @@ import com.github.catvod.crawler.SpiderDebug;
 public class IkanBot extends Spider {
 
   private static final String siteUrl = "https://v.aikanbot.com";
+
+  public String BasePath = "/storage/emulated/0/视频";
 
   //ext为外部给的字符串
   public String ext = "";
@@ -39,6 +44,11 @@ public class IkanBot extends Spider {
 
       JSONObject dianying = new JSONObject();
       JSONObject dianshiju = new JSONObject();
+      JSONObject local_video = new JSONObject();
+
+
+      local_video.put("type_name","本地视频");
+      local_video.put("type_id",BasePath);
 
       dianying.put("type_name", "电影");
       dianying.put("type_id", "movie");
@@ -46,6 +56,7 @@ public class IkanBot extends Spider {
       dianshiju.put("type_name", "电视剧");
       dianshiju.put("type_id", "tv");
 
+      classes.put(local_video);
       classes.put(dianying);
       classes.put(dianshiju);
 
@@ -60,42 +71,81 @@ public class IkanBot extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
-      // System.out.println("====");
-      // System.out.println(getToken(""));
-      // System.out.println("====");
-      String u="";
-      JSONObject result = new JSONObject();
-      JSONArray jSONArray = new JSONArray();
-      int page = Integer.parseInt(pg);
-      if (pg.equals("1")){
+      if(tid.equals(BasePath)){
+        JSONObject result = new JSONObject();
+        JSONArray jSONArray = new JSONArray();
+        File VideosDir=new File(tid);
+        if (VideosDir.exists()){
+          File[] files=VideosDir.listFiles();
+          if (files!=null){
+            for(int i=0;i<files.length;i++){
+              File f=files[i];
+              // System.out.println(files.length);
 
-        u= siteUrl+ "/hot/index-"+tid+"-热门.html";
+              // System.out.println(f);
+              if (f.isDirectory()){
+                if(f.getName().equals("PIC")){
+                  continue;
+                }
+                JSONObject vod = new JSONObject();
+                String vod_name=f.getName().toString();
+                vod.put("vod_name", vod_name);
+                vod.put("vod_id", f.toString());
+                String vod_pic=tid+"/PIC/"+vod_name+".jpg";
+                vod.put("vod_pic", vod_pic);
+                // System.out.println(vod_pic);
+                jSONArray.put(vod);
+              }
+
+            }
+          }
+
+        }
+        result.put("page", "1");
+        result.put("pagecount", "1");
+        result.put("limit", Integer.MAX_VALUE);
+        result.put("total", Integer.MAX_VALUE);
+        result.put("list", jSONArray);
+        return result.toString();
+
+
+
       }else{
 
-        u= siteUrl+ "/hot/index-"+tid+"-热门-p-"+pg+".html";
+        String u="";
+        JSONObject result = new JSONObject();
+        JSONArray jSONArray = new JSONArray();
+        int page = Integer.parseInt(pg);
+        if (pg.equals("1")){
+
+          u= siteUrl+ "/hot/index-"+tid+"-热门.html";
+        }else{
+
+          u= siteUrl+ "/hot/index-"+tid+"-热门-p-"+pg+".html";
+        }
+        String res = OkHttpUtil.string(u, getHeaders());
+        Elements list_el = Jsoup.parse(res).select("[class=v-list]").select("[class=item]");
+        for (int i = 0; i < list_el.size(); i++) {
+          JSONObject vod = new JSONObject();
+          String vod_id=list_el.get(i).select("a").attr("href");
+          String vod_name=list_el.get(i).select("p").text();
+
+          String vod_pic = list_el.get(i).select("img").attr("data-src");
+          vod.put("vod_id", vod_id);
+          vod.put("vod_name", vod_name);
+          vod.put("vod_pic", vod_pic+"@Referer=https://v.ikanbot.com/@User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
+          jSONArray.put(vod);
+        }
+        result.put("page", page);
+        result.put("pagecount", Integer.MAX_VALUE);
+        result.put("limit", 40);
+        result.put("total", Integer.MAX_VALUE);
+        result.put("list", jSONArray);
+        return result.toString();
+
+
+
       }
-      String res = OkHttpUtil.string(u, getHeaders());
-      Elements list_el = Jsoup.parse(res).select("[class=v-list]").select("[class=item]");
-      for (int i = 0; i < list_el.size(); i++) {
-        JSONObject vod = new JSONObject();
-        String vod_id=list_el.get(i).select("a").attr("href");
-        String vod_name=list_el.get(i).select("p").text();
-
-        String vod_pic = list_el.get(i).select("img").attr("data-src");
-        vod.put("vod_id", vod_id);
-        vod.put("vod_name", vod_name);
-        vod.put("vod_pic", vod_pic+"@Referer=https://v.ikanbot.com/@User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
-        jSONArray.put(vod);
-      }
-      result.put("page", page);
-      result.put("pagecount", Integer.MAX_VALUE);
-      result.put("limit", 40);
-      result.put("total", Integer.MAX_VALUE);
-      result.put("list", jSONArray);
-      return result.toString();
-
-
-
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -105,126 +155,172 @@ public class IkanBot extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
-
+      if(ids.get(0).startsWith(BasePath)){
       JSONObject result = new JSONObject();
       JSONObject info = new JSONObject();
       JSONArray list_info = new JSONArray();
-      String u=siteUrl+ids.get(0);
-      String res = OkHttpUtil.string(u, getHeaders());
-      // String vod_id = Jsoup.parse(res).select("[id=current_id]").attr("value");
-      String vod_name = Jsoup.parse(res).select("h2").text();
-      String vod_pic = Jsoup.parse(res).select("[class=item-root]").select("img").attr("data-src");
 
-String vod_actor="";
-String vod_area="";
-String vod_year="";
+      String url = ids.get(0);
+      File VideosDir=new File(url);
+      ArrayList<String> arr = new ArrayList<String>();
+      if (VideosDir.exists()){
+        File[] files=VideosDir.listFiles();
+        if (files!=null){
+          for(int i=0;i<files.length;i++){
+            File f=files[i];
+            String vname=f.getName();
+            String vurl=f.toString();
+            // System.out.println(vname+"$"+vurl);
+            arr.add(vname+"$"+vurl);
+          }
+        }
 
-      try {
-      vod_actor=Jsoup.parse(res).select("[class=meta]").get(3).text();
-      } catch (Exception e) {
       }
-      try {
-       vod_area=Jsoup.parse(res).select("[class=meta]").get(2).text();
-      } catch (Exception e) {
-      }
-      try {
-       vod_year=Jsoup.parse(res).select("[class=meta]").get(1).text();
-        
-      } catch (Exception e) {
-      }
-      String vod_content=Jsoup.parse(res).select("[class=line-tips]").text();
+      Collections.sort(arr);
+      // System.out.println(arr);
+      String vod_name=VideosDir.getName();
+      String vod_pic=BasePath+"/PIC/"+vod_name+".jpg";
+
+      String vod_play_from="Local";
+      String vod_play_url=TextUtils.join("#", arr);
+
       info.put("vod_id", ids.get(0));
       info.put("vod_name", vod_name);
       info.put("vod_pic", vod_pic);
-      info.put("type_name", "");
-      info.put("vod_year", vod_year);
-      info.put("vod_area", vod_area);
-      info.put("vod_remarks", "");
-      info.put("vod_actor", vod_actor);
-      info.put("vod_director", "");
-      info.put("vod_content", vod_content);
-      String v_tks = getToken(res);
-      int vid_index=u.lastIndexOf("/")+1;
-      String uu=siteUrl+"/api/getResN?videoId=" + u.substring(vid_index)+"&mtype=2&token="+v_tks;
-      // System.out.println(uu);
-      String res_m3u8 = OkHttpUtil.string(uu, getHeaders());
-      // System.out.println(res_m3u8);
-      JSONObject json_res_m3u8=new JSONObject(res_m3u8);
-      HashMap<String, String> m = new HashMap<>();
-      m.put("bfzym3u8", "暴风");
-      m.put("1080zyk", "优质");
-      m.put("kuaikan", "快看");
-      m.put("lzm3u8", "量子");
-      m.put("ffm3u8", "非凡");
-      m.put("haiwaikan", "海外看");
-      m.put("gsm3u8", "光速");
-      m.put("zuidam3u8", "最大");
-      m.put("bjm3u8", "八戒");
-      m.put("snm3u8", "索尼");
-      m.put("wolong", "卧龙");
-      m.put("xlm3u8", "新浪");
-      m.put("yhm3u8", "樱花");
-      m.put("tkm3u8", "天空");
-      m.put("jsm3u8", "极速");
-      m.put("wjm3u8", "无尽");
-      m.put("sdm3u8", "闪电");
-      m.put("kcm3u8", "快车");
-      m.put("jinyingm3u8", "金鹰");
-      m.put("fsm3u8", "飞速");
-      m.put("tpm3u8", "淘片");
-      m.put("lem3u8", "鱼乐");
-      m.put("dbm3u8", "百度");
-      m.put("tomm3u8", "番茄");
-      m.put("ukm3u8", "U酷");
-      m.put("ikm3u8", "爱坤");
-      m.put("hnzym3u8", "红牛资源");
-      m.put("hnm3u8", "红牛");
-      m.put("68zy_m3u8", "68");
-      m.put("kdm3u8", "酷点");
-      m.put("bdxm3u8", "北斗星");
-      m.put("qhm3u8", "奇虎");
-      m.put("hhm3u8", "豪华");
-      JSONArray res_list=json_res_m3u8.getJSONObject("data").getJSONArray("list");
-      // System.out.println(res_list);
-      ArrayList<String> play_from_array = new ArrayList<String>();
-      ArrayList<String> play_url_array = new ArrayList<String>();
-      for(int i=0;i<res_list.length();i++){
-        JSONArray json_resData=new JSONArray( res_list.getJSONObject(i).getString("resData"));
-        JSONObject f_and_u=json_resData.getJSONObject(0);
-
-        try {
-          String flag=f_and_u.getString("flag");
-          String res_url=f_and_u.getString("url");
-          // System.out.println(flag);
-          if(m.containsKey(flag)){
-            // System.out.println(m.get(flag));
-            play_from_array.add(m.get(flag));
-
-
-          }else{
-            play_from_array.add(flag);
-
-          }
-
-          play_url_array.add(res_url.replaceAll("##", "#"));
-
-
-        } catch (Exception e) {
-          System.out.println("运行时解析Url出错");
-        }
-      }
-      String vod_play_from=TextUtils.join("$$$", play_from_array);
-      String vod_play_url=TextUtils.join("$$$", play_url_array);
 
       info.put("vod_play_from", vod_play_from);
       info.put("vod_play_url", vod_play_url);
 
-
       list_info.put(info);
       result.put("list", list_info);
 
-
       return result.toString();
+
+
+      }else{
+
+
+        JSONObject result = new JSONObject();
+        JSONObject info = new JSONObject();
+        JSONArray list_info = new JSONArray();
+        String u=siteUrl+ids.get(0);
+        String res = OkHttpUtil.string(u, getHeaders());
+        // String vod_id = Jsoup.parse(res).select("[id=current_id]").attr("value");
+        String vod_name = Jsoup.parse(res).select("h2").text();
+        String vod_pic = Jsoup.parse(res).select("[class=item-root]").select("img").attr("data-src");
+
+        String vod_actor="";
+        String vod_area="";
+        String vod_year="";
+
+        try {
+          vod_actor=Jsoup.parse(res).select("[class=meta]").get(3).text();
+        } catch (Exception e) {
+        }
+        try {
+          vod_area=Jsoup.parse(res).select("[class=meta]").get(2).text();
+        } catch (Exception e) {
+        }
+        try {
+          vod_year=Jsoup.parse(res).select("[class=meta]").get(1).text();
+
+        } catch (Exception e) {
+        }
+        String vod_content=Jsoup.parse(res).select("[class=line-tips]").text();
+        info.put("vod_id", ids.get(0));
+        info.put("vod_name", vod_name);
+        // info.put("vod_pic", vod_pic);
+        info.put("vod_pic", vod_pic+"@Referer=https://v.ikanbot.com/@User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
+        info.put("type_name", "");
+        info.put("vod_year", vod_year);
+        info.put("vod_area", vod_area);
+        info.put("vod_remarks", "");
+        info.put("vod_actor", vod_actor);
+        info.put("vod_director", "");
+        info.put("vod_content", vod_content);
+        String v_tks = getToken(res);
+        int vid_index=u.lastIndexOf("/")+1;
+        String uu=siteUrl+"/api/getResN?videoId=" + u.substring(vid_index)+"&mtype=2&token="+v_tks;
+        // System.out.println(uu);
+        String res_m3u8 = OkHttpUtil.string(uu, getHeaders());
+        // System.out.println(res_m3u8);
+        JSONObject json_res_m3u8=new JSONObject(res_m3u8);
+        HashMap<String, String> m = new HashMap<>();
+        m.put("bfzym3u8", "暴风");
+        m.put("1080zyk", "优质");
+        m.put("kuaikan", "快看");
+        m.put("lzm3u8", "量子");
+        m.put("ffm3u8", "非凡");
+        m.put("haiwaikan", "海外看");
+        m.put("gsm3u8", "光速");
+        m.put("zuidam3u8", "最大");
+        m.put("bjm3u8", "八戒");
+        m.put("snm3u8", "索尼");
+        m.put("wolong", "卧龙");
+        m.put("xlm3u8", "新浪");
+        m.put("yhm3u8", "樱花");
+        m.put("tkm3u8", "天空");
+        m.put("jsm3u8", "极速");
+        m.put("wjm3u8", "无尽");
+        m.put("sdm3u8", "闪电");
+        m.put("kcm3u8", "快车");
+        m.put("jinyingm3u8", "金鹰");
+        m.put("fsm3u8", "飞速");
+        m.put("tpm3u8", "淘片");
+        m.put("lem3u8", "鱼乐");
+        m.put("dbm3u8", "百度");
+        m.put("tomm3u8", "番茄");
+        m.put("ukm3u8", "U酷");
+        m.put("ikm3u8", "爱坤");
+        m.put("hnzym3u8", "红牛资源");
+        m.put("hnm3u8", "红牛");
+        m.put("68zy_m3u8", "68");
+        m.put("kdm3u8", "酷点");
+        m.put("bdxm3u8", "北斗星");
+        m.put("qhm3u8", "奇虎");
+        m.put("hhm3u8", "豪华");
+        JSONArray res_list=json_res_m3u8.getJSONObject("data").getJSONArray("list");
+        // System.out.println(res_list);
+        ArrayList<String> play_from_array = new ArrayList<String>();
+        ArrayList<String> play_url_array = new ArrayList<String>();
+        for(int i=0;i<res_list.length();i++){
+          JSONArray json_resData=new JSONArray( res_list.getJSONObject(i).getString("resData"));
+          JSONObject f_and_u=json_resData.getJSONObject(0);
+
+          try {
+            String flag=f_and_u.getString("flag");
+            String res_url=f_and_u.getString("url");
+            // System.out.println(flag);
+            if(m.containsKey(flag)){
+              // System.out.println(m.get(flag));
+              play_from_array.add(m.get(flag));
+
+
+            }else{
+              play_from_array.add(flag);
+
+            }
+
+            play_url_array.add(res_url.replaceAll("##", "#"));
+
+
+          } catch (Exception e) {
+            System.out.println("运行时解析Url出错");
+          }
+        }
+        String vod_play_from=TextUtils.join("$$$", play_from_array);
+        String vod_play_url=TextUtils.join("$$$", play_url_array);
+
+        info.put("vod_play_from", vod_play_from);
+        info.put("vod_play_url", vod_play_url);
+
+
+        list_info.put(info);
+        result.put("list", list_info);
+
+
+        return result.toString();
+      }
 
     } catch (Exception e) {
       SpiderDebug.log(e);
@@ -252,7 +348,8 @@ String vod_year="";
 
         vod.put("vod_id", vod_id);
         vod.put("vod_name", vod_name);
-        vod.put("vod_pic", vod_pic);
+        // vod.put("vod_pic", vod_pic);
+        vod.put("vod_pic", vod_pic+"@Referer=https://v.ikanbot.com/@User-Agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36");
         vod.put("vod_remarks", vod_remarks);
         list.put(vod);
 
