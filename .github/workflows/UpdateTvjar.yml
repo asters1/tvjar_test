@@ -23,7 +23,7 @@ jobs:
           echo "==old=="
           echo $oldcommit
           echo "==end=="
-          newcommit=$(curl -sL https://github.com/asters1/tvjar_test/commits/master |grep -o "/asters1/tvjar_test/commit/[a-z0-9]\+" |head -1 | cut -d\/ -f5)
+          newcommit=$(git rev-parse HEAD)
           echo "==new=="
           echo $newcommit
           echo "==end=="
