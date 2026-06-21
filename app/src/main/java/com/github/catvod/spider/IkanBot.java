@@ -50,7 +50,7 @@ public class IkanBot extends Spider {
       local_video.put("type_name","本地视频");
       local_video.put("type_id",BasePath);
 
-      dianying.put("type_name", "电影1");
+      dianying.put("type_name", "电影");
       dianying.put("type_id", "movie");
 
       dianshiju.put("type_name", "电视剧");
