@@ -22,7 +22,7 @@ import com.github.catvod.utils.okhttp.OkHttpUtil;
 import com.github.catvod.crawler.Spider;
 import com.github.catvod.crawler.SpiderDebug;
 
-public class IkanBot1 extends Spider {
+public class IKB extends Spider {
 
   private static final String siteUrl = "https://v.aikanbot.com";
 
