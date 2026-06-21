@@ -89,8 +89,9 @@ public class IKB extends Spider {
                 }
                 JSONObject vod = new JSONObject();
                 String vod_name=f.getName().toString();
-                vod.put("vod_name", vod_name);
+                vod.put("vod_name", vod_name+"vs");
                 vod.put("vod_id", f.toString());
+          vod.put("ext", "quickSearch="+vod_name);
                 String vod_pic=tid+"/PIC/"+vod_name+".jpg";
                 vod.put("vod_pic", vod_pic);
                 // System.out.println(vod_pic);
