@@ -24,7 +24,7 @@ import com.github.catvod.crawler.SpiderDebug;
 
 public class IkanBot extends Spider {
 
-  private static final String siteUrl = "https://v.aikanbot.com";
+  private static final String siteUrl = "https://www.ikanbot.com";
 
   public String BasePath = "/storage/emulated/0/视频";
 
