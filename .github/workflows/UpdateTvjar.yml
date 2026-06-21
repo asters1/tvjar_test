@@ -16,16 +16,16 @@ jobs:
       - name: Clone auto
         run: |
 
+          newcommit=$(git rev-parse HEAD)
+          echo "==new=="
+          echo $newcommit
+          echo "==end=="
           git clone https://asters1:${{secrets.USER_TOKEN}}@github.com/asters1/auto
           cd auto
 
           oldcommit=$(./jq ./tvjar/tvjarCommit.json new)
           echo "==old=="
           echo $oldcommit
-          echo "==end=="
-          newcommit=$(git rev-parse HEAD)
-          echo "==new=="
-          echo $newcommit
           echo "==end=="
           echo "oldcommit=$oldcommit">> $GITHUB_ENV
           echo "newcommit=$newcommit">> $GITHUB_ENV
