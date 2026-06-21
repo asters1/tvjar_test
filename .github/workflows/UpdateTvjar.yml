@@ -18,6 +18,7 @@ jobs:
 
           git clone https://asters1:${{secrets.USER_TOKEN}}@github.com/asters1/auto
           cd auto
+
           oldcommit=$(./jq ./tvjar/tvjarCommit.json new)
           newcommit=$(curl -sL https://github.com/asters1/tvjar_test/commits/master |grep -o "/asters1/tvjar_test/commit/[a-z0-9]\+" |head -1 | cut -d\/ -f5)
           echo "oldcommit=$oldcommit">> $GITHUB_ENV
@@ -37,6 +38,3 @@ jobs:
           git add --all
           git commit -m "${info}"
           git push -u -f origin master
-
-
-
