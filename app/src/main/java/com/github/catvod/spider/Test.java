@@ -6,12 +6,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.github.tvbox.osc.ui.activity.FastSearchActivity;
-
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Base64;
-import android.content.Intent;
 
 import java.util.HashMap;
 import java.util.List;
@@ -89,11 +86,17 @@ public class Test extends Spider {
 
     public String detailContent(List<String> ids) {
         try {
-String KEY =ids.get(0);
-            Intent intent = new Intent(this, FastSearchActivity.class);
-            intent.putExtra("keyword", KEY);
-            startActivity(intent);
+            String vid = ids.get(0);
 
+            JSONObject item = new JSONObject();
+            item.put("vod_id", vid);
+            item.put("vod_name", "测试影片");
+            item.put("quickSearch", "流浪地球");
+
+            JSONObject result = new JSONObject();
+            result.put("list", new JSONArray().put(item));
+
+            return result.toString();
 
         } catch (Exception e) {
             SpiderDebug.log(e);
