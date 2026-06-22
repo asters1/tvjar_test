@@ -2,6 +2,7 @@
 .settings/
 .project
 .gradle
+.idea/
 .gitattributes
 .gradle/
 *.class
