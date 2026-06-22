@@ -63,7 +63,7 @@ public class Test extends Spider {
                 JSONObject vod = new JSONObject();
 
                 vod.put("vod_name", "斗破苍穹");
-                vod.put("vod_id", i + "");
+                vod.put("vod_id", "aaa");
 
 
                 // System.out.println(vod_pic);
