@@ -227,9 +227,7 @@ public class TX extends Spider {
     // ====================
     public static JSONArray slice(JSONArray array, int start, int end) {
         JSONArray result = new JSONArray();
-        if (array == null || array.isEmpty()) {
-            return result;
-        }
+
         int total = array.length();
         // 边界修正
         start = Math.max(start, 0);
