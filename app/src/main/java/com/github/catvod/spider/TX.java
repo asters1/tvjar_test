@@ -76,8 +76,8 @@ public class TX extends Spider {
 
   public String categoryContent(String tid, String pg, boolean filter, HashMap<String, String> extend) {
     try {
-        JSONObject result = new JSONObject();
-        JSONArray jSONArray = new JSONArray();
+      JSONObject result = new JSONObject();
+      JSONArray jSONArray = new JSONArray();
       int page = Integer.parseInt(pg);
       String v_list_u="https://v.%71%71.com/x/bu/pagesheet/list?_all=1&append=1&channel="+tid+"&listpage=1&offset="+(page-1)*21+"&pagesize=21&iarea=-1";
       // if(extend==o)
@@ -89,28 +89,28 @@ public class TX extends Spider {
       }
       String res = OkHttpUtil.string(v_list_u, getHeaders());
       // System.out.println(res);
-        Elements list_el = Jsoup.parse(res).select("[class=list_item]");
-        for (int i = 0; i < list_el.size(); i++) {
-          JSONObject vod = new JSONObject();
-          String vod_id=list_el.get(i).select("a").attr("data-float");
-          String vod_name=list_el.get(i).select("img").attr("alt");
+      Elements list_el = Jsoup.parse(res).select("[class=list_item]");
+      for (int i = 0; i < list_el.size(); i++) {
+        JSONObject vod = new JSONObject();
+        String vod_id=list_el.get(i).select("a").attr("data-float");
+        String vod_name=list_el.get(i).select("img").attr("alt");
 
-          String vod_pic = list_el.get(i).select("img").attr("src");
-          String vod_remarks = list_el.get(i).select("a").get(0).text();
-          vod.put("vod_id", vod_id);
-          vod.put("vod_name", vod_name);
-          vod.put("vod_pic", vod_pic);
-          vod.put("vod_remarks", vod_remarks);
+        String vod_pic = list_el.get(i).select("img").attr("src");
+        String vod_remarks = list_el.get(i).select("a").get(0).text();
+        vod.put("vod_id", vod_id);
+        vod.put("vod_name", vod_name);
+        vod.put("vod_pic", vod_pic);
+        vod.put("vod_remarks", vod_remarks);
 
-          jSONArray.put(vod);
-        }
-        result.put("page", page);
-        result.put("pagecount", Integer.MAX_VALUE);
-        result.put("limit", 40);
-        result.put("total", Integer.MAX_VALUE);
-        result.put("list", jSONArray);
-        return result.toString();
-        // System.out.println(result.toString());
+        jSONArray.put(vod);
+      }
+      result.put("page", page);
+      result.put("pagecount", Integer.MAX_VALUE);
+      result.put("limit", 40);
+      result.put("total", Integer.MAX_VALUE);
+      result.put("list", jSONArray);
+      return result.toString();
+      // System.out.println(result.toString());
 
 
     } catch (Exception e) {
@@ -121,6 +121,27 @@ public class TX extends Spider {
 
   public String detailContent(List<String> ids) {
     try {
+      String cid =ids.get(0);
+
+      JSONObject result = new JSONObject();
+      JSONObject info = new JSONObject();
+      JSONArray list_info = new JSONArray();
+
+      String detailUrl = "https://node.video.%71%71.com/x/api/float_vinfo2?cid="+cid;
+      String html = OkHttpUtil.string(detailUrl, getHeaders());
+      System.out.println(html);
+      JSONObject v_obj = new JSONObject(html);
+
+      info.put("vod_id", ids.get(0));
+      info.put("vod_name", v_obj.getJSONObject("c").getString("title"));
+      info.put("type_name", v_obj.getJSONArray("typ").toString());
+      info.put("vod_actor", v_obj.getJSONArray("nam").toString());
+      info.put("vod_year", v_obj.getJSONObject("c").getString("year"));
+      info.put("vod_content", v_obj.getJSONObject("c").getString("description"));
+      info.put("vod_remarks", v_obj.getString("rec"));
+      info.put("vod_pic", v_obj.getJSONObject("c").getString("pic"));
+      // System.out.println(info);
+
 
     } catch (Exception e) {
       SpiderDebug.log(e);
